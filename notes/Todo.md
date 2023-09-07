@@ -2,11 +2,10 @@
 tags: tasklist
 ---
 
-- [ ] submit git to canvas
-
 ## ES
 
 - [ ] .
+
 ## SD
 
 - [ ] .
@@ -14,3 +13,7 @@ tags: tasklist
 ## COMM
 
 - [ ] .
+
+## PO
+
+- [ ] add interview thing
