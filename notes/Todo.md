@@ -1,19 +1,19 @@
 ---
 tags: tasklist
 ---
-
-## ES
-
-- [ ] .
-
-## SD
+## #ES
 
 - [ ] .
 
-## COMM
+## #SD
 
 - [ ] .
 
-## PO
+## #COMM
 
-- [ ] add interview thing
+- [ ] protocol assignment
+- [ ] software serial || other assignment
+
+## #PO
+
+- [ ] add interview thing to #portfolio
