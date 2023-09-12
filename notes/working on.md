@@ -1,15 +1,15 @@
-## ES
+## #ES
 
-- [ ] .
+- [ ] nucleo gpio challange
 
-## COMM
+## #COMM
 
 - [ ] `1 communication protocols for IOT.pdf`
 
-## SD
+## #SD
 
 - [ ] .
 
-## PO
+## #PO
 
-- [ ] .
+- [ ] portfolio sprint 1

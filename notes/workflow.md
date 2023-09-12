@@ -1,3 +1,8 @@
+---
+tags:
+  - research
+---
+
 1. analyze
 2. design
 3. advise
