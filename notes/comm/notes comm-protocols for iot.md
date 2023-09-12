@@ -1,12 +1,13 @@
 ---
 tags:
   - COMM
-  - protocol
+  - protocols
 ---
-## investigating protocols
+## step 1 (investigating protocols)
+
 #### lighting in p8
 
-- mcu with touch display connecting to webhooks.
+- micro controller with touch display connecting to web-hooks.
 
 #### counting wildlife
 
@@ -62,3 +63,13 @@ tags:
 |        168        |          *          | payload (if available)             |
 
 >source [wiki](https://en.wikipedia.org/wiki/Constrained_Application_Protocol)
+
+## step 2 (imagining the usage)
+
+- CoAp
+	- low power consumption and simple implementation
+	- designed for resource/power constrained applications
+	- low overhead
+- mqtt
+	- usable in a mesh setup
+	- high(er) availability
