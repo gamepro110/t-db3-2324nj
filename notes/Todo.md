@@ -1,11 +1,16 @@
 ---
-tags: tasklist
+tags:
+  - tasklist
 ---
 ## #ES
 
-- [ ] look at GPIO challenge 
-	- [ ] ...
+- [ ] look at GPIO challenge
+	- [x] digital input
+	- [x] digital output
+	- [ ] 1.3
+	- note: never forget to invert the pin. forgetting it means u overwrite everything, pin A14 is reserved for flashing
 - [ ] look at timer challenge
+	- [ ] PWM
 - [ ] look at closed-loop challenge
 - [ ] car challenge
 	- [ ] make task list using research notion (PDF i send on teams)
