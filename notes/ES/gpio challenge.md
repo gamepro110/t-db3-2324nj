@@ -1,3 +1,53 @@
+## class diagram
+
+```mermaid
+classDiagram
+direction LR
+
+class Led{
+	+Led(GPIO_TypeDef* gpio_block, int pin)
+	+~Led()
+	+Toggle() void
+	+On() void
+	+Off() void
+	-block GPIO_TypeDef*
+	-pin intf
+}
+
+class buttonAction {
+	<<Enum>>
+	None = 0,
+	pressShort,
+	pressLong,
+}
+
+class Button {
+	+Button(GPIO_TypeDef* gpio_block, int pin)
+	+~Button()
+	+GetButtonAction(action buttonAction&)
+	-isButtonPressed() void
+	-GPIO_TypeDef* block
+	-int pin
+	-bool logicEntered
+	-int startTime
+}
+
+class main {
+	-int led1Timer
+	-int led2Timer
+	-const int ledToggleTimeShort
+	-const int ledToggleTimeLong
+	-buttonAction btn1
+	-buttonAction btn2
+}
+
+main o-- "2" Button
+main o-- "2" Led
+
+```
+
+## flowchart
+
 ```mermaid
 flowchart TD
 subgraph main
@@ -51,5 +101,3 @@ none-->lUE
 lUE
 
 ```
-
-## notes

@@ -18,6 +18,10 @@
 */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include "lib/Led.h"
+#include "lib/Button.h"
+#include "lib/print.h"
+
 #include "main.h"
 #include "cmsis_os.h"
 #include "usart.h"
@@ -60,11 +64,30 @@ void MX_FREERTOS_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-void voidPrint(const char* msg) {
-    const uint8_t MSGBUFSIZE{ 100 };
-    char msgBuf[MSGBUFSIZE];
-    snprintf(msgBuf, MSGBUFSIZE, "%s\n", msg);
-    HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+void ledBlinkTimed(Led* led, const uint32_t delay, uint32_t& timer) {
+    uint32_t ledNow = HAL_GetTick();
+    if ((ledNow - timer) > delay) {
+        timer = ledNow;
+        led->Toggle();
+    }
+}
+
+void LedLogic(buttonAction btnAction, Led& led, uint32_t& ledTimer, const uint32_t ledToggleTimeShort, const uint32_t ledToggleTimeLong) {
+    switch (btnAction)
+    {
+    case buttonAction::pressShort: {
+        ledBlinkTimed(&led, ledToggleTimeShort, ledTimer);
+        break;
+    }
+    case buttonAction::pressLong: {
+        ledBlinkTimed(&led, ledToggleTimeLong, ledTimer);
+        break;
+    }
+    case buttonAction::none:
+    default: {
+        break;
+    }
+    }
 }
 
 /* USER CODE END 0 */
@@ -79,67 +102,35 @@ int main(void) {
     MX_GPIO_Init();
     MX_USART2_UART_Init();
 
-    // set pin to output
-    GPIOA->MODER =
-        (GPIOA->MODER & ~GPIO_MODER_MODER6) |
-        ((0b01 << GPIO_MODER_MODER6_Pos));
+    Button but1(GPIOA, 6);
+    Button but2(GPIOA, 7);
+    Led led1(GPIOB, 6);
+    Led led2(GPIOC, 7);
 
-    // set pin output type to push-pull
-    GPIOA->OTYPER &= ~GPIO_OTYPER_OT_6;
+    uint32_t led1Timer = 0;
+    uint32_t led2Timer = 0;
+    const uint32_t ledToggleTimeShort = 200;
+    const uint32_t ledToggleTimeLong = 800;
+    buttonAction btn1Action = (buttonAction)0;
+    buttonAction btn2Action = (buttonAction)0;
 
-    // set pin to input
-    GPIOA->MODER = ((GPIOA->MODER & ~GPIO_MODER_MODER7) |
-        (0b00 << GPIO_MODER_MODER7_Pos));
-    // set pulup resistor. 0b01 == pullup resistor
-    GPIOA->PUPDR = ((GPIOA->PUPDR & ~GPIO_PUPDR_PUPDR7) |
-        (0b01 << GPIO_PUPDR_PUPDR7_Pos));
-
-    /* Init scheduler */
-    // ES Course Comments: Uncomment the three lines below to enable FreeRTOS.
+    /*
+    Init scheduler
+    ES Course Comments: Uncomment the three lines below to enable FreeRTOS.
+    */
     //osKernelInitialize(); /* Call init function for freertos objects (in freertos.c) */
     //MX_FREERTOS_Init();
     //osKernelStart(); /* Start scheduler */
 
     /* We should never get here as control is now taken by the scheduler */
     /* Infinite loop */
-    const int MSGBUFSIZE = 100;
-    char msgBuf[MSGBUFSIZE];
-    bool btnPressed = false;
-    bool btnLogicEntered = false;
-    bool btnDoAction = false;
-    uint16_t btnTimePressed = 0;
 
     while (1) {
-        btnPressed = (GPIOA->IDR & GPIO_IDR_7) == 0;
+        but1.GetButtonAction(btn1Action);
+        but2.GetButtonAction(btn2Action);
 
-        if (btnPressed && !btnLogicEntered) { // btn press init
-            btnLogicEntered = true;
-            voidPrint("btnPressed");
-            //TODO grab timestamp "begin"
-        }
-        else if (btnPressed) { // btn pressed
-            btnTimePressed++; //FIXME probably redundent
-        }
-        else if (!btnPressed && btnLogicEntered) { // btn press end
-            btnLogicEntered = false;
-            //TODO grab timestamp "current"
-            //TODO duration = now - begin
-            snprintf(msgBuf, MSGBUFSIZE, "%s %d", "btn time pressed:", btnTimePressed);
-            voidPrint(msgBuf);
-            btnTimePressed = 0;
-            btnDoAction = true; // on do the thing after the btn is released
-            voidPrint("btnRel");
-        }
-
-        if (btnDoAction) {
-            btnDoAction = false;
-            GPIOA->ODR |= GPIO_ODR_6;
-            //voidPrint("led on");
-        }
-        else {
-            GPIOA->ODR &= ~GPIO_ODR_6;
-            //voidPrint("led off");
-        }
+        LedLogic(btn1Action, led1, led1Timer, ledToggleTimeShort, ledToggleTimeLong);
+        LedLogic(btn2Action, led2, led2Timer, ledToggleTimeShort, ledToggleTimeLong);
     }
 }
 
