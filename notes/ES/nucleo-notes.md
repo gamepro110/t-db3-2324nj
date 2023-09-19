@@ -29,6 +29,22 @@ GPIOA->ODR |= GPIO_ODR_5;
 GPIOA->ODR ^= GPIO_ODR_5
 ```
 
+### function version
+
+```cpp
+void PinSetOutput(GPIO_TypeDef* block, uint8_t pin) {
+    // set pin to output
+    block->MODER = (
+        (block->MODER & ~(0b00 << (pin * 2))) |
+        ((0b01 << (pin * 2)))
+    );
+    // set pin output type to push-pull
+    block->OTYPER &= ~(1 << pin);
+}
+```
+
+> `pin * 2` is done because each pin has 2 bits in the 32 bit MODER (mode register)
+
 ## digital input
 
 > enables gpio pin A7 as digital input
@@ -48,3 +64,19 @@ if ((GPIOA->IDR & GPIO_IDR_7) == 0) {
 	// button pressed
 }
 ```
+
+### function version
+
+```cpp
+void PinSetOutput(GPIO_TypeDef* block, uint8_t pin) {
+    // set pin to output
+    block->MODER = (
+        (block->MODER & ~(0b00 << (pin * 2))) |
+        ((0b01 << (pin * 2)))
+    );
+    // set pin output type to push-pull
+    block->OTYPER &= ~(1 << pin);
+}
+```
+
+> `pin * 2` is done because each pin has 2 bits in the 32 bit MODER (mode register)
