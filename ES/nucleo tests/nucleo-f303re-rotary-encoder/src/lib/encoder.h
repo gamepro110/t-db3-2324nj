@@ -26,7 +26,7 @@ private:
     uint8_t sigClk{ 0 };
     uint8_t sigDt{ 0 };
     uint32_t lastTrigger{ 0 };
-    const uint32_t debouncTime{ 50 };
+    const uint32_t debouncTime{ 80 };
 };
 
 #endif

@@ -1,11 +1,9 @@
 # pinout
 
-## led
+## encoder
 
-led --> gnd
-led --> gpioA6
-
-## button
-
-button --> gnd
-button --> gpioA7
+- `clk` -> `A7`
+- `dt` -> `A6`
+- gnd -> gnd
+- `\+` -> `3.3v`
+- `sw` -> `undecided`

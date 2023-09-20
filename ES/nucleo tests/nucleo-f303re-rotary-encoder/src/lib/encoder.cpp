@@ -26,7 +26,7 @@ EncoderOutput Encoder::Poll() {
 
     const int MSGBUFSIZE = 80;
     char msgBuf[MSGBUFSIZE];
-    snprintf(msgBuf, MSGBUFSIZE, "clk:%d dt:%d", sigClk, sigDt);
+    snprintf(msgBuf, MSGBUFSIZE, "clk:%d dt:%d ", sigClk, sigDt);
     vprint(msgBuf);
 
     uint32_t now = HAL_GetTick();

@@ -88,17 +88,17 @@ int main(void) {
         switch (encOut)
         {
         case EncoderOutput::rotatedLeft: {
-            snprintf(msgBuf, MSGBUFSIZE, "%s", "Rot L!\r\n");
+            snprintf(msgBuf, MSGBUFSIZE, "%s", "Rot L\t\r");
             HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
             break;
         }
         case EncoderOutput::rotatedRight: {
-            snprintf(msgBuf, MSGBUFSIZE, "%s", "Rot R!\r\n");
+            snprintf(msgBuf, MSGBUFSIZE, "%s", "Rot R\t\r");
             HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
             break;
         }
         case EncoderOutput::NoChange: {
-            snprintf(msgBuf, MSGBUFSIZE, "%s", " \r");
+            snprintf(msgBuf, MSGBUFSIZE, "%s", "\t\t\t\r");
             HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
             break;
         }
