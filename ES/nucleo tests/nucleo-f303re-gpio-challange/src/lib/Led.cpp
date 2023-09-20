@@ -8,7 +8,7 @@ Led::Led(GPIO_TypeDef* block, uint8_t pin)
     // set pin to output
     block->MODER = (
         (block->MODER & ~(0b00 << (pin * 2))) |
-        ((0b01 << (2 * pin)))
+        ((0b01 << (pin * 2)))
     );
 
     // set pin output type to push-pull
