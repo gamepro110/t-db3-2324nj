@@ -1,3 +1,16 @@
+## notes
+
+- what is the primary function of the system?
+- what are the secondary functions of the system?
+- why is this system being built? what is it replacing and why?
+- what are the actors in this system?
+
+> construct the use case(s) for the primary function(s), taking into account
+> - the role the external objects (actors) and system play in each scenario
+> - the interaction (flows) necessary to complete the scenarios in the use case(s)
+> - the sequence of events and data to realize the scenario in the use case(s)
+> - what variations on the scenario are possible?
+
 ## system
 
 ---

@@ -23,3 +23,50 @@
 		- doors
 		- - speaker
 			- notifies the user that an elevator arrived at the floor
+
+## object diagram
+
+```mermaid
+graph LR
+
+sy[System]
+el[Elevator]
+bt[Button]
+btu[Button up]
+btd[Button down]
+fl[Floor]
+ten[TensionSensor]
+li[Light]
+li2[Light]
+li3[Light]
+do[Door]
+do2[Door]
+in[Indicator]
+senp[Optical Sensors]
+seno[Presure Sensor]
+senp2[Optical Sensors]
+seno2[Presure Sensor]
+sp[Speaker]
+
+sy -- 20 </br>top+bottom floor only have 1 button --- fl
+sy -- 8 --- el
+
+fl --- btu
+fl --- btd
+fl --- in
+fl --- sp
+fl --- do
+
+el -- one for each floor--- bt
+el --- ten
+el --- do2
+
+bt --- li
+btu --- li2
+btd --- li3
+
+do --- senp
+do --- seno
+do2 --- senp2
+do2 --- seno2
+```
