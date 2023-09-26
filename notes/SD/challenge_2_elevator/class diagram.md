@@ -1,5 +1,7 @@
-> - replace filled in `diamonds` with open ones for the interfaces
-> - add `CTOR` for `elevator` and `floor`
+---
+tags:
+  - SD
+---
 
 ```mermaid
 classDiagram 
@@ -59,6 +61,7 @@ class Indicator {
 	+SetCurrentFloor()
 }
 class Floor {
+	+Floor(IButton& up,IButton& down, IDoor& door, IIndicator& indicator, ISpeaker speaker)
 	+BtnUp()
 	+BtnDown()
 	+TurnIndicatorOn()
@@ -74,6 +77,7 @@ class IElevator {
 	+Update()
 }
 class Elevator {
+	+Elevator(IIndicator& indicator, IDoor& door, ITensionSensor tensionSensor, List~IButton~ floorButtons)
 	-currentFloor int
 	-targetFloor int
 	+GetGurrentFloor() int
@@ -86,18 +90,18 @@ class Elevator {
 
 %% relations --------------------------------
 
-System *--"8" IElevator
-System *--"20" Floor
+System o--"8" IElevator
+System o--"20" Floor
 
-Floor *--"1..2" IButton
-Floor *--"8" IDoor
-Floor *--"8" IIndicator
-Floor *--"1" ISpeaker
+Floor o--"1..2" IButton
+Floor o--"8" IDoor
+Floor o--"8" IIndicator
+Floor o--"1" ISpeaker
 
-Elevator *--"1" IIndicator
-Elevator *--"1" IDoor
-Elevator *--"20" IButton
-Elevator *--"1" ITensionSensor
+Elevator o--"1" IIndicator
+Elevator o--"1" IDoor
+Elevator o--"20" IButton
+Elevator o--"1" ITensionSensor
 
 IButton <|.. Button
 IDoor <|.. Door
@@ -107,5 +111,5 @@ IIndicator <|.. Indicator
 IElevator <|.. Elevator
 ITensionSensor <|.. TensionSensor
 
-Button *--"1" ILight
+Button o--"1" ILight
 ```
