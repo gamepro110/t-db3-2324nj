@@ -19,14 +19,15 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 
+//#include "lib/ButtonIrq.h"
+#include "lib/IrqButton.h"
+
 #include "main.h"
 #include "cmsis_os.h"
 #include "usart.h"
 #include "gpio.h"
 #include <string.h>
 #include <stdio.h>
-
-#include <inttypes.h> // temp
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -64,7 +65,26 @@ void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN 0 */
 //*
 
-volatile int a = 0;
+IrqButton but = IrqButton(
+    GPIOA, 1,
+    EXTI0_IRQn,
+    3,
+    [&]()
+    {
+        const int MSGBUFSIZE = 100;
+        char msgBuf[MSGBUFSIZE];
+        snprintf(msgBuf, MSGBUFSIZE, "%s", "pressed Short\n");
+        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+    },
+    [&]()
+    {
+        const int MSGBUFSIZE = 100;
+        char msgBuf[MSGBUFSIZE];
+        snprintf(msgBuf, MSGBUFSIZE, "%s", "pressed Long\n");
+        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+    }
+);
+volatile int button = 0;
 extern "C" void EXTI0_IRQHandler(void)
 {
     if (EXTI->PR & EXTI_PR_PR0)
@@ -73,7 +93,27 @@ extern "C" void EXTI0_IRQHandler(void)
         EXTI->PR |= EXTI_PR_PR0;
 
         //interrupt code here
-        a = 1;
+        button = 0x1;
+    }
+}
+
+int pressed = 0;
+extern "C" void EXTI1_IRQHandler(void)
+{
+    if (EXTI->PR & EXTI_PR_PR1)
+    {
+        EXTI->PR |= EXTI_PR_PR1;
+        button = 0x2;
+        if (pressed == 0)
+        {
+            pressed = 1;
+            but.SetPressStart(HAL_GetTick());
+        }
+        else
+        {
+            pressed = 0;
+            but.SetPressEnd(HAL_GetTick());
+        }
     }
 }
 //*/
@@ -99,6 +139,7 @@ int main(void) {
 
     const int MSGBUFSIZE = 80;
     char msgBuf[MSGBUFSIZE];
+
     //ButtonPoll btn{ GPIOA, 8 };
 
     /* Init scheduler */
@@ -110,49 +151,51 @@ int main(void) {
     /* We should never get here as control is now taken by the scheduler */
     /* Infinite loop */
 
-    printThing(GPIOA->MODER, GPIOA->PUPDR);
-    #pragma region BUTTONINTERRUPT
+    but.init();
+
+    //*
     // config PA0 as input with pull-up
     GPIOA->MODER = (
         (GPIOA->MODER & ~(0b00 << (2 * 0))) |
         (0b00 << (2 * 0))
     );
     GPIOA->PUPDR = (
-        (GPIOA->PUPDR & (0b00 << (2* 0))) |
+        (GPIOA->PUPDR & (0b00 << (2 * 0))) |
         (0b01 << (2 * 0))
     );
-
-    printThing(GPIOA->MODER, GPIOA->PUPDR);
-
-    GPIOA->MODER &= ~(GPIO_MODER_MODER0);
-    GPIOA->PUPDR |= GPIO_PUPDR_PUPDR0_0;
-
-    printThing(GPIOA->MODER, GPIOA->PUPDR);
 
     // connect extio line to PA0
     SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI0_PA;
     // config extio to trigger on rising and falling edge edge
     EXTI->RTSR |= EXTI_RTSR_TR0;
-    //EXTI->FTSR |= EXTI_FTSR_TR0;
+    EXTI->FTSR |= EXTI_FTSR_TR0;
     // enable extio interrupt
     EXTI->IMR |= EXTI_IMR_MR0;
     NVIC_EnableIRQ(EXTI0_IRQn);
-    #pragma endregion BUTTONINTERRUPT
-
+    //*/
 
     snprintf(msgBuf, MSGBUFSIZE, "%s", "Hello World!\r\n");
     HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
 
     while (1) {
 
-        if (a == 1){
-            a = 0;
+        if (button & 1)
+        {
+            button &= ~1;
 
-            snprintf(msgBuf, MSGBUFSIZE, "%s", "INTERUPT!!!!!\n");
+            snprintf(msgBuf, MSGBUFSIZE, "%s", "INT_1\n");
             HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
         }
 
-        snprintf(msgBuf, MSGBUFSIZE, "\ra: %d", a);
+        if (button & 2)
+        {
+            button &= ~2;
+
+            snprintf(msgBuf, MSGBUFSIZE, "%s", "INT_2\n");
+            HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+        }
+
+        snprintf(msgBuf, MSGBUFSIZE, "\ra: %d", button);
         HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
     }
 }

@@ -3,10 +3,17 @@
 
 #include "gpio.h"
 
+enum class EdgeIRQType
+{
+    Rising,
+    Falling,
+    Both,
+};
+
 class ButtonIrq
 {
 public:
-    ButtonIrq(GPIO_TypeDef* block, uint8_t pin, EXTI_TypeDef* exti);
+    ButtonIrq(GPIO_TypeDef* block, uint8_t pin, EdgeIRQType edgeType, IRQn_Type irqn, volatile uint32_t* exticr, uint32_t exticrMask);
     ~ButtonIrq();
 
 private:
