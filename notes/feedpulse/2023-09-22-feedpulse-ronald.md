@@ -1,3 +1,7 @@
+---
+tags: feedpulse
+---
+
 # feedpulse 2023-09-22 ronald
 
 ronald was satisfied with my `object diagram` and `class diagram`.</br>
