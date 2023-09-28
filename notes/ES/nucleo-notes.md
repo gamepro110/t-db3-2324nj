@@ -1,3 +1,12 @@
+---
+tags: 
+  - ES
+  - nucleo
+---
+## pinout
+
+![pinout](nucleo-f303_pinout.png)
+
 ## printing to serial (HAL)
 
 ```cpp

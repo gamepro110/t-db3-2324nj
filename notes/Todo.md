@@ -7,9 +7,13 @@ tags:
 - [ ] look at GPIO challenge
 	- [x] digital input
 	- [x] digital output
-	- [x] encoder
+	- [ ] encoder
+		- [x] polling
+		- [ ] interrupt
 	- [ ] 1.3
 - [ ] look at interrupts
+	- [x] basic example
+	- [ ] class
 - [ ] look at timer challenge
 	- [ ] PWM
 - [ ] look at closed-loop challenge
@@ -23,6 +27,7 @@ tags:
 ## #COMM
 
 - [ ] protocol assignment
+	- [x] step 1
 	- [ ] step 2
 	- [ ] step 3
 - [ ] other assignment
@@ -32,6 +37,8 @@ tags:
 
 - [x] rough crane flowchart
 - [ ] project plan
+	- [x] started
+	- [ ] ...
 - [ ] requirements
 
 ## #SD
@@ -54,4 +61,4 @@ tags:
 ## #PO
 
 - [ ] add interview thing to #portfolio
-- [ ] add activity on 08-09-2023 to feed-pulse/portfolio (helping 1st semester students with tech)
+- [x] add activity on 08-09-2023 to feed-pulse/portfolio (helping 1st semester students with tech)

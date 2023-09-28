@@ -1,5 +1,7 @@
 ---
-tags: ES
+tags:
+  - ES
+  - nucleo
 ---
 
 ## class diagram

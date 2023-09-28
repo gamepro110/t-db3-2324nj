@@ -1,3 +1,7 @@
+---
+tags: SD
+---
+
 ## notes
 
 - what is the primary function of the system?
