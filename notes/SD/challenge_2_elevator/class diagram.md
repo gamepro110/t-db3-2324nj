@@ -1,6 +1,7 @@
 ---
 tags:
   - SD
+  - diagrams
 ---
 
 ```mermaid

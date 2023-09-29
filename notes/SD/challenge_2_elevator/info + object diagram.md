@@ -1,5 +1,7 @@
 ---
-tags: SD
+tags:
+  - SD
+  - diagrams
 ---
 
 ## requirements
