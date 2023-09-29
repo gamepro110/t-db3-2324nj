@@ -9,13 +9,13 @@
 
 ## #COMM
 
-- [ ] `1 communication protocols for IOT.pdf`
+- [ ] [[notes comm-protocols for iot]]
 	- finishing step 2
 
 ## #SD
 
 - [ ] `elevator challange`
-	- sequence diagram
+	- [[sequence diagram]]
 
 ## #PO
 

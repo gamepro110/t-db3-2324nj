@@ -89,7 +89,7 @@ tags:
 - machine to machine
 	- context
 		- ![CoAP-setup-example](CoAP_setup.jpg)
-		- 
+		- ...
 	- advice
 		- CoAP
 	- reason
@@ -106,6 +106,10 @@ tags:
 		- the environment is very challenging and the resources are constrained, meaning we cant have it polling for events all the time.
 		- power availability is not guaranteed, hence the battery. meaning low power consumption is a must.
 		- Lora can be used to connect to the internet and send the data
+
+## step 3
+
+- ...
 
 ## sources
 
