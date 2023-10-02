@@ -8,7 +8,7 @@
 
 int main(int argc, char* argv[])
 {
-    if (argc != 3)
+    if (argc != 3) // changed
     {
         printf("Please provide argument to select assignment.\n");
         printf("argc: %d\n", argc);
