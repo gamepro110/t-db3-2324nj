@@ -5,7 +5,8 @@
 ## #ES
 
 - [ ] nucleo gpio challenge
-	- interrupts for button
+	- [x] interrupts for button
+	- [ ] rewrite code 
 
 ## #COMM
 

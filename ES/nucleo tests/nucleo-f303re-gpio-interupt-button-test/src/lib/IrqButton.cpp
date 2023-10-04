@@ -15,21 +15,29 @@ void IrqButton::init()
     configureIRQ();
 }
 
-void IrqButton::handle()
+void IrqButton::handleIrq()
 {
-    if(pressHandled)
-    {
-        return;
-    }
+    uint32_t tick = HAL_GetTick();
 
-    uint32_t delta = pressEnd - pressStart;
-    if (delta > 20 && delta < 500)
+    if (!startedPress)
     {
-        pressShort();
+        startedPress = true;
+        SetPressStart(tick);
     }
-    else if (delta > 500)
+    else
     {
-        pressLong();
+        startedPress = false;
+        SetPressEnd(tick);
+
+        uint32_t delta = pressEnd - pressStart;
+        if (delta > 20 && delta < 500)
+        {
+            pressShort();
+        }
+        else if (delta > 500)
+        {
+            pressLong();
+        }
     }
 }
 
@@ -54,8 +62,15 @@ void IrqButton::configureIRQ()
     uint32_t exti_idx = pin / 4;
     uint32_t exti_shift = (pin % 4) * 4;
 
-    SYSCFG->EXTICR[exti_idx] &= ~(0xF << exti_shift);
-    SYSCFG->EXTICR[exti_idx] |= (0x0 << exti_shift);
+    // SYSCFG->EXTICR[exti_idx] |= (
+    //     ~(0xF << exti_shift) &
+    //     (0x0 << exti_shift)
+    // );
+
+    SYSCFG->EXTICR[exti_idx] = (
+        (SYSCFG->EXTICR[exti_idx] & ~(0xf << exti_shift)) |
+        (0x0 << exti_shift)
+    );
 
     // Configure EXTI to trigger on the specified edge
     if (edge == EXTI_TRIGGER_RISING)
@@ -77,6 +92,5 @@ void IrqButton::configureIRQ()
     EXTI->IMR |= (1 << pin);
 
     // Enable the EXTI interrupt in NVIC
-    //TODO fix hardcoded variant
-    NVIC_EnableIRQ(EXTI1_IRQn);
+    NVIC_EnableIRQ(irq);
 }

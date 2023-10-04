@@ -67,24 +67,30 @@ void MX_FREERTOS_Init(void);
 
 IrqButton but = IrqButton(
     GPIOA, 1,
-    EXTI0_IRQn,
+    EXTI1_IRQn,
     3,
     [&]()
     {
-        const int MSGBUFSIZE = 100;
-        char msgBuf[MSGBUFSIZE];
-        snprintf(msgBuf, MSGBUFSIZE, "%s", "pressed Short\n");
-        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+        int i = 5;
+        i++;
+        // const int MSGBUFSIZE = 100;
+        // char msgBuf[MSGBUFSIZE];
+        // snprintf(msgBuf, MSGBUFSIZE, "%s", "pressed Short\n");
+        // HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
     },
     [&]()
     {
-        const int MSGBUFSIZE = 100;
-        char msgBuf[MSGBUFSIZE];
-        snprintf(msgBuf, MSGBUFSIZE, "%s", "pressed Long\n");
-        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+        int i = 90;
+        i++;
+        // const int MSGBUFSIZE = 100;
+        // char msgBuf[MSGBUFSIZE];
+        // snprintf(msgBuf, MSGBUFSIZE, "%s", "pressed Long\n");
+        // HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
     }
 );
+
 volatile int button = 0;
+
 extern "C" void EXTI0_IRQHandler(void)
 {
     if (EXTI->PR & EXTI_PR_PR0)
@@ -93,13 +99,21 @@ extern "C" void EXTI0_IRQHandler(void)
         EXTI->PR |= EXTI_PR_PR0;
 
         //interrupt code here
-        button = 0x1;
+        button |= 0x1;
     }
 }
 
 int pressed = 0;
 extern "C" void EXTI1_IRQHandler(void)
 {
+    if (EXTI->PR & EXTI_PR_PR1)
+    {
+        EXTI->PR |= EXTI_PR_PR1;
+        but.handleIrq();
+        button |= 0x2;
+    }
+
+    /*
     if (EXTI->PR & EXTI_PR_PR1)
     {
         EXTI->PR |= EXTI_PR_PR1;
@@ -115,17 +129,11 @@ extern "C" void EXTI1_IRQHandler(void)
             but.SetPressEnd(HAL_GetTick());
         }
     }
+    //*/
 }
 //*/
 
 /* USER CODE END 0 */
-
-void printThing(uint32_t moder, uint32_t pupdr){
-    const int MSGBUFSIZE = 100;
-    char msgBuf[MSGBUFSIZE];
-    snprintf(msgBuf, MSGBUFSIZE, "moder: 0x%016lx\tpupdr: 0x%016lx\n", moder, pupdr);
-    HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-}
 
 /**
 * @brief  The application entry point.
@@ -178,7 +186,6 @@ int main(void) {
     HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
 
     while (1) {
-
         if (button & 1)
         {
             button &= ~1;
@@ -191,12 +198,9 @@ int main(void) {
         {
             button &= ~2;
 
-            snprintf(msgBuf, MSGBUFSIZE, "%s", "INT_2\n");
-            HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+            //snprintf(msgBuf, MSGBUFSIZE, "%s", "INT_2\n");
+            //HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
         }
-
-        snprintf(msgBuf, MSGBUFSIZE, "\ra: %d", button);
-        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
     }
 }
 

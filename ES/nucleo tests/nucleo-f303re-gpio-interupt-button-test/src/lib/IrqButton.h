@@ -5,6 +5,7 @@
 
 #include <functional>
 
+// incomplete. configIrq not working!!
 class IrqButton
 {
 public:
@@ -12,11 +13,11 @@ public:
     ~IrqButton();
 
     void init();
-    void handle();
-    void SetPressStart(uint32_t time);
-    void SetPressEnd(uint32_t time);
+    void handleIrq();
 
 private:
+    void SetPressStart(uint32_t time);
+    void SetPressEnd(uint32_t time);
     void configureGPIO();
     void configureIRQ();
 
@@ -27,7 +28,7 @@ private:
 
     uint32_t pressStart{ 0 };
     uint32_t pressEnd{ 0 };
-    bool pressHandled{ false };
+    bool startedPress{ false };
     std::function<void()> pressShort;
     std::function<void()> pressLong;
 };
