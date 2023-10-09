@@ -88,8 +88,7 @@ tags:
 		- when using CoAP u would need to continuously request information, because the moment u receive your request it can be made invalid by the module u requested it from.
 - machine to machine
 	- context
-		- ![CoAP-setup-example](CoAP_setup.jpg)
-		- ...
+		- wildlife cam
 	- advice
 		- CoAP
 	- reason
