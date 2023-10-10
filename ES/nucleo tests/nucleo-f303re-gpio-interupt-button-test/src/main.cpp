@@ -71,21 +71,17 @@ IrqButton but = IrqButton(
     3,
     [&]()
     {
-        int i = 5;
-        i++;
-        // const int MSGBUFSIZE = 100;
-        // char msgBuf[MSGBUFSIZE];
-        // snprintf(msgBuf, MSGBUFSIZE, "%s", "pressed Short\n");
-        // HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+        const int MSGBUFSIZE = 100;
+        char msgBuf[MSGBUFSIZE];
+        snprintf(msgBuf, MSGBUFSIZE, "%s", "pressed Short\n");
+        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
     },
     [&]()
     {
-        int i = 90;
-        i++;
-        // const int MSGBUFSIZE = 100;
-        // char msgBuf[MSGBUFSIZE];
-        // snprintf(msgBuf, MSGBUFSIZE, "%s", "pressed Long\n");
-        // HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+        const int MSGBUFSIZE = 100;
+        char msgBuf[MSGBUFSIZE];
+        snprintf(msgBuf, MSGBUFSIZE, "%s", "pressed Long\n");
+        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
     }
 );
 

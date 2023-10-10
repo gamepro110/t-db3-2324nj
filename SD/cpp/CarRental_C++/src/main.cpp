@@ -118,17 +118,17 @@ static void cleanCar(RentalAdministration* administration, size_t carNumber)
 
 static void showMenu( void )
 {
-    std::cout << ("\n\nCar Rental menu\n");
-    std::cout << ("===============\n");
-    std::cout << ("(1) Show all cars\n");
-    std::cout << ("(2) Select car\n");
-    std::cout << ("(3) Rent selected car\n");
-    std::cout << ("(4) Return selected car\n");
-    std::cout << ("(5) Check if car needs cleaning\n");
-    std::cout << ("(6) Clean car\n");
-    std::cout << ("-----------------------\n");
-    std::cout << ("(9) QUIT\n\n");
-    std::cout << ("Choice : ");
+    std::cout << "\n\nCar Rental menu\n";
+    std::cout << "===============\n";
+    std::cout << "(1) Show all cars\n";
+    std::cout << "(2) Select car\n";
+    std::cout << "(3) Rent selected car\n";
+    std::cout << "(4) Return selected car\n";
+    std::cout << "(5) Check if car needs cleaning\n";
+    std::cout << "(6) Clean car\n";
+    std::cout << "-----------------------\n";
+    std::cout << "(9) QUIT\n\n";
+    std::cout << "Choice : ";
 }
 
 int main( void )

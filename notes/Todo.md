@@ -44,7 +44,8 @@ tags:
 - [x] rough crane flowchart
 - [ ] project plan
 	- [x] started
-	- awaiting requirements
+	- [x] requirements
+	- [ ] finish it
 - [ ] requirements
 
 ## #SD
@@ -64,6 +65,12 @@ tags:
 		- [ ] part 1
 		- [ ] part 2
 		- [ ] challenge (optional)
+- [ ] c++
+	- [x] and now c++ car rental
+			- [x] part 1
+			- [x] part 2
+			- [x] part 3
+			- [x] part 4
 
 ## #PO
 

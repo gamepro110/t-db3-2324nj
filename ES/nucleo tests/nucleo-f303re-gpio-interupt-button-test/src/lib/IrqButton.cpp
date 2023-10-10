@@ -67,9 +67,44 @@ void IrqButton::configureIRQ()
     //     (0x0 << exti_shift)
     // );
 
-    SYSCFG->EXTICR[exti_idx] = (
+    int irqPinBlock = 0;
+    //...
+    if (block == GPIOA)
+    {
+        irqPinBlock = 0b000;
+    }
+    else if (block == GPIOB)
+    {
+        irqPinBlock = 0b001;
+    }
+    else if (block == GPIOC)
+    {
+        irqPinBlock = 0b010;
+    }
+    else if (block == GPIOD)
+    {
+        irqPinBlock = 0b011;
+    }
+    else if (block == GPIOE)
+    {
+        irqPinBlock = 0b100;
+    }
+    else if (block == GPIOF)
+    {
+        irqPinBlock = 0b101;
+    }
+    else if (block == GPIOG)
+    {
+        irqPinBlock = 0b110;
+    }
+    else if (block == GPIOH)
+    {
+        irqPinBlock = 0b111;
+    }
+
+    SYSCFG->EXTICR[exti_idx] = ( //TODO check if 0xf and 0x0 are correct
         (SYSCFG->EXTICR[exti_idx] & ~(0xf << exti_shift)) |
-        (0x0 << exti_shift)
+        (irqPinBlock << exti_shift)
     );
 
     // Configure EXTI to trigger on the specified edge

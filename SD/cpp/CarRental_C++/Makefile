@@ -12,10 +12,16 @@ $(TARGET): $(SOURCES) $(HEADERS)
 	@$(CXX) $(CXXFLAGS) -o $@ $(SOURCES)
 
 valgrind: $(TARGET) $(SOURCES) $(HEADERS)
-	@valgrind -v --leak-check=yes --show-leak-kinds=all ./$(TARGET)
+	@valgrind --leak-check=yes --show-leak-kinds=all ./$(TARGET)
+
+liltest: $(SOURCES) $(HEADERS) val-test/stringTest.cpp
+	@$(CXX) $(CXXFLAGS) val-test/stringTest.cpp src/Car.cpp -I src/ -o $@
+
+runliltest: $(SOURCES) $(HEADERS) liltest val-test/stringTest.cpp
+	@valgrind --leak-check=yes --show-leak-kinds=all ./liltest
 
 run: $(TARGET)
 	@./$(TARGET)
 
 clean:
-	@rm -f $(TARGET)
+	@rm -f $(TARGET) liltest

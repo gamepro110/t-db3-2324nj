@@ -44,7 +44,6 @@ double RentalAdministration::ReturnCar(const std::string &licencePlate, int kilo
         throw std::logic_error("car was not rented");
     }
 
-    //TODO always invalid return
     return car->Return(kilometers);
 }
 
