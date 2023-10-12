@@ -1,0 +1,1 @@
+[example src](<https://www.hackster.io/chipmc/arduino-i2c-multi-master-approach-why-and-how-93f638>)

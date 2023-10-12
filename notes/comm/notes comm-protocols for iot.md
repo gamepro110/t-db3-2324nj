@@ -32,7 +32,7 @@ tags:
 
 - requires a broker
 - clients connect to broker
-- ![mqtt_Layout](mqtt_layout.png)
+- ![mqtt_Layout](<mqtt_layout.png>)
 - light weight
 - bi-directional
 - uses tcp
@@ -86,13 +86,16 @@ tags:
 	- reason
 		- due to the system having to communicate based on changes in the modules state i would recommend mqtt over CoAP, as CoAP acts more like a restful API. having to request each time u need to check multiple modules is inefficient, when u can have a central place that notifies the module on changes.
 		- when using CoAP u would need to continuously request information, because the moment u receive your request it can be made invalid by the module u requested it from.
-- machine to machine
+- wildlife cam
 	- context
-		- wildlife cam
+		- a wildlife cam hanging in a forest taking pictures of passing wild life
+		- it is power constrained by having to run on battery, and has to run for long periods of time as to not disturb wildlife. CoAp acts as a restful API making it less power hungry and has less overhead, meaning less power consumption.
 	- advice
 		- CoAP
 	- reason
-	- [source](https://www.hivemq.com/article/mqtt-vs-coap-for-iot/)
+		- power consumption
+		- small data transfers
+		- [source](<https://www.hivemq.com/article/mqtt-vs-coap-for-iot/>)
 
 ### bonus (Lora)
 
@@ -113,5 +116,5 @@ tags:
 ## sources
 
 - Wikipedia
-	- [mqtt](https://en.wikipedia.org/wiki/MQTT)
-	- [CoAP](https://en.wikipedia.org/wiki/Constrained_Application_Protocol)
+	- [mqtt](<https://en.wikipedia.org/wiki/MQTT>)
+	- [CoAP](<https://en.wikipedia.org/wiki/Constrained_Application_Protocol>)

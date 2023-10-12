@@ -4,45 +4,64 @@
 
 #include <stdio.h>
 
-Button::Button(GPIO_TypeDef *block, uint8_t pin)
-    : block(block), pin(pin)
+Button::Button(GPIO_TypeDef *block, uint8_t pin, std::function<void()> shortPress, std::function<void()> longPress) :
+    block(block),
+    pin(pin),
+    shortPressFunc(shortPress),
+    longPressFunc(longPress)
 {
-    block->MODER = (
-        (block->MODER & ~(0b00 << (2* pin))) |
-        (0b00 << (2 * pin))
-    );
-
-    block->PUPDR = (
-        (block->PUPDR & (0b00 << (2* pin))) |
-        (0b01 << (2 * pin))
-    );
 }
 
 Button::~Button()
 {
 }
 
-void Button::GetButtonAction(buttonAction& action)
+void Button::init()
 {
-    bool isPressed = IsButtonPressed();
+    block->MODER = (
+        (block->MODER & ~(0b00 << (pin * 2))) |
+        (0b00 << (2 * pin))
+    );
 
-    if (isPressed && !logicEntered) { // btn press start
-        logicEntered = true;
-        startTime = HAL_GetTick();
-    }
-    else if (!isPressed && logicEntered) { // btn press end
-        logicEntered = false;
-        uint32_t delta = HAL_GetTick() - startTime;
+    block->PUPDR = (
+        (block->PUPDR & (0b00 << (pin * 2))) |
+        (0b01 << (2 * pin))
+    );
+}
 
-        if (delta > 20 && delta < 500) {
-            action = buttonAction::pressShort;
-            voidPrint("button short press");
+void Button::HandleButtonAction()
+{
+    if (triggered)
+    {
+        triggered = false;
+
+        if (logicEntered)
+        {
+            logicEntered = false;
+            uint32_t delta = HAL_GetTick() - startTime;
+
+            if (delta > 500)
+            {
+                voidPrint("longFunc()");
+                longPressFunc();
+            }
+            else if (delta > 20)
+            {
+                voidPrint("shortFunc()");
+                shortPressFunc();
+            }
         }
-        else if (delta > 500) {
-            action = buttonAction::pressLong;
-            voidPrint("button long press");
+        else
+        {
+            logicEntered = true;
+            startTime = HAL_GetTick();
         }
     }
+}
+
+void Button::HandleIrq()
+{
+    triggered = true;
 }
 
 bool Button::IsButtonPressed() const

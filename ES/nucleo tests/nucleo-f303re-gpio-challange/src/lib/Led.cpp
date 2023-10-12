@@ -21,7 +21,7 @@ Led::~Led()
 void Led::Toggle()
 {
     block->ODR ^= (1 << pin);
-    voidPrint("toggle led");
+    //voidPrint("toggle led");
 }
 
 void Led::On()

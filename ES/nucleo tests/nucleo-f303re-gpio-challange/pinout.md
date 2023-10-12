@@ -3,19 +3,19 @@
 ## led1
 
 led --> gnd
-led --> gpioB6
+led --> gpioA5
 
 ## led2
 
 led --> gnd
-led --> gpioC7
+led --> gpioA12
 
 ## button1
 
 button --> gnd
-button --> gpioA6
+button --> gpioA0
 
 ## button2
 
 button --> gnd
-button --> gpioA7
+button --> gpioA1

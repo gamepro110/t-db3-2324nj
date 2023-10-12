@@ -90,6 +90,31 @@ void LedLogic(buttonAction btnAction, Led& led, uint32_t& ledTimer, const uint32
     }
 }
 
+volatile buttonAction btn1Action = (buttonAction)0;
+volatile buttonAction btn2Action = (buttonAction)0;
+
+void but1ShortPress()
+{
+    btn1Action = buttonAction::pressShort;
+}
+
+void but1LongPress()
+{
+    btn1Action = buttonAction::pressLong;
+}
+
+void but2ShortPress()
+{
+    btn2Action = buttonAction::pressShort;
+}
+
+void but2LongPress()
+{
+    btn2Action = buttonAction::pressLong;
+}
+
+Button but1(GPIOA, 0, but1ShortPress, but1LongPress);
+Button but2(GPIOA, 1, but2ShortPress, but2LongPress);
 /* USER CODE END 0 */
 
 /**
@@ -102,17 +127,39 @@ int main(void) {
     MX_GPIO_Init();
     MX_USART2_UART_Init();
 
-    Button but1(GPIOA, 6);
-    Button but2(GPIOA, 7);
-    Led led1(GPIOB, 6);
-    Led led2(GPIOC, 7);
+    but1.init();
+    //but2.init();
+
+    //setup irq
+    // connect extio line to PA0
+    SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI0_PA;
+    // config extio to trigger on rising and falling edge edge
+    EXTI->RTSR |= EXTI_RTSR_TR0;
+    EXTI->FTSR |= EXTI_FTSR_TR0;
+    // enable exti0 interrupt
+    EXTI->IMR |= EXTI_IMR_MR0;
+    NVIC_EnableIRQ(EXTI0_IRQn);
+
+    //-----------------
+
+    // // connect extio line to PA1
+    // SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI1_PA;
+    // // config extio to trigger on rising and falling edge edge
+    // EXTI->RTSR |= EXTI_RTSR_TR1;
+    // EXTI->FTSR |= EXTI_FTSR_TR1;
+    // // enable exti1 interrupt
+    // EXTI->IMR |= EXTI_IMR_MR1;
+    // NVIC_EnableIRQ(EXTI1_IRQn);
+
+    //
+
+    Led led1{ GPIOA, 5 };
+    Led led2{ GPIOA, 12 };
 
     uint32_t led1Timer = 0;
     uint32_t led2Timer = 0;
     const uint32_t ledToggleTimeShort = 200;
     const uint32_t ledToggleTimeLong = 800;
-    buttonAction btn1Action = (buttonAction)0;
-    buttonAction btn2Action = (buttonAction)0;
 
     /*
     Init scheduler
@@ -125,12 +172,34 @@ int main(void) {
     /* We should never get here as control is now taken by the scheduler */
     /* Infinite loop */
 
+    voidPrint("hello world\n");
+
     while (1) {
-        but1.GetButtonAction(btn1Action);
-        but2.GetButtonAction(btn2Action);
+        but1.HandleButtonAction();
+        // but2.HandleButtonAction();
 
         LedLogic(btn1Action, led1, led1Timer, ledToggleTimeShort, ledToggleTimeLong);
         LedLogic(btn2Action, led2, led2Timer, ledToggleTimeShort, ledToggleTimeLong);
+    }
+}
+
+extern "C" void EXTI0_IRQHandler(void)
+{
+    if (EXTI->PR & EXTI_PR_PR0)
+    {
+        EXTI->PR = EXTI_PR_PR0;
+        but1.HandleIrq();
+        voidPrint("irq 0");
+    }
+}
+
+extern "C" void EXTI1_IRQHandler(void)
+{
+    if (EXTI->PR & EXTI_PR_PR1)
+    {
+        EXTI->PR = EXTI_PR_PR1;
+        but2.HandleIrq();
+        voidPrint("irq 1");
     }
 }
 

@@ -30,12 +30,11 @@ tags:
 
 ## #COMM
 
-- [ ] protocol assignment
-	- [x] step 1
-	- [ ] step 2
-		- urgent!!!
-		- ---
-	- [ ] step 3
+- [ ] [protocol assignment](<comm/notes comm-protocols for iot.md>)
+	- [x] [step 1](<comm/notes comm-protocols for iot.md#step 1 (investigating protocols)>)
+	- [x] [step 2](<comm/notes comm-protocols for iot.md#step 2 (imagining the usage of mqtt or CoAP)>)
+	- [ ] [step 3](<comm/notes comm-protocols for iot.md#step 3>)
+		- [ ] make copy of notes doc and structure it like requested in the assignment
 - [ ] other assignment
 - [ ] software serial
 
@@ -51,11 +50,10 @@ tags:
 ## #SD
 
 - [ ] challenge 2 elevator
-	- [ ] design
-		- [x] use cases
-		- [x] object diagram
-		- [x] class diagram
-		- [ ] sequence diagram
+	- [x] [use cases](<SD/challenge_2_elevator/use case.md>)
+	- [x] [object diagram](<SD/challenge_2_elevator/info + object diagram.md>)
+	- [x] [class diagram](<SD/challenge_2_elevator/class diagram.md>)
+	- [ ] [sequence diagram](<SD/challenge_2_elevator/sequence diagram.md>)
 - [ ] C data-structure algorithm Challenges
 	- [ ] 1 - intro
 		- [ ] part 0
