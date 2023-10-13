@@ -25,16 +25,16 @@ public:
     virtual std::string ToString() const;
 
 protected:
-    bool needsCleaning;
+    bool needsCleaning{ false };
 
 private:
-    std::string manufacturer;
-    std::string model;
-    std::string licencePlate;
-    int buildYear;
-    int kilometers;
-    bool isAvailable;
-    double pricePerKm;
+    std::string manufacturer{ "" };
+    std::string model{ "" };
+    std::string licencePlate{ "" };
+    int buildYear{ 1890 };
+    int kilometers{ 0 };
+    bool isAvailable{ true };
+    double pricePerKm{ 0.0 };
 };
 
 #endif

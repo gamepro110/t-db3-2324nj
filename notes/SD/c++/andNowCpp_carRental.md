@@ -17,3 +17,9 @@ runliltest: $(SOURCES) $(HEADERS) val-test/stringTest.cpp
 > first run showed no leaks, did get 140+ errors tracing back to `std::cout`...
 
 link to [raw log output](logOutput.md)
+
+---
+
+> the reason for the 140+ errors were uninitialized variables!!
+> 
+> they are fixed now

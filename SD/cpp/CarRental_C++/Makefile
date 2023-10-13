@@ -15,7 +15,7 @@ valgrind: $(TARGET) $(SOURCES) $(HEADERS)
 	@valgrind --leak-check=yes --show-leak-kinds=all ./$(TARGET)
 
 liltest: $(SOURCES) $(HEADERS) val-test/stringTest.cpp
-	@$(CXX) $(CXXFLAGS) val-test/stringTest.cpp src/Car.cpp -I src/ -o $@
+	@$(CXX) $(CXXFLAGS) val-test/stringTest.cpp src/Car.cpp src/Limousine.cpp -I src/ -o $@
 
 runliltest: $(SOURCES) $(HEADERS) liltest val-test/stringTest.cpp
 	@valgrind --leak-check=yes --show-leak-kinds=all ./liltest

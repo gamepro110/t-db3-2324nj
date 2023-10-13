@@ -18,7 +18,7 @@ public:
 
 private:
     const double pricePerKm;
-    bool hasMinibar;
+    bool hasMinibar{ true };
 };
 
 #endif

@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 Car::Car(const std::string& manufacturer, const std::string& model, int buildYear, const std::string& licencePlate, double pricePerKm) :
-    manufacturer(manufacturer), model(model), licencePlate(licencePlate), buildYear(buildYear), isAvailable(true), pricePerKm(pricePerKm)
+    needsCleaning(false), manufacturer(manufacturer), model(model), licencePlate(licencePlate), buildYear(buildYear), kilometers(0), isAvailable(true), pricePerKm(pricePerKm)
 {
     if (buildYear < 1890)
     {

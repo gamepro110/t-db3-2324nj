@@ -98,6 +98,11 @@ static void printIfCarNeedsCleaning(const RentalAdministration* administration, 
 {
     const Car* curr = GetCurrentCar(administration, carNumber);
     
+    if (curr == nullptr)
+    {
+        throw std::invalid_argument("getCurrentCar() returned a null");
+    }
+
     if (curr->NeedsCleaning())
     {
         std::cout << curr->ToString() << " needs to be cleaned" << std::endl;

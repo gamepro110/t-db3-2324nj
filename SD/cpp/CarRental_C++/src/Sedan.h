@@ -16,8 +16,8 @@ public:
 
 private:
     const double pricePerKm = 0.29;
-    bool hasTowbar;
-    double lastCleanedAtKm;
+    bool hasTowbar{ true };
+    double lastCleanedAtKm{ 0 };
 };
 
 #endif
