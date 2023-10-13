@@ -19,7 +19,7 @@ public:
 
     void init();
     void HandleButtonAction();
-    void HandleIrq();
+    void HandleIrq() volatile;
 
 private:
     bool IsButtonPressed() const;

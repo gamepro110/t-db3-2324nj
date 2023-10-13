@@ -20,7 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 
 //#include "lib/ButtonIrq.h"
-#include "lib/IrqButton.h"
+#include "lib/Button.h"
 
 #include "main.h"
 #include "cmsis_os.h"
@@ -65,27 +65,50 @@ void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN 0 */
 //*
 
-IrqButton but = IrqButton(
-    GPIOA, 1,
-    EXTI1_IRQn,
-    3,
-    [&]()
-    {
-        const int MSGBUFSIZE = 100;
-        char msgBuf[MSGBUFSIZE];
-        snprintf(msgBuf, MSGBUFSIZE, "%s", "pressed Short\n");
-        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-    },
-    [&]()
-    {
-        const int MSGBUFSIZE = 100;
-        char msgBuf[MSGBUFSIZE];
-        snprintf(msgBuf, MSGBUFSIZE, "%s", "pressed Long\n");
-        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-    }
+void prnt(const char* str)
+{
+    const int MSGBUFSIZE = 20;
+    char msgBuf[MSGBUFSIZE];
+    snprintf(msgBuf, MSGBUFSIZE, "%s", str);
+    HAL_UART_Transmit(&huart2, (uint8_t*)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+}
+
+void but0ShortFunc()
+{
+    prnt("but0 short\n");
+}
+
+void but0LongFunc()
+{
+    prnt("but0 long\n");
+}
+
+void but1ShortFunc()
+{
+    prnt("but1 short\n");
+}
+
+void but1LongFunc()
+{
+    prnt("but1 long\n");
+}
+
+
+Button but0 = Button(
+    GPIOA, 0,
+    EXTI0_IRQn,
+    EdgeTrigger::RisingAndFalling,
+    but0ShortFunc,
+    but0LongFunc
 );
 
-volatile int button = 0;
+Button but1 = Button(
+    GPIOA, 1,
+    EXTI1_IRQn,
+    EdgeTrigger::RisingAndFalling,
+    but1ShortFunc,
+    but1LongFunc
+);
 
 extern "C" void EXTI0_IRQHandler(void)
 {
@@ -95,37 +118,17 @@ extern "C" void EXTI0_IRQHandler(void)
         EXTI->PR |= EXTI_PR_PR0;
 
         //interrupt code here
-        button |= 0x1;
+        but0.handleIrq();
     }
 }
 
-int pressed = 0;
 extern "C" void EXTI1_IRQHandler(void)
 {
     if (EXTI->PR & EXTI_PR_PR1)
     {
         EXTI->PR |= EXTI_PR_PR1;
-        but.handleIrq();
-        button |= 0x2;
+        but1.handleIrq();
     }
-
-    /*
-    if (EXTI->PR & EXTI_PR_PR1)
-    {
-        EXTI->PR |= EXTI_PR_PR1;
-        button = 0x2;
-        if (pressed == 0)
-        {
-            pressed = 1;
-            but.SetPressStart(HAL_GetTick());
-        }
-        else
-        {
-            pressed = 0;
-            but.SetPressEnd(HAL_GetTick());
-        }
-    }
-    //*/
 }
 //*/
 
@@ -144,8 +147,6 @@ int main(void) {
     const int MSGBUFSIZE = 80;
     char msgBuf[MSGBUFSIZE];
 
-    //ButtonPoll btn{ GPIOA, 8 };
-
     /* Init scheduler */
     // ES Course Comments: Uncomment the three lines below to enable FreeRTOS.
     //osKernelInitialize(); /* Call init function for freertos objects (in freertos.c) */
@@ -155,7 +156,8 @@ int main(void) {
     /* We should never get here as control is now taken by the scheduler */
     /* Infinite loop */
 
-    but.init();
+    but0.init();
+    but1.init();
 
     //*
     // config PA0 as input with pull-up
@@ -168,35 +170,11 @@ int main(void) {
         (0b01 << (2 * 0))
     );
 
-    // connect extio line to PA0
-    SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI0_PA;
-    // config extio to trigger on rising and falling edge edge
-    EXTI->RTSR |= EXTI_RTSR_TR0;
-    EXTI->FTSR |= EXTI_FTSR_TR0;
-    // enable extio interrupt
-    EXTI->IMR |= EXTI_IMR_MR0;
-    NVIC_EnableIRQ(EXTI0_IRQn);
-    //*/
-
     snprintf(msgBuf, MSGBUFSIZE, "%s", "Hello World!\r\n");
     HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
 
     while (1) {
-        if (button & 1)
-        {
-            button &= ~1;
 
-            snprintf(msgBuf, MSGBUFSIZE, "%s", "INT_1\n");
-            HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-        }
-
-        if (button & 2)
-        {
-            button &= ~2;
-
-            //snprintf(msgBuf, MSGBUFSIZE, "%s", "INT_2\n");
-            //HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-        }
     }
 }
 

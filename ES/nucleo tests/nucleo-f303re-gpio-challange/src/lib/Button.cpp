@@ -18,13 +18,15 @@ Button::~Button()
 
 void Button::init()
 {
+    //~GPIO_MODER_MODER0;
+    //~GPIO_MODER_MODER0_Pos;
     block->MODER = (
-        (block->MODER & ~(0b00 << (pin * 2))) |
+        (block->MODER & ~(0b11 << (pin * 2))) |
         (0b00 << (2 * pin))
     );
 
     block->PUPDR = (
-        (block->PUPDR & (0b00 << (pin * 2))) |
+        (block->PUPDR & ~(0b11 << (pin * 2))) |
         (0b01 << (2 * pin))
     );
 }
@@ -59,7 +61,7 @@ void Button::HandleButtonAction()
     }
 }
 
-void Button::HandleIrq()
+void Button::HandleIrq() volatile
 {
     triggered = true;
 }

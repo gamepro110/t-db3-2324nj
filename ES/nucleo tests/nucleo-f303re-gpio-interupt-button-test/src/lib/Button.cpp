@@ -1,21 +1,25 @@
-#include "IrqButton.h"
+#include "Button.h"
 
-IrqButton::IrqButton(GPIO_TypeDef *block, uint8_t pin, IRQn_Type irq, uint32_t edge, std::function<void()> pressShort, std::function<void()> pressLong) :
+Button::Button(GPIO_TypeDef *block, uint8_t pin, IRQn_Type irq, EdgeTrigger edge, std::function<void()> pressShort, std::function<void()> pressLong) :
     block(block), pin(pin), irq(irq), edge(edge), pressShort(pressShort), pressLong(pressLong)
 {
 }
 
-IrqButton::~IrqButton()
+Button::~Button()
 {
 }
 
-void IrqButton::init()
+void Button::init()
 {
     configureGPIO();
-    configureIRQ();
+
+    if (edge != EdgeTrigger::none)
+    {
+        configureIRQ();
+    }
 }
 
-void IrqButton::handleIrq()
+void Button::handleIrq()
 {
     uint32_t tick = HAL_GetTick();
 
@@ -41,34 +45,36 @@ void IrqButton::handleIrq()
     }
 }
 
-void IrqButton::SetPressStart(uint32_t time)
+void Button::SetPressStart(uint32_t time)
 {
     pressStart = time;
 }
 
-void IrqButton::SetPressEnd(uint32_t time)
+void Button::SetPressEnd(uint32_t time)
 {
     pressEnd = time;
 }
 
-void IrqButton::configureGPIO()
+void Button::configureGPIO()
 {
-    block->MODER &= ~(1 << (pin * 2));
-    block->PUPDR |= (1 << (pin * 2));
+    block->MODER = (
+        (block->MODER & ~(0b11 << (pin * 2))) |
+        (0b00 << (2 * pin))
+    );
+
+    block->PUPDR = (
+        (block->PUPDR & ~(0b11 << (pin * 2))) |
+        (0b01 << (2 * pin))
+    );
 }
 
-void IrqButton::configureIRQ()
+void Button::configureIRQ()
 {
     uint32_t exti_idx = pin / 4;
     uint32_t exti_shift = (pin % 4) * 4;
 
-    // SYSCFG->EXTICR[exti_idx] |= (
-    //     ~(0xF << exti_shift) &
-    //     (0x0 << exti_shift)
-    // );
-
     int irqPinBlock = 0;
-    //...
+
     if (block == GPIOA)
     {
         irqPinBlock = 0b000;
@@ -102,25 +108,27 @@ void IrqButton::configureIRQ()
         irqPinBlock = 0b111;
     }
 
-    SYSCFG->EXTICR[exti_idx] = ( //TODO check if 0xf and 0x0 are correct
+    SYSCFG->EXTICR[exti_idx] = (
         (SYSCFG->EXTICR[exti_idx] & ~(0xf << exti_shift)) |
         (irqPinBlock << exti_shift)
     );
 
     // Configure EXTI to trigger on the specified edge
-    if (edge == EXTI_TRIGGER_RISING)
+    switch (edge)
     {
+    case EdgeTrigger::Rising:
         EXTI->RTSR |= (1 << pin);
-    }
-    else if (edge == EXTI_TRIGGER_FALLING)
-    {
+        break;
+    case EdgeTrigger::Falling:
         EXTI->FTSR |= (1 << pin);
-    }
-    //TODO update to enum
-    else if (edge == (EXTI_TRIGGER_RISING | EXTI_TRIGGER_FALLING))
-    {
+        break;
+    case EdgeTrigger::RisingAndFalling:
         EXTI->RTSR |= (1 << pin);
         EXTI->FTSR |= (1 << pin);
+        break;
+    case EdgeTrigger::none:
+    default:
+        break;
     }
 
     // Enable EXTI interrupt

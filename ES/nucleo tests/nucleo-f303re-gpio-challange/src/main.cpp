@@ -128,7 +128,7 @@ int main(void) {
     MX_USART2_UART_Init();
 
     but1.init();
-    //but2.init();
+    but2.init();
 
     //setup irq
     // connect extio line to PA0
@@ -142,14 +142,14 @@ int main(void) {
 
     //-----------------
 
-    // // connect extio line to PA1
-    // SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI1_PA;
-    // // config extio to trigger on rising and falling edge edge
-    // EXTI->RTSR |= EXTI_RTSR_TR1;
-    // EXTI->FTSR |= EXTI_FTSR_TR1;
-    // // enable exti1 interrupt
-    // EXTI->IMR |= EXTI_IMR_MR1;
-    // NVIC_EnableIRQ(EXTI1_IRQn);
+    // connect extio line to PA1
+    SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI1_PA;
+    // config extio to trigger on rising and falling edge edge
+    EXTI->RTSR |= EXTI_RTSR_TR1;
+    EXTI->FTSR |= EXTI_FTSR_TR1;
+    // enable exti1 interrupt
+    EXTI->IMR |= EXTI_IMR_MR1;
+    NVIC_EnableIRQ(EXTI1_IRQn);
 
     //
 
@@ -176,7 +176,7 @@ int main(void) {
 
     while (1) {
         but1.HandleButtonAction();
-        // but2.HandleButtonAction();
+        but2.HandleButtonAction();
 
         LedLogic(btn1Action, led1, led1Timer, ledToggleTimeShort, ledToggleTimeLong);
         LedLogic(btn2Action, led2, led2Timer, ledToggleTimeShort, ledToggleTimeLong);
