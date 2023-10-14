@@ -1,8 +1,8 @@
-#include "encoder.h"
+#include "PollingEncoder.h"
 
 #include "lib/print.h"
 
-Encoder::Encoder(GPIO_TypeDef* blockPinClk, uint8_t pinClk, GPIO_TypeDef* blockPinDt, uint8_t pinDt) :
+PollingEncoder::PollingEncoder(GPIO_TypeDef* blockPinClk, uint8_t pinClk, GPIO_TypeDef* blockPinDt, uint8_t pinDt) :
     blockPinClk(blockPinClk), pinClk(pinClk), blockPinDt(blockPinDt), pinDt(pinDt)
 {
     blockPinClk->MODER = (
@@ -16,10 +16,10 @@ Encoder::Encoder(GPIO_TypeDef* blockPinClk, uint8_t pinClk, GPIO_TypeDef* blockP
     );
 }
 
-Encoder::~Encoder() {
+PollingEncoder::~PollingEncoder() {
 }
 
-EncoderOutput Encoder::Poll() {
+EncoderOutput PollingEncoder::Poll() {
     EncoderOutput output = EncoderOutput::NoChange;
     sigClk = (blockPinClk->IDR & (1 << pinClk)) == 0;
     sigDt = (blockPinDt->IDR & (1 << pinDt)) == 0;

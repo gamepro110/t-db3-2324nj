@@ -18,7 +18,7 @@
 */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "lib/encoder.h"
+#include "lib/IrqEncoder.h"
 
 #include "main.h"
 #include "cmsis_os.h"
@@ -61,8 +61,24 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+IrqEncoder encoder{
+    GPIOA, 0,
+    GPIOA, 1,
+    EXTI0_IRQn
+};
 /* USER CODE END 0 */
+
+extern "C" void EXTI0_IRQHandler(void)
+{
+    if (EXTI->PR & EXTI_PR_PR0)
+    {
+        // reset interrupt flag
+        EXTI->PR |= EXTI_PR_PR0;
+
+        //interrupt code here
+        encoder.HandleIrq();
+    }
+}
 
 /**
 * @brief  The application entry point.
@@ -76,33 +92,13 @@ int main(void) {
 
     const int MSGBUFSIZE = 80;
     char msgBuf[MSGBUFSIZE];
-    Encoder enc(GPIOA, 6, GPIOA, 7);
-    EncoderOutput encOut{ (EncoderOutput)0 };
 
     snprintf(msgBuf, MSGBUFSIZE, "%s", "Hello World!\r\n");
     HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
 
     while (1) {
-        encOut = enc.Poll();
-
-        switch (encOut)
-        {
-        case EncoderOutput::rotatedLeft: {
-            snprintf(msgBuf, MSGBUFSIZE, "%s", "Rot L\t\r");
-            HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-            break;
-        }
-        case EncoderOutput::rotatedRight: {
-            snprintf(msgBuf, MSGBUFSIZE, "%s", "Rot R\t\r");
-            HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-            break;
-        }
-        case EncoderOutput::NoChange: {
-            snprintf(msgBuf, MSGBUFSIZE, "%s", "\t\t\t\r");
-            HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-            break;
-        }
-        }
+        snprintf(msgBuf, MSGBUFSIZE, "\rpos: 0x%02lx   ", encoder.GetPosition());
+        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
     }
 }
 

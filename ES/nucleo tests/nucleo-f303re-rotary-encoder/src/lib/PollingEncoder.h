@@ -9,10 +9,10 @@ enum class EncoderOutput {
     rotatedRight,
 };
 
-class Encoder final {
+class PollingEncoder final {
 public:
-    Encoder(GPIO_TypeDef* blockPinClk, uint8_t pinClk, GPIO_TypeDef* blockPinDt, uint8_t pinDt/*, GPIO_TypeDef* blockPinBtn, uint8_t pinBtn*/);
-    ~Encoder();
+    PollingEncoder(GPIO_TypeDef* blockPinClk, uint8_t pinClk, GPIO_TypeDef* blockPinDt, uint8_t pinDt/*, GPIO_TypeDef* blockPinBtn, uint8_t pinBtn*/);
+    ~PollingEncoder();
 
     EncoderOutput Poll();
 
