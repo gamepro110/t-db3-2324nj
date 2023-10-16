@@ -139,7 +139,7 @@ int main(void) {
     but2.init();
 
     //setup irq
-    // connect extio line to PA0
+    // connect exti0 line to PA0
     SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI0_PA;
     // config extio to trigger on rising and falling edge edge
     EXTI->RTSR |= EXTI_RTSR_TR0;
@@ -150,7 +150,7 @@ int main(void) {
 
     //-----------------
 
-    // connect extio line to PA1
+    // connect exti0 line to PA1
     SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI1_PA;
     // config extio to trigger on rising and falling edge edge
     EXTI->RTSR |= EXTI_RTSR_TR1;
