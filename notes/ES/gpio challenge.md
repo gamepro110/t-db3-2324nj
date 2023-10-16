@@ -8,7 +8,7 @@ tags:
 
 ## class diagram
 
-### polling
+### polling class diagram
 
 ```mermaid
 classDiagram
@@ -58,7 +58,7 @@ main o-- "2" Led
 
 ---
 
-### interrupts
+### interrupt class diagram
 
 > `std::function` = C++ `std::function<void()>`
 
@@ -119,7 +119,7 @@ main --* "2" buttonAction
 
 ## flowchart
 
-### polling
+### polling flowchart
 
 ```mermaid
 flowchart TD
@@ -175,7 +175,7 @@ lUE
 
 ```
 
-### interrupt
+### interrupt flowchart
 
 ```mermaid
 flowchart LR
