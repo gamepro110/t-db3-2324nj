@@ -113,8 +113,16 @@ void but2LongPress()
     btn2Action = buttonAction::pressLong;
 }
 
-Button but1(GPIOA, 0, but1ShortPress, but1LongPress);
-Button but2(GPIOA, 1, but2ShortPress, but2LongPress);
+Button but1(
+    GPIOA, 0,
+    but1ShortPress,
+    but1LongPress
+);
+Button but2(
+    GPIOA, 1,
+    but2ShortPress,
+    but2LongPress
+);
 /* USER CODE END 0 */
 
 /**
@@ -178,8 +186,20 @@ int main(void) {
         but1.HandleButtonAction();
         but2.HandleButtonAction();
 
-        LedLogic(btn1Action, led1, led1Timer, ledToggleTimeShort, ledToggleTimeLong);
-        LedLogic(btn2Action, led2, led2Timer, ledToggleTimeShort, ledToggleTimeLong);
+        LedLogic(
+            btn1Action,
+            led1,
+            led1Timer,
+            ledToggleTimeShort,
+            ledToggleTimeLong
+        );
+        LedLogic(
+            btn2Action,
+            led2,
+            led2Timer,
+            ledToggleTimeShort,
+            ledToggleTimeLong
+        );
     }
 }
 
