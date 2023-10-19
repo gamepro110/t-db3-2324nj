@@ -7,13 +7,11 @@
 	- [x] digital output
 	- [ ] encoder
 		- [x] polling
+    		- with heavy software debounce
 		- [ ] interrupt
 	- [x] rewrite code to use interrupts
 	- [ ] 1.3
 	- [ ] 2.1
-- [x] look at interrupts
-	- [x] basic example
-	- [x] class
 - [ ] look at timer challenge
 	- [/] timed signal
 		- don't fully know how it works yet
