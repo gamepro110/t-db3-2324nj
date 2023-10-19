@@ -1,7 +1,5 @@
----
-tags:
-  - tasklist
----
+# TODO
+
 ## #ES
 
 - [ ] look at GPIO challenge
@@ -10,12 +8,12 @@ tags:
 	- [ ] encoder
 		- [x] polling
 		- [ ] interrupt
-	- [ ] rewrite code to use interrupts
+	- [x] rewrite code to use interrupts
 	- [ ] 1.3
+	- [ ] 2.1
 - [x] look at interrupts
 	- [x] basic example
-	- [ ] class
-		- unfinished, not enough time
+	- [x] class
 - [ ] look at timer challenge
 	- [/] timed signal
 		- don't fully know how it works yet
@@ -23,10 +21,13 @@ tags:
 - [ ] look at closed-loop challenge
 - [ ] car challenge
 	- [ ] make task list using research notion (PDF i send on teams)
-	- [ ] hoofdvragen
-	- [ ] deelvragen
-- [ ] test pixtend build chain
+	- [ ] [main question](<ES/notes.md#main question>)
+	- [ ] [sub questions](<ES/notes.md#sub questions>)
+- [ ] test PiXtend build chain
 	- [ ] drive an led
+	- looks like the Linux env I know on older Hardware
+
+---
 
 ## #COMM
 
@@ -38,14 +39,20 @@ tags:
 - [ ] other assignment
 - [ ] software serial
 
+---
+
 ## #Proftaak
 
 - [x] rough crane flowchart
-- [ ] project plan
+- [x] project plan
 	- [x] started
 	- [x] requirements
-	- [ ] finish it
-- [ ] requirements
+	- [x] finish it
+- [x] requirements
+- [ ] talking skeleton
+- [ ] poc
+
+---
 
 ## #SD
 
@@ -59,6 +66,7 @@ tags:
 		- [ ] part 0
 			- [/] implement function
 				- [ ] recheck validity
+				- fix `parseString()` by inserting '`\0`' at the end instead of hard cutting it off
 			- [ ] handle input (WIP)
 		- [ ] part 1
 		- [ ] part 2
@@ -70,7 +78,10 @@ tags:
 			- [x] part 3
 			- [x] part 4
 
+---
+
 ## #PO
 
 - [x] add interview thing to #portfolio
 - [x] add activity on 08-09-2023 to feed-pulse/portfolio (helping 1st semester students with tech)
+---

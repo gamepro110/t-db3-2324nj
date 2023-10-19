@@ -10,7 +10,7 @@ tags:
 
 - how do I get the Nucleo car driving and avoiding obstacles using low level hardware control?
 
-## sub question
+## sub questions
 
 - [ ] how do I control the actuators?
 	- [ ] which actuators?

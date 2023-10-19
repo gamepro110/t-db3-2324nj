@@ -1,18 +1,24 @@
-## important!!!
+---
+tags:
+  - feedpulse
+---
 
-- [ ] update trello board
+# WIP
 
 ## #ES
 
-- [ ] nucleo gpio challenge
-	- [x] interrupts for button
-	- [ ] rewrite code 
+- [ ] Nucleo GPIO challenge
+	- [ ] write report
+    	- [ ] tests
+    	- [ ] reflection
+    	- [ ] conclusion
 - [ ] timer challenge
+    - [ ] pwm
 
 ## #COMM
 
 - [ ] [notes comm-protocols for iot](<comm/notes comm-protocols for iot.md>)
-	- finishing step 2
+	- [ ] [finishing step 3](<comm/comm report.md>)
 
 ## #SD
 
@@ -25,5 +31,5 @@
 
 ## #PO
 
-- [ ] portfolio sprint 1
-	- add last details
+- [x] portfolio sprint 1
+- [ ] portfolio sprint 2
