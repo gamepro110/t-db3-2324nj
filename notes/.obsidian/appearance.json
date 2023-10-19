@@ -1,3 +1,5 @@
 {
-  "accentColor": ""
+  "accentColor": "",
+  "baseFontSizeAction": false,
+  "cssTheme": "GitHub Theme"
 }
