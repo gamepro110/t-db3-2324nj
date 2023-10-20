@@ -2,25 +2,20 @@
 
 ## #ES
 
-- [ ] look at GPIO challenge
-	- [x] digital input
-	- [x] digital output
+- [/] look at GPIO challenge
 	- [ ] encoder
 		- [x] polling
     		- with heavy software debounce
 		- [ ] interrupt
-	- [x] rewrite code to use interrupts
-	- [ ] 1.3
-	- [ ] 2.1
 - [ ] look at timer challenge
 	- [/] timed signal
 		- don't fully know how it works yet
 	- [ ] PWM
 - [ ] look at closed-loop challenge
 - [ ] car challenge
-	- [ ] make task list using research notion (PDF i send on teams)
-	- [ ] [main question](<ES/notes.md#main question>)
-	- [ ] [sub questions](<ES/notes.md#sub questions>)
+	- [ ] make task list using research notion (PDF I send on teams)
+	- [x] [main question](<ES/notes.md#main question>)
+	- [x] [sub questions](<ES/notes.md#sub questions>)
 - [ ] test PiXtend build chain
 	- [ ] drive an led
 	- looks like the Linux env I know on older Hardware
@@ -33,7 +28,7 @@
 	- [x] [step 1](<comm/notes comm-protocols for iot.md#step 1 (investigating protocols)>)
 	- [x] [step 2](<comm/notes comm-protocols for iot.md#step 2 (imagining the usage of mqtt or CoAP)>)
 	- [ ] [step 3](<comm/notes comm-protocols for iot.md#step 3>)
-		- [ ] make copy of notes doc and structure it like requested in the assignment
+		- [ ] [wip](<comm/comm report.md>)
 - [ ] other assignment
 - [ ] software serial
 
