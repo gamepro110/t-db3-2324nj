@@ -9,6 +9,8 @@ classDiagram
 direction TB
 class System {
 	+run()
+	+addElevatorRequest()
+	-Queue~requests~ elevatorRequests
 }
 class IDoor {
 	<<interface>>
@@ -68,13 +70,20 @@ class Floor {
 	+TurnIndicatorOn()
 	+TurnIndicatorOff()
 }
+class ElevatorDirection {
+    <<Enum>>
+    Down = -1,
+    none = 0,
+    Up = 1,
+}
 class IElevator {
 	<<interface>>
 	+GetGurrentFloor() int
 	+SetCurrentFloor() int
 	+GetTargetFloor() int
 	+SetTargetFloor() int
-	+direction() int
+	+direction() ElevatorDirection
+	+isAvailable() bool
 	+Update()
 }
 class Elevator {
@@ -85,8 +94,17 @@ class Elevator {
 	+SetCurrentFloor() int
 	+GetTargetFloor() int
 	+SetTargetFloor() int
-	+direction() int
+	+direction() ElevatorDirection
+	+isAvailable() bool
 	+Update()
+	-List~int~ targetFloors
+}
+class IPressureSensor {
+    <<interface>>
+    +Update(bool& valueChanged)
+}
+class PressureSensor {
+    +Update(bool& valueChanged)
 }
 
 %% relations --------------------------------
@@ -103,6 +121,7 @@ Elevator o--"1" IIndicator
 Elevator o--"1" IDoor
 Elevator o--"20" IButton
 Elevator o--"1" ITensionSensor
+Elevator o--"1" IPressureSensor
 
 IButton <|.. Button
 IDoor <|.. Door
@@ -111,6 +130,7 @@ ISpeaker <|.. Speaker
 IIndicator <|.. Indicator
 IElevator <|.. Elevator
 ITensionSensor <|.. TensionSensor
+IPressureSensor <|.. PressureSensor
 
 Button o--"1" ILight
 ```

@@ -1,3 +1,8 @@
+---
+tags:
+  - todo
+---
+
 # TODO
 
 ## #ES
@@ -54,6 +59,7 @@
 	- [x] [object diagram](<SD/challenge_2_elevator/info + object diagram.md>)
 	- [x] [class diagram](<SD/challenge_2_elevator/class diagram.md>)
 	- [ ] [sequence diagram](<SD/challenge_2_elevator/sequence diagram.md>)
+    	- [ ] [sequence todo](<SD/challenge_2_elevator/sequence diagram.md#todo>)
 - [ ] C data-structure algorithm Challenges
 	- [ ] 1 - intro
 		- [ ] part 0
