@@ -2,7 +2,6 @@
 tags:
   - SD
   - diagrams
-  - todo
 ---
 
 # sequence diagram
@@ -17,78 +16,67 @@ actor U as user
 participant B as Button_up 
 participant S as system
 participant E as Elevator
-participant L as Light
+participant L as ButtonBackLight
 participant F as Floor
 participant Df as FloorDoor
 participant De as ElevatorDoor
 participant If as Floor Indicator
 participant Ie as Elevator Indicator
 participant SP as Speaker
-participant T as TensionSensor
+participant P as PreasureSensor
+participant Bb as BreakBeamSensor
 
 %% ----------------------------------------
 
 %% start user interaction
 U ->> B: user presses a button
-B -) S: ButtonPressInterrupt
+B -)+ S: ButtonPressInterrupt
 B -) L : Light.On()
 S -) If : floorIndicator.Show()
-S ->>+ S : addElevatorRequest()
+S ->> S : addElevatorRequest()
+activate S
 
-loop in "addElevatorRequest()"
-    S ->> E : IElevator elevator.isAvailable(targetFloor)
-    
-    alt false
-        E -->> S : "try next elevator"
-    else true
-        E -->> S : true
-        S -) E : SetTargetFloor()
-    end
-end
+S ->>+ E : isAvailable(targetFloor)
+%% empty on purpose
+E -->> S : 
+S -) E : SetTargetFloor()
+S ->>+ E : Update()
 
-S ->>+ E : IElevator.Update()
-E ->>+ T : IsLimitExceded()
-    alt True
-        T -->> E : emergency stop
-        E -->> S : Notify system
-    else False
-        T -->>- E : 
-    end
-
-E ->>+ Ie : GetCurrentFloor() //validate
-Ie -->>- E : value
-    alt elevator.GetCurrentFloor() != value
-        E -) Ie : SetCurrentFloor()
-        E -) If : SetCurrentFloor()
-    end
+E ->>+ Ie : UpdateFloor()
+%% empty on purpose
+Ie -->>- E : 
 
 %% elevator reaches target
-alt GetCurrentFloor == GetTargetFloor
-E ->> E : targetFloors.PopFront
+%%E ->> E : floorReached()
+note over E : elevator reached target floor
 E -) SP : Play()
 E -) De : Open()
-E -->>+ S : notify arival
-S ->> Df : Open()
-S -->- E : 
-end
-
-%% start door timer
-
-%% close door at end of timer
+E ->>+ F : OpenDoor(floor)
+F -) Df : Open()
+F -->>- E : 
 
 %% empty on purpose
 E -->>- S : 
 
-%%S -->>- S : 
+%% start door timer
+S -) P : TimerStart()
+S -) Bb : TimerStart()
+
+%% close door at end of timer
+note over S : user enters elevator and timer ends
+P -) S : 
+Bb -) S : 
+S -) E : CloseDoor()
+S -) F : CloseDoor()
+deactivate S
+%%S -->>- B : 
 ```
 
 > `Button_up` can also be `button_down`
 
-### todo
+### notes
 
-- [ ] validate `GetCurrentFloor()`
-- [ ]  start door timer
-- [ ] close door at end of timer
+- 
 
 ### assumptions
 

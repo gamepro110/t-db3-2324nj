@@ -59,7 +59,7 @@ int main(void)
         (0b0 << 1)
     );
     
-    TIM2->CCR1 = 1380;
+    TIM2->CCR1 = 1280;
 
     // start timer (timer_ControlRegister_ClockENable)
     TIM2->CR1 |= TIM_CR1_CEN;
@@ -80,8 +80,8 @@ int main(void)
     vprint("Hello World!\n");
     const int MSGBUFSIZE = 100;
     char msgBuf[MSGBUFSIZE];
-    while (1) {
 
+    while (1) {
         snprintf(msgBuf, MSGBUFSIZE, "TIM2: %lu\n", TIM2->CNT);
         vprint(msgBuf);
     }
