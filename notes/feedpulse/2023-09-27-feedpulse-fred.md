@@ -12,6 +12,6 @@ tags: feedpulse
 ## next steps
 
 - flesh out step 2
-	- more use cases
+  - more use cases
 - step 3 is giving advice
-	- on the use cases
+  - on the use cases

@@ -4,9 +4,11 @@ tags:
   - nucleo
   - snippet
 ---
+# nucleo-notes
+
 ## pinout
 
-![pinout](<nucleo-f303_pinout.png>)
+![pinout](<../Assets/nucleo-f303_pinout.png>)
 
 ---
 
@@ -31,7 +33,7 @@ tags:
 | Description            | Link                                                                           |
 | ---------------------- | ------------------------------------------------------------------------------ |
 | Reference manual       | <https://www.st.com/resource/en/reference_manual/DM00043574-.pdf>              |
-| ST Timers presentation | <https://www.st.com/resource/en/product_training/STM32L4_WDG_TIMERS_GPTIM.pdf> | 
+| ST Timers presentation | <https://www.st.com/resource/en/product_training/STM32L4_WDG_TIMERS_GPTIM.pdf> |
 
 ## printing to serial (HAL)
 
@@ -50,7 +52,7 @@ HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY); //
 
 | name     | meaning                                                        | why?                              |
 | -------- | -------------------------------------------------------------- | --------------------------------- |
-| `GPIO*`  | general purpose IO, * is replaced with a letter from a till h. | `DMA` access to GPIO block        |
+| `GPIO*`  | general purpose IO, * is replaced with a letter from a till h. | `DMA` (Direct memory access) access to GPIO block        |
 | `MODER`  | mode register                                                  | set the mode of the specified pin |
 | `OTYPER` | output type register                                           | setting push-pull or open drain   |
 
@@ -58,7 +60,7 @@ HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY); //
 
 ```cpp
 // set pin to output
-GPIOA->MODER = (GPIOA->MODER & ~GPIO_MODER_MODER5) | (0b01 << GPIO_MODER_MODER5_Pos));
+GPIOA->MODER = ((GPIOA->MODER & ~GPIO_MODER_MODER5) | (0b01 << GPIO_MODER_MODER5_Pos));
 
 // set pin output type to push-pull
 GPIOA->OTYPER &= ~GPIO_OTYPER_OT_5;
@@ -74,13 +76,13 @@ GPIOA->ODR |= GPIO_ODR_5;
 GPIOA->ODR ^= GPIO_ODR_5
 ```
 
-### function version
+### output function version
 
 ```cpp
 void PinSetOutput(GPIO_TypeDef* block, uint8_t pin) {
     // set pin to output
     block->MODER = (
-        (block->MODER & ~(0b00 << (pin * 2))) |
+        (block->MODER & ~(0b11 << (pin * 2))) |
         ((0b01 << (pin * 2)))
     );
     // set pin output type to push-pull
@@ -112,17 +114,17 @@ GPIOA->PUPDR = ((GPIOA->PUPDR & ~GPIO_PUPDR_PUPDR7) | (0b01 << GPIO_PUPDR_PUPDR7
 
 ```cpp
 if ((GPIOA->IDR & GPIO_IDR_7) == 0) {
-	// button pressed
+  // button pressed
 }
 ```
 
-### function version
+### input function version
 
 ```cpp
-void PinSetOutput(GPIO_TypeDef* block, uint8_t pin) {
+void PinSetToInput(GPIO_TypeDef* block, uint8_t pin) {
     // set pin to output
     block->MODER = (
-        (block->MODER & ~(0b00 << (pin * 2))) |
+        (block->MODER & ~(0b11 << (pin * 2))) |
         ((0b01 << (pin * 2)))
     );
     // set pin output type to push-pull
@@ -137,6 +139,7 @@ void PinSetOutput(GPIO_TypeDef* block, uint8_t pin) {
 > default system clock speed is 7.2 MHz!!!
 
 ### registers
+
 | name          | meaning                                                            | why?                                                                                                                                                                        |
 | ------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `RCC`         | Reset and Clock Control                                            | handle system reset and clock controls.                                                                                                                                     |
@@ -190,11 +193,11 @@ TIM2->CR1 |= TIM_CR1_CEN;
 
 > reference manual, page 602
 
-![timer diagram](figure-197.png)
+![timer diagram](<../Assets/figure-197.png>)
 
 ---
 
-#### Input capture clarification
+### Input capture clarification
 
 ST timers presentation, page 16
 
@@ -202,11 +205,11 @@ ST timers presentation, page 16
 ![timers presentation screenshot 1](docs/slideshow-input-capture.png)
 %%
 
-#### Capture/Compare channel clarification
+### Capture/Compare channel clarification
 
 Reference manual, section 21.3.4
 
-#### Rotary encoder timer mode
+### Rotary encoder timer mode
 
 ST timers presentation, page 12
 

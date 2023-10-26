@@ -2,6 +2,7 @@
 tags:
   - research
 ---
+# workflow
 
 1. analyze
 2. design
@@ -13,7 +14,7 @@ tags:
 - process information (research-based)
 - determine the `main question`
 - add `subquestion`
-	- each `subquestion` can be its own `main question` to break the problem into smaller parts
+  - each `subquestion` can be its own `main question` to break the problem into smaller parts
 - answer questions
 - determine a conclusion
 
@@ -21,7 +22,7 @@ tags:
 
 ```mermaid
 classDiagram
-	research <|-- question : is a
-	research *-- question : 1..*
+  research <|-- question : is a
+  research *-- question : 1..*
 
 ```

@@ -11,4 +11,3 @@ tags: feedpulse
 
 - moet meer feedback vragen volgens peter
   - moet hij mijn vragen wel serieus nemen
-

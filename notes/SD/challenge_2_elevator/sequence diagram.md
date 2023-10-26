@@ -13,7 +13,7 @@ sequenceDiagram
 
 %%TODO fix order when done
 actor U as user
-participant B as Button_up 
+participant B as Button_up
 participant S as system
 participant E as Elevator
 participant L as ButtonBackLight
@@ -30,21 +30,22 @@ participant Bb as BreakBeamSensor
 
 %% start user interaction
 U ->> B: user presses a button
-B -)+ S: ButtonPressInterrupt
+B -) S: ButtonPressInterrupt
+activate S
 B -) L : Light.On()
 S -) If : floorIndicator.Show()
 S ->> S : addElevatorRequest()
-activate S
 
-S ->>+ E : isAvailable(targetFloor)
+
+S ->> E : isAvailable(targetFloor)
 %% empty on purpose
-E -->> S : 
+E -->> S :
 S -) E : SetTargetFloor()
 S ->>+ E : Update()
 
 E ->>+ Ie : UpdateFloor()
 %% empty on purpose
-Ie -->>- E : 
+Ie -->>- E :
 
 %% elevator reaches target
 %%E ->> E : floorReached()
@@ -53,32 +54,28 @@ E -) SP : Play()
 E -) De : Open()
 E ->>+ F : OpenDoor(floor)
 F -) Df : Open()
-F -->>- E : 
+F -->>- E :
 
 %% empty on purpose
-E -->>- S : 
+E -->>- S :
 
 %% start door timer
-S -) P : TimerStart()
-S -) Bb : TimerStart()
+S -)+ P : TimerStart()
+S -)+ Bb : TimerStart()
 
 %% close door at end of timer
 note over S : user enters elevator and timer ends
-P -) S : 
-Bb -) S : 
+P -)- S :
+Bb -)- S :
 S -) E : CloseDoor()
 S -) F : CloseDoor()
 deactivate S
-%%S -->>- B : 
+
 ```
 
 > `Button_up` can also be `button_down`
 
-### notes
-
-- 
-
-### assumptions
+## assumptions
 
 - elevators are on random floors
 - all elevators are empty

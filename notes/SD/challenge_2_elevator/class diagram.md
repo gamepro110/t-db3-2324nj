@@ -4,71 +4,73 @@ tags:
   - diagrams
 ---
 
+# class diagram
+
 ```mermaid
-classDiagram 
+classDiagram
 direction TB
 class System {
-	+run()
-	+addElevatorRequest()
-	-Queue~requests~ elevatorRequests
+  +run()
+  +addElevatorRequest()
+  -Queue~requests~ elevatorRequests
 }
 class IDoor {
-	<<interface>>
-	+IsOpen() bool
-	+Open()
-	+Close()
+  <<interface>>
+  +IsOpen() bool
+  +Open()
+  +Close()
 }
 class Door {
-	+IsOpen() bool
-	+Open()
-	+Close()
+  +IsOpen() bool
+  +Open()
+  +Close()
 }
 class IButton {
-	<<interface>>
-	+isPressed() bool
+  <<interface>>
+  +isPressed() bool
 }
 class Button {
-	+isPressed() bool
+  +isPressed() bool
 }
 class ITensionSensor {
-	<<interface>>
-	+isLimitExceded() bool	
+  <<interface>>
+  +isLimitExceded() bool
 }
 class TensionSensor {
-	+isLimitExceded() bool	
+  +isLimitExceded() bool
 }
 class ILight {
-	<<interface>>
-	+On()
-	+Off()
+  <<interface>>
+  +On()
+  +Off()
 }
 class Light {
-	+On()
-	+Off()
+  +On()
+  +Off()
 }
 class ISpeaker {
-	<<interface>>
-	+Play()
+  <<interface>>
+  +Play()
 }
 class Speaker {
-	+Play()
+  +Play()
 }
 class IIndicator {
-	<<interface>>
-	+GetCurrentFloor()
-	+SetCurrentFloor()
+  <<interface>>
+  +GetCurrentFloor()
+  +SetCurrentFloor()
 }
 class Indicator {
-	-currentFloor int
-	+GetCurrentFloor()
-	+SetCurrentFloor()
+  -currentFloor int
+  +GetCurrentFloor()
+  +SetCurrentFloor()
 }
 class Floor {
-	+Floor(IButton& up,IButton& down, IDoor& door, IIndicator& indicator, ISpeaker speaker)
-	+BtnUp()
-	+BtnDown()
-	+TurnIndicatorOn()
-	+TurnIndicatorOff()
+  +Floor(IButton& up,IButton& down, IDoor& door, IIndicator& indicator, ISpeaker speaker)
+  +BtnUp()
+  +BtnDown()
+  +TurnIndicatorOn()
+  +TurnIndicatorOff()
 }
 class ElevatorDirection {
     <<Enum>>
@@ -77,27 +79,27 @@ class ElevatorDirection {
     Up = 1,
 }
 class IElevator {
-	<<interface>>
-	+GetGurrentFloor() int
-	+SetCurrentFloor() int
-	+GetTargetFloor() int
-	+SetTargetFloor() int
-	+direction() ElevatorDirection
-	+isAvailable() bool
-	+Update()
+  <<interface>>
+  +GetGurrentFloor() int
+  +SetCurrentFloor() int
+  +GetTargetFloor() int
+  +SetTargetFloor() int
+  +direction() ElevatorDirection
+  +isAvailable() bool
+  +Update()
 }
 class Elevator {
-	+Elevator(IIndicator& indicator, IDoor& door, ITensionSensor tensionSensor, List~IButton~ floorButtons)
-	-currentFloor int
-	-targetFloor int
-	+GetGurrentFloor() int
-	+SetCurrentFloor() int
-	+GetTargetFloor() int
-	+SetTargetFloor() int
-	+direction() ElevatorDirection
-	+isAvailable() bool
-	+Update()
-	-List~int~ targetFloors
+  +Elevator(IIndicator& indicator, IDoor& door, ITensionSensor tensionSensor, List~IButton~ floorButtons)
+  -currentFloor int
+  -targetFloor int
+  +GetGurrentFloor() int
+  +SetCurrentFloor() int
+  +GetTargetFloor() int
+  +SetTargetFloor() int
+  +direction() ElevatorDirection
+  +isAvailable() bool
+  +Update()
+  -List~int~ targetFloors
 }
 class IPressureSensor {
     <<interface>>
