@@ -115,6 +115,7 @@ tags:
 ## step 3
 
 - make copy of notes doc and structure it like requested in the assignment
+  - [report](<./comm report.md>)
 
 ## sources
 
