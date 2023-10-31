@@ -15,9 +15,20 @@ vec2 vec2::operator*(float scaler) {
     return { nX, nY };
 }
 
+vec2 vec2::operator*(const vec2 scaler) {
+    return vec2{ x * scaler.x, y * scaler.y };
+}
+
 vec2 &vec2::operator*=(float scaler) {
     x *= scaler;
     y *= scaler;
+
+    return (*this);
+}
+
+vec2 &vec2::operator*=(const vec2 scaler) {
+    x *= scaler.x;
+    y *= scaler.y;
 
     return (*this);
 }

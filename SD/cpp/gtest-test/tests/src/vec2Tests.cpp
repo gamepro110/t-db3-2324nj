@@ -50,6 +50,19 @@ TEST_F(vec2Test, ScalerMultiply) {
     EXPECT_EQ(v.Y(), 4);
 }
 
+TEST_F(vec2Test, ScalerVec2Multiply) {
+    v = { 1, 2 };
+    vec2 multiplier{ 2, 2 };
+
+    EXPECT_EQ(v.X(), 1);
+    EXPECT_EQ(v.Y(), 2);
+
+    v = v * multiplier;
+
+    EXPECT_EQ(v.X(), 2);
+    EXPECT_EQ(v.Y(), 4);
+}
+
 TEST_F(vec2Test, ScalerMultiplyAssignment) {
     v = { 1, 2 };
 
@@ -57,6 +70,19 @@ TEST_F(vec2Test, ScalerMultiplyAssignment) {
     EXPECT_EQ(v.Y(), 2);
 
     v *= 2;
+
+    EXPECT_EQ(v.X(), 2);
+    EXPECT_EQ(v.Y(), 4);
+}
+
+TEST_F(vec2Test, ScalerVec2MultiplyAssignment) {
+    v = { 1, 2 };
+    vec2 multiplier{ 2, 2 };
+
+    EXPECT_EQ(v.X(), 1);
+    EXPECT_EQ(v.Y(), 2);
+
+    v *= multiplier;
 
     EXPECT_EQ(v.X(), 2);
     EXPECT_EQ(v.Y(), 4);

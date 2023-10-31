@@ -7,7 +7,9 @@ public:
 
 public:
     vec2 operator*(float scaler);
+    vec2 operator*(const vec2 scaler);
     vec2& operator*=(float scaler);
+    vec2& operator*=(const vec2 scaler);
     float X() const;
     float Y() const;
 

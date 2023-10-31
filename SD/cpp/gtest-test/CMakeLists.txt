@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(gtest-test)
+project(own-project) #gtest-test
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -12,4 +12,3 @@ add_subdirectory(app)
 if(configureTests)
     add_subdirectory(tests)
 endif(configureTests)
-
