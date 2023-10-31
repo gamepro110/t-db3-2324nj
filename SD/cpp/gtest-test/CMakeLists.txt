@@ -4,12 +4,12 @@ project(gtest-test)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(configureTests "configure unit tests" true)
+option(configureTests "configure unit tests" ON)
 
 add_subdirectory(lib)
 add_subdirectory(app)
 
-if(configureTests EQUAL true)
+if(configureTests)
     add_subdirectory(tests)
-endif(configureTests EQUAL true)
+endif(configureTests)
 
