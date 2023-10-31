@@ -9,7 +9,7 @@ public:
 
 public:
     int8_t ReadCStr(char* str, size_t strLength);
-    int8_t ReadByte(char& outputChar);
+    int8_t ReadByte(char* outputChar);
     void WriteCStr(const char* str);
     void WriteByte(char byte);
     const uint64_t BitDurationMicros() const;

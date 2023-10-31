@@ -2,24 +2,36 @@
 
 #include <Arduino.h>
 
-Uart uart{ 8, 9, 4800 };
+Uart uart{ 8, 9, 9600 };
+const size_t StrLen{ 30 };
+char c[StrLen];
+
+void clearStr(char* str, size_t len);
 
 void setup() {
     uart.WriteByte('A');
-    uart.WriteCStr("\nhello world\n");
-    Serial.begin(9600);
+    uart.WriteByte('\n');
+    uart.WriteCStr("hello world\n");
+
+    clearStr(c, StrLen);
 }
 
 void loop() {
-    char c{ 0 };
+    if (uart.ReadCStr(c, StrLen) == 0) {
+        for (auto& ch : c) {
+            ch++;
+        }
 
-    if (uart.ReadByte(c) == 0) {
-        Serial.print(c);
-        Serial.print(" 0x");
-        Serial.println(c, 16);
-        Serial.print(" '");
-        Serial.print(c);
-        Serial.println(" '");
-        uart.WriteByte(c);
+        uart.WriteCStr(c);
+        uart.WriteByte('\n');
+
+        clearStr(c, StrLen);
     }
+}
+
+void clearStr(char* str, size_t len) {
+    for (size_t i = 0; i < len; i++) {
+        c[i] = '0';
+    }
+
 }
