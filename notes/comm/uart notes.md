@@ -15,13 +15,14 @@ tags:
 ## todo
 
 - [x] write serial writer poc on uno
+  - using digital read/write
   - uno r3 is too slow to write at `115200` baud rate
   - tested
     - [x] 9600 (succes)
     - [x] 14400 (succes)
     - [x] 19200 (failed, not fast enough)
     - [x] 115200 (failed, not fast enough)
-- [ ] write serial reader poc on uno
+- [x] write serial reader poc on uno
 - [ ] write DMA serial writer poc on uno
 - [ ] write DMA serial reader poc on uno
 - [ ] write serial writer poc on nucleo
