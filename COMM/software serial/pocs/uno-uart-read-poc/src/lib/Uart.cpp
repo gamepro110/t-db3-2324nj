@@ -65,9 +65,9 @@ int8_t Uart::ReadByte(char* outputChar) {
 
     updateTimerAndWait(nextBitTimeMicros);
 
-    if (digitalRead(pinRx) == BITIDLE) {
-        return 1;
-    }
+    // if (digitalRead(pinRx) == BITIDLE) {
+    //     return 1;
+    // }
 
     return 0;
 }

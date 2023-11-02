@@ -8,6 +8,7 @@ public:
     ~Uart();
 
 public:
+    /// @brief reads a string from the RX pin (WIP, inclomplete)
     int8_t ReadCStr(char* str, size_t strLength);
     int8_t ReadByte(char* outputChar);
     void WriteCStr(const char* str);
