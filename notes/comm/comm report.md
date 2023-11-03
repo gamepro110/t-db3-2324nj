@@ -27,6 +27,9 @@ Karlo Koelewijn
     - [differences](#differences)
     - [comparisons](#comparisons)
   - [conclusion](#conclusion)
+    - [smart home](#smart-home)
+    - [factory production line](#factory-production-line)
+    - [wildlife camera](#wildlife-camera)
   - [references](#references)
 
 ## Introduction
@@ -155,7 +158,47 @@ There are a few comparisons to be found, but naturally also some differences, le
 
 ## conclusion
 
-<<>>
+now that we know their pros and cons lets look at a fe scenarios and my advice for which protocol to use.
+
+each scenario wil have some context, my advice and why.
+
+### smart home
+
+context
+
+someone wants to make his home 'smart'. for example: only turn on the lights if someone is in that room, turn on the floor heating in a room when someone is there, open and close doors using a servo and a distance sensor, logging activities, etc.
+
+the systems want to be notified of changes, like a person changing rooms.
+
+the smart home system is made from multiple smaller systems
+
+---
+
+advice: mqtt
+
+mqtt works on a subscriber based system, meaning that once something changes everything listening to that 'channel' gets notified and can act accordingly.
+
+### factory production line
+
+a factory consisting of modules. each module has a status and has to communicate with other modules about their input/output. the system has to run continuously and be able to accept recipe changes.
+
+when using CoAP u would need to continuously request information, which would take up bandwith on your home network which does not need to happen.
+
+---
+
+advice: mqtt
+
+due to the system having to communicate based on changes in the modules state i would recommend mqtt over CoAP, as CoAP acts more like a restful API. having to request each time u need to check multiple modules is inefficient, when u can have a central place that notifies the module on changes.
+
+### wildlife camera
+
+a wildlife cam hanging in a forest taking pictures of passing wild life for research purposes, checking population, keeping tabs of what lives there. it is power constrained by having to run on battery, and has to run for long periods of time as to not disturb wildlife. aiming to have a camera module hang in a location for multiple months/years
+
+---
+
+advice: CoAp
+
+due to power consumption and remote locations being major factors. images being larger does not allow them to be send over CoAp, but will instead be saved on a storage medium included in the module. instead a system can periodicaly (think 1x/month) how many pictures are taken or when the storage medium is full.
 
 ## references
 
