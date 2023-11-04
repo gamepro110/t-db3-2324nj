@@ -13,13 +13,18 @@ tags:
 ## sub questions
 
 - [ ] how do I control the actuators?
-  - [ ] which actuators?
-- [ ] how do I detect obstacles? -> ultra sonic sensor
+  - [x] which actuators? -> parallax inc. feedback 360 servo
+    - [ ] how do I control them?
+      - [x] input -> [pwm signal](<../../ES/nucleo tests/nucleo-f303re-2x-pwm/src/main.cpp>)
+      - [ ] output
+- [x] how do I detect obstacles? -> ultra sonic sensor
 - [ ] how do I control the ultra sonic sensor?
   - [ ] how does it work?
   - [ ] what inputs does it take?
-    - [ ] how do I control the pins on the Nucleo
+    - [x] [how do I control the pins on the Nucleo](<./nucleo-notes.md#digital-output>)
+    - trigger pin
   - [ ] what outputs does it have?
+    - echo pin
 - [x] how do interrupts work? -> view `gitroot/ES/nucleo-gpio-interrupt-test`
   - [x] can u call c++ class functions in an `extern "C"` function?
     - [x] expert interview
@@ -30,10 +35,11 @@ tags:
       - using `x86-64 gcc 8.5` on godbolt.org
       - ![test](<../Assets/godbolt_test.png>)
 - [ ] how do timers work?
-  - [ ] what is a timer?
+  - [x] what is a timer?
+    - a timer is a register that counts up or down on clock signals from the system clock.
   - [x] how do I configure one? -> [timers](<../ES/nucleo-notes.md#example>)
   - [x] what registers do I need to know? -> [registers](<../ES/nucleo-notes.md#registers>)
-  - [ ] how do u calculate the timing?
+  - [x] [how do u calculate the timing?](<./nucleo-notes.md#calculate timer timing>)
 - what is a control panel? -> physical user interface (consists of buttons encoders etc. for the user to interact with)
 
 ### extern "c" test code

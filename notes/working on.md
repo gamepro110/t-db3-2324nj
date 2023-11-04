@@ -7,21 +7,24 @@ tags:
 
 ## #ES
 
-- [ ] Nucleo GPIO challenge
-  - [/] write report
+- [x] Nucleo GPIO challenge
+  - [x] write report
     - [x] tests
     - [x] reflection
     - [x] conclusion
-  - [ ] request feedback from peter
+  - [/] request feedback from peter
 - [ ] timer challenge
   - [/] pwm
     - [x] poc with 1 servo
-    - [ ] pos with 2 servos
+    - [x] pos with 2 servos
+    - [ ] read assignment
+    - [ ] reading pwm
 
 ## #COMM
 
-- [ ] [notes comm-protocols for iot](<comm/notes comm-protocols for iot.md>)
-  - [ ] [finishing step 3](<comm/comm report.md>)
+- [x] [notes comm-protocols for iot](<comm/notes comm-protocols for iot.md>)
+  - [x] [finishing step 3](<comm/comm report.md>)
+- [ ] uart challenge
 
 ## #SD
 
@@ -31,8 +34,11 @@ tags:
   - [ ] 1 intro
 - [ ] c++
   - [x] [challenge `and now c++`](<SD/c++/andNowCpp_carRental.md>)
+  - [x] challenge CarTruckWheel
+    - [ ] validate with teacher
 
 ## #PO
 
 - [x] portfolio sprint 1
-- [ ] portfolio sprint 2
+- [x] portfolio sprint 2
+- [ ] portfolio sprint 3

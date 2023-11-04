@@ -11,14 +11,15 @@ tags:
   - [ ] encoder
     - [x] polling
       - with heavy software debounce
-    - [ ] interrupt
+    - [/] interrupt
 - [ ] look at timer challenge
   - [/] timed signal
     - don't fully know how it works yet
-  - [ ] PWM
+  - [/] PWM
     - [/] poc
       - [x] 1 servo
-      - [ ] 2 servos
+      - [x] 2 servos
+      - [ ] reading pwm
 - [ ] look at closed-loop challenge
 - [ ] car challenge
   - [ ] make task list using research notion (PDF I send on teams)
@@ -29,33 +30,30 @@ tags:
 
 ## #COMM
 
-- [ ] [protocol assignment](<comm/notes comm-protocols for iot.md>)
-  - [x] [step 1](<comm/notes comm-protocols for iot.md#step 1 (investigating protocols)>)
-  - [x] [step 2](<comm/notes comm-protocols for iot.md#step 2 (imagining the usage of mqtt or CoAP)>)
-  - [ ] [step 3](<comm/notes comm-protocols for iot.md#step 3>)
-    - [ ] [wip](<comm/comm report.md>)
-    - look at `Project plan template docx` for stucture
-- [ ] ~~other assignment~~ going to skip this in favor of Software Serial
 - [ ] Software Serial
-  - [ ] check example received from Sven
-  - [ ] implement my own using DMA (Direct Memory Access)
+  - [x] check example received from Sven
+    - [x] read byte
+    - [x] write byte
+    - [x] write string
+  - [ ] check assignment pdf
+  - [ ] implement my own using MMI (memory mapped io)
+    - [ ] read byte
+    - [ ] write byte
+    - [ ] write string
 
 ---
 
 ## #Proftaak
 
-- [x] rough crane flowchart
-- [x] project plan
-  - [x] started
-  - [x] requirements
-  - [x] finish it
-- [x] requirements
 - [ ] talking skeleton
 - [ ] poc
 - [ ] test PiXtend build chain
   - [x] check build-in test tool
-  - [ ] drive an led
-  - looks like the Linux env I know on older Hardware
+  - [ ] comunicate with pixtend
+    - [x] compile `hello world`
+    - [x] link pxdev (pixtend lib)
+    - [ ] drive an led/button
+  - looks like the Linux env I know on older Hardware/platform
 
 ---
 
@@ -78,7 +76,7 @@ tags:
     - [ ] challenge (optional)
 - [ ] c++
   - [x] and now c++ car rental
-  - [ ] Car Truck Wheel challenge
+  - [x] Car Truck Wheel challenge
 
 ---
 

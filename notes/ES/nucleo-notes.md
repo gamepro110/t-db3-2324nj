@@ -138,6 +138,18 @@ void PinSetToInput(GPIO_TypeDef* block, uint8_t pin) {
 
 > default system clock speed is 7.2 MHz!!!
 
+### calculate timer timing
+
+| var name | full name |
+| --- | --- |
+| `c` | pwm clock cycle |
+| `m` | main system clock |
+| `p` | timer prescaler |
+| `d` | pwm duty cycle |
+| `a` | auto reset register (turns duty cycle on/off) |
+
+> $$ c = \frac{m}{p} $$
+
 ### registers
 
 | name          | meaning                                                            | why?                                                                                                                                                                        |
