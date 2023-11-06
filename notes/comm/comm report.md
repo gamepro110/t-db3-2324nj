@@ -16,7 +16,7 @@ Karlo Koelewijn
     - [MQTT](#mqtt)
       - [MQTT protocol](#mqtt-protocol)
       - [MQTT requirements](#mqtt-requirements)
-      - [MQTT constraints/limitations](#mqtt-constriantslimitations)
+      - [MQTT constraint/limitations](#mqtt-constraintlimitations)
       - [MQTT Diagram](#mqtt-diagram)
     - [CoAp](#coap)
       - [CoAp protocols](#coap-protocols)
@@ -57,7 +57,7 @@ I went through the following steps to learn about each protocol.
 - requires a broker
 - clients connect to broker
 
-#### MQTT constraints/limitations
+#### MQTT constraint\/limitations
 
 - higher power consumption
 - easy to implement
