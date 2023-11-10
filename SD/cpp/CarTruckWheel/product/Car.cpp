@@ -39,7 +39,7 @@ Car& Car::operator=(const Car& other) {
 
         for (auto* item : wheels) {
             delete item;
-            item = 0;
+            item = nullptr;
         }
         wheels.clear();
 
