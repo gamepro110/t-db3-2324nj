@@ -14,4 +14,3 @@
   - lichtelijk achter vanwegen gebrek aan feedback (GPIO, begonnen aan timer) (0.6 dagen)
 - SD
   - loop voor, kan volgende opdracht snel af hebben (1+ dagen voor)
-

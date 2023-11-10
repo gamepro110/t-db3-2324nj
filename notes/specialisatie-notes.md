@@ -2,15 +2,12 @@
 
 ## interested in
 
+- ict & open learning (low code)
 - ict & smart mobile
 - ict & smart industry
 - ict & education
 - ict & cyber security
 - ict & creative tech
-
-## interest TBD
-
-- low code meh
 
 ## not interested in
 
