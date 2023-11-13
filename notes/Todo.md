@@ -59,11 +59,6 @@ tags:
 
 ## #SD
 
-- [x] challenge 2 elevator
-  - [x] [use cases](<SD/challenge_2_elevator/use case.md>)
-  - [x] [object diagram](<SD/challenge_2_elevator/info + object diagram.md>)
-  - [x] [class diagram](<SD/challenge_2_elevator/class diagram.md>)
-  - [x] [sequence diagram](<SD/challenge_2_elevator/sequence diagram.md>)
 - [ ] C data-structure algorithm Challenges (started preemptively)
   - [ ] 1 - intro
     - [ ] part 0
@@ -75,15 +70,12 @@ tags:
     - [ ] part 2
     - [ ] challenge (optional)
 - [ ] c++
-  - [x] and now c++ car rental
   - [x] Car Truck Wheel challenge
 
 ---
 
 ## #PO
 
-- [x] add interview thing to #portfolio
-- [x] add activity on 08-09-2023 to feed-pulse/portfolio (helping 1st semester students with tech)
-- [ ] update [portfolio](<https://fhict.instructure.com/accounts/1/external_tools/23360?launch_type=global_navigation>) for sprint 2
+- [ ] update [portfolio](<https://fhict.instructure.com/accounts/1/external_tools/23360?launch_type=global_navigation>) for sprint 3
 
 ---

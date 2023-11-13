@@ -148,7 +148,7 @@ void PinSetToInput(GPIO_TypeDef* block, uint8_t pin) {
 | `d` | pwm duty cycle |
 | `a` | auto reset register (turns duty cycle on/off) |
 
-> $$ c = \frac{m}{p} $$
+> $$ c = \frac{p}{m} $$
 
 ### registers
 
