@@ -20,7 +20,7 @@ int main(void)
     MX_GPIO_Init();
     MX_USART2_UART_Init();
 
-    #if 1 // setting pwm
+    #if 1 // setting pwm output
     // enable timer 2
     RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
 
@@ -108,34 +108,65 @@ int main(void)
     );
     #endif
 
-    // set pin A4 to alternate function mode
-    GPIOA->MODER |= (0b10 << GPIO_MODER_MODER4_Pos);
-
-    // set pin a4 to AF2 (tim3 ch2)
-    GPIOA->AFR[0] = (0b0010 << GPIO_AFRL_AFRL2_Pos);
-
+    #if 1 // setting pwm input
+    //1---------------------------------------------------------
     // enable tim3
     RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
 
-    // set prescaler to 100
-    TIM3->PSC = 720000 - 1;
+    //2---------------------------------------------------------
+    // set prescaler to 911 hz (7.2Mhz / 7900 = 911.3924)
+    TIM3->PSC = 7900 - 1;
 
-    // tim3->ccmr2 set to input mode
-    TIM3->CCMR1 |= 0b01;
+    //3---------------------------------------------------------
+    // setup cc1 to input
+    TIM3->CCMR1 &= ~(0b11 << TIM_CCMR1_IC1PSC_Pos); // disable ic1psc
+    TIM3->CCMR1 |= (0b01 << TIM_CCMR1_CC1S_Pos); // set cc1s to input ic1 mapped to ti1
 
-    // set polarity to input
-    TIM3->CCER &= ~TIM_CCER_CC1NP;
-    TIM3->CCER &= ~TIM_CCER_CC1P;
+    //4---------------------------------------------------------
+    TIM3->CCER &= ~(
+        (0b1 << TIM_CCER_CC1P_Pos) | // set CC1P to 0b00 (non-inverting/rising edge)
+        (0b1 << TIM_CCER_CC1NP_Pos)
+    );
 
-    // snprintf(msgBuf, MSGBUFSIZE, "%ld\n", TIM3->ARR);
-    // vprint(msgBuf);
+    //5---------------------------------------------------------
+    TIM3->CCER |= (0b1 << TIM_CCER_CC1E_Pos); // enable CC channel 1
+
+    //6---------------------------------------------------------
+    // setup cc2 to input
+    TIM3->CCMR1 |= (0b10 << TIM_CCMR1_CC2S_Pos); // set cc2s to input ic2 mapped to ti1
+
+    //7---------------------------------------------------------
+    TIM3->CCER &= ~(0b1 << TIM_CCER_CC2NP_Pos);
+    TIM3->CCER |= (0b1 << TIM_CCER_CC2P_Pos);
+
+    //8---------------------------------------------------------
+    TIM3->CCER |= TIM_CCER_CC2E; // enable cc channel 2
+
+    //9---------------------------------------------------------
+    TIM3->SMCR |= (0b101 << TIM_SMCR_TS_Pos); // set trigger selection to "filtered timer input 1"
+
+    //10---------------------------------------------------------
+    TIM3->SMCR |= (0b100 << TIM_SMCR_SMS_Pos); // set slave mode selection to "reset mode"
+
+    //11---------------------------------------------------------
+    TIM3->CR1 |= TIM_CR1_CEN; // enable counter
+
+    #endif
+
+    //12---------------------------------------------------------
+    // set pin A6 to alternate function mode
+    GPIOA->MODER |= (0b10 << GPIO_MODER_MODER6_Pos);
+
+    // set pin a6 to AF2 (tim3 ch2)
+    GPIOA->AFR[0] |= (0b0010 << GPIO_AFRL_AFRL6_Pos);
 
     vprint("Hello World!\n");
 
     while (1) {
-        snprintf(msgBuf, MSGBUFSIZE, "TIM2: %lu\n", TIM2->CNT);
+        snprintf(msgBuf, MSGBUFSIZE, "TIM3 cnt: %lu\t cc1: %lu\t cc2: %lu\n", TIM3->CNT, TIM3->CCR1, TIM3->CCR2);
         vprint(msgBuf);
     }
+
 }
 
 #if 1 // hiding

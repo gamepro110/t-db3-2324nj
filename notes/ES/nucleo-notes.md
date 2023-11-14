@@ -30,10 +30,12 @@ tags:
 
 ## useful links
 
-| Description            | Link                                                                           |
-| ---------------------- | ------------------------------------------------------------------------------ |
-| Reference manual       | <https://www.st.com/resource/en/reference_manual/DM00043574-.pdf>              |
-| ST Timers presentation | <https://www.st.com/resource/en/product_training/STM32L4_WDG_TIMERS_GPTIM.pdf> |
+| Description            | Link                                                                                                 |
+| ---------------------- | ---------------------------------------------------------------------------------------------------- |
+| hal examples           | <https://github.com/STMicroelectronics/STM32CubeF3/tree/master/Projects/STM32F303RE-Nucleo/Examples> |
+| Reference manual       | <https://www.st.com/resource/en/reference_manual/DM00043574-.pdf>                                    |
+| ST Timers presentation | <https://www.st.com/resource/en/product_training/STM32L4_WDG_TIMERS_GPTIM.pdf>                       |
+| PID example            | <https://gist.github.com/bradley219/5373998>                                                         | 
 
 ## printing to serial (HAL)
 
