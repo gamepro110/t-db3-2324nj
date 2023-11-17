@@ -114,8 +114,8 @@ int main(void)
     RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
 
     //2---------------------------------------------------------
-    // set prescaler to 911 hz (7.2Mhz / 7900 = 911.3924)
-    TIM3->PSC = 7900 - 1;
+    // set prescaler to 911 hz (7.2Mhz / 790 = 9113.924)
+    TIM3->PSC = 790 - 1;
 
     //3---------------------------------------------------------
     // setup cc1 to input

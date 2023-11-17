@@ -17,10 +17,13 @@ tags:
     - don't fully know how it works yet
   - [/] PWM
     - [/] poc
-      - [x] 1 servo
-      - [x] 2 servos
-      - [ ] reading pwm
+      - [x] reading pwm
+      - [ ] check timer challenge
 - [ ] look at closed-loop challenge
+  - [ ] requirements
+    - [ ] software serial
+      - [x] polling
+      - [ ] interrupt
 - [ ] car challenge
   - [ ] make task list using research notion (PDF I send on teams)
   - [x] [main question](<ES/notes.md#main question>)
@@ -45,14 +48,27 @@ tags:
 
 ## #Proftaak
 
-- [ ] talking skeleton
+- [ ] todo
+  - [ ] make project base a seperate git branch
+  - [ ]  rework readme
+    - [ ] core lib description
+
+---
+
 - [ ] poc
+  - [ ] check trello
 - [ ] test PiXtend build chain
   - [x] check build-in test tool
-  - [ ] comunicate with pixtend
+  - [x] comunicate with pixtend
     - [x] compile `hello world`
     - [x] link pxdev (pixtend lib)
-    - [ ] drive an led/button
+    - [ ] poc
+      - [ ] set output pin high
+        - [ ] figure out mutex
+      - [x] read input
+      - [ ] communicate using factory_comm
+        - [x] initial setup
+        - [ ] finalize
   - looks like the Linux env I know on older Hardware/platform
 
 ---
@@ -71,6 +87,7 @@ tags:
     - [ ] challenge (optional)
 - [ ] c++
   - [x] Car Truck Wheel challenge
+  - [ ] state challenge
 
 ---
 
