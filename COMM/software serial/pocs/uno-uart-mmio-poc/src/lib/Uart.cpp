@@ -1,45 +1,56 @@
 #include "Uart.h"
 
-void pinWrite(uint8_t pin, uint8_t value) {
-    // decrement by 8 to negate the normal numbering so u start at portB pin 0
-    pin -= 8;
-
-    if (pin > 8) {
-        return;
+void pinWrite(uint8_t pin, uint8_t value, bool track = false) {
+    if (pin >= 8) {
+        pin -= 8;
     }
 
-    uint8_t pinVal = 1;
-
+    uint8_t pinVal{ 1 };
     pinVal <<= pin;
 
-    uint8_t* port_b = (uint8_t*)0x25;
-
-    switch (value) {
-    case LOW: {
-        (*port_b) &= ~pinVal;
-        break;
+    if (track) {
+        PORTB ^= 8;
+        switch (value) {
+            case LOW: {
+                PORTB &= ~pinVal;
+                break;
+            }
+            default: {
+                PORTB |= pinVal;
+                break;
+            }
+        }
+        PORTB ^= 8;
     }
-    default:
-        (*port_b) |= pinVal;
-        break;
+    else {
+        switch (value) {
+            case LOW: {
+                PORTB &= ~pinVal;
+                break;
+            }
+            default: {
+                PORTB |= pinVal;
+                break;
+            }
+        }
     }
 }
 
-uint8_t pinRead(uint8_t pin) {
-    // decrement by 8 to negate the normal numbering so u start at portB pin 0
-    pin -= 8;
+// <https://docs.arduino.cc/hacking/software/PortManipulation>
+uint8_t pinRead(uint8_t pin, bool track = false) {
+    uint8_t mask{ 1 };
+    uint8_t value{ 0 };
 
-    if (pin > 8) {
-        return false;
+    if (track) {
+        PORTB ^= 4;
+        value = PINB;
+        PORTB ^= 4;
+    }
+    else {
+        value = PINB;
     }
 
-    uint8_t pinVal = 1;
-
-    pinVal <<= pin;
-
-    uint8_t* port_b = (uint8_t*)0x25;
-
-    return ((*port_b) & pinVal) >> pinVal;
+    return (value & mask);
 }
 
 Uart::Uart(const uint8_t pinRX, const uint8_t pinTX, const uint32_t baudrate) :
@@ -47,16 +58,20 @@ Uart::Uart(const uint8_t pinRX, const uint8_t pinTX, const uint32_t baudrate) :
     pinTx(pinTX),
     baudrate(baudrate)
 {
-    pinMode(pinTx, OUTPUT);
-    pinMode(pinRX, INPUT);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    pinMode(10, OUTPUT);
+    pinMode(11, OUTPUT);
 
     digitalWrite(pinTx, BITIDLE);
+    pinMode(pinTx, OUTPUT);
+    pinMode(pinRX, INPUT_PULLUP);
 }
 
 Uart::~Uart()
 {}
 
-int8_t Uart::ReadByte(char& outputChar) {
+uint8_t Uart::ReadByte(uint8_t* outputChar) {
     uint64_t nextBitTimeMicros = micros();
 
     if (pinRead(pinRx) != BITSTART) {
@@ -64,13 +79,12 @@ int8_t Uart::ReadByte(char& outputChar) {
     }
 
     // adding a half bit delay to the reading to sample in the middle of the bit instead of at the beginning
-    nextBitTimeMicros += (BitDurationMicros() / 2);
+    nextBitTimeMicros += (BitDurationMicros() / 4);
     updateTimerAndWait(nextBitTimeMicros);
 
-    for (int i = 0; i < 8; i++) {
-        int value = pinRead(pinRx);
-        outputChar |= value << i;
-        //Serial.println(outputChar, 2);
+    for (uint8_t i = 0; i < 8; i++) {
+        uint8_t value = pinRead(pinRx, true);
+        (*outputChar) |= value << i;
         updateTimerAndWait(nextBitTimeMicros);
     }
 
@@ -98,7 +112,7 @@ void Uart::WriteByte(char byte) {
     updateTimerAndWait(nextBitTimeMicros);
 
     for (int bit = 0; bit < 8; bit++) {
-        pinWrite(pinTx, bitRead(byte, bit) == 1 ? BITONE : BITZERO);
+        pinWrite(pinTx, (bitRead(byte, bit) == 1 ? BITONE : BITZERO), true);
         updateTimerAndWait(nextBitTimeMicros);
     }
 

@@ -2,20 +2,20 @@
 
 #include <Arduino.h>
 
-Uart uart{ 8, 9, 9600 };
+Uart uart{ 8, 9, 115200 };
 
 void setup() {
-    uart.WriteByte('A');
-    uart.WriteByte('\n');
-    uart.WriteCStr("Hello World\n");
-    Serial.begin(9600);
+    char txt[50];
+    sprintf(txt, "soft uart at %d\nHello World!\n", (const int)uart.GetBaudrate());
+    uart.WriteCStr(txt);
 }
 
 void loop() {
-    static char c{ 0 };
-    static char retval = 0;
+    static uint8_t c{ 0 };
+    static int8_t retval = 0;
     c = 0;
-    retval = uart.ReadByte(c);
+    retval = uart.ReadByte(&c);
+
     if (retval == 0) {
         c++;
         uart.WriteByte(c);

@@ -8,10 +8,14 @@ public:
     ~Uart();
 
 public:
-    int8_t ReadByte(char& outputChar);
+    uint8_t ReadByte(uint8_t* outputChar);
     void WriteCStr(const char* str);
     void WriteByte(char byte);
     const uint64_t BitDurationMicros() const;
+
+    const uint32_t GetBaudrate() const {
+        return baudrate;
+    }
 
 private:
     void updateTimerAndWait(uint64_t& duration);
