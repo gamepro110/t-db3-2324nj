@@ -39,13 +39,13 @@ S ->> S : addElevatorRequest()
 
 S ->> E : isAvailable(targetFloor)
 %% empty on purpose
-E -->> S :
+E -->> S : 
 S -) E : SetTargetFloor()
 S ->>+ E : Update()
 
 E ->>+ Ie : UpdateFloor()
 %% empty on purpose
-Ie -->>- E :
+Ie -->>- E : 
 
 %% elevator reaches target
 %%E ->> E : floorReached()
@@ -54,10 +54,10 @@ E -) SP : Play()
 E -) De : Open()
 E ->>+ F : OpenDoor(floor)
 F -) Df : Open()
-F -->>- E :
+F -->>- E : 
 
 %% empty on purpose
-E -->>- S :
+E -->>- S : 
 
 %% start door timer
 S -)+ P : TimerStart()
@@ -65,8 +65,8 @@ S -)+ Bb : TimerStart()
 
 %% close door at end of timer
 note over S : user enters elevator and timer ends
-P -)- S :
-Bb -)- S :
+P -)- S : 
+Bb -)- S : 
 S -) E : CloseDoor()
 S -) F : CloseDoor()
 deactivate S

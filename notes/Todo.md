@@ -38,11 +38,21 @@ tags:
     - [x] read byte
     - [x] write byte
     - [x] write string
+  - [x] implement my own using MMI (memory mapped io)
+    - [x] read byte
+    - [x] write byte
+    - [x] write string
   - [ ] check assignment pdf
-  - [ ] implement my own using MMI (memory mapped io)
-    - [ ] read byte
-    - [ ] write byte
-    - [ ] write string
+    - [ ] requirements
+      - [ ] 5 t/m 8 data bits
+      - [ ] 1 or 2 stop bits
+      - [ ] none, 1, or 2 parity bits
+    - [ ] make design
+      - [ ] state diagrams
+        - [ ] transmit
+        - [ ] receive
+      - [ ] class diagram
+      - [ ] sequence diagram
 
 ---
 
