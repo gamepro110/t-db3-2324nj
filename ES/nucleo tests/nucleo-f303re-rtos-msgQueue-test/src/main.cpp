@@ -25,6 +25,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "lib/QueueData.h"
+#include "lib/Sender.h"
+#include "lib/Receiver.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -60,6 +64,29 @@ void MX_FREERTOS_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+const osThreadAttr_t defaultTask_attributes = {
+    .name = "defaultTask",
+    .attr_bits = osThreadDetached,
+    .cb_mem = NULL,
+    .cb_size = 0,
+    .stack_mem = NULL,
+    .stack_size = 256 * 4,
+    .priority = (osPriority_t)osPriorityNormal,
+    .tz_module = 0,
+    .reserved = 0
+};
+
+void ReceiverThread(void* arg) {
+    Receiver* reciever = reinterpret_cast<Receiver*>(arg);
+    reciever->Loop();
+}
+
+void SenderThread(void* arg) {
+    Sender* sender = reinterpret_cast<Sender*>(arg);
+    sender->Loop();
+}
+
+
 /* USER CODE END 0 */
 
 /**
@@ -72,32 +99,39 @@ int main(void) {
     MX_GPIO_Init();
     MX_USART2_UART_Init();
 
+    const int MSGBUFSIZE = 80;
+    char msgBuf[MSGBUFSIZE];
+
+    Sender* sen = new Sender();
+    Receiver* rec = new Receiver();
+    osMessageQueueId_t queueId;
+
+    osThreadId_t senderThreadHandle;
+    osThreadId_t receiverThreadHandle;
+
     /* Init scheduler */
     // ES Course Comments: Uncomment the three lines below to enable FreeRTOS.
     osKernelInitialize(); /* Call init function for freertos objects (in freertos.c) */
-    MX_FREERTOS_Init();
-    osKernelStart(); /* Start scheduler */
+    //MX_FREERTOS_Init();
 
-    /* We should never get here as control is now taken by the scheduler */
-    /* Infinite loop */
-    /* USER CODE BEGIN WHILE */
-    /*
-    const int MSGBUFSIZE = 80;
-    char msgBuf[MSGBUFSIZE];
-    snprintf(msgBuf, MSGBUFSIZE, "%s", "Hello World!\r\n");
-    HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-    while (1)
+    do
     {
-        * USER CODE END WHILE *
-        snprintf(msgBuf, MSGBUFSIZE, "%s", "In loop!\r\n");
+        snprintf(msgBuf, MSGBUFSIZE, "%s", "setting up queue\n");
         HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-        GPIOA->ODR ^= (1 << 5); // Toggle GPIO pin PA5 (onboard green LED).
-        HAL_Delay(1000);
-        //* USER CODE BEGIN 3 /
-    }
-    /*/
-    /* USER CODE END 3 */
+
+        queueId = osMessageQueueNew(15, sizeof(QueueData), NULL);
+    } while (queueId == NULL);
+
+    sen->Setup(queueId);
+    rec->Setup(queueId);
+
+    senderThreadHandle = osThreadNew(SenderThread, (void*)sen, &defaultTask_attributes);
+    receiverThreadHandle = osThreadNew(ReceiverThread, (void*)rec, &defaultTask_attributes);
+
+    osKernelStart(); /* Start scheduler */
 }
+
+#if 1 // hide block
 
 /**
  * @brief System Clock Configuration
@@ -202,3 +236,4 @@ void assert_failed(uint8_t *file, uint32_t line)
 #endif /* USE_FULL_ASSERT */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+#endif

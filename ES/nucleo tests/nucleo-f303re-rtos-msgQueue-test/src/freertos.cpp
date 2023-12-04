@@ -23,8 +23,7 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
-#include <string.h>
-#include <stdio.h>
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -40,68 +39,6 @@
 /* USER CODE BEGIN PD */
 
 /* USER CODE END PD */
-
-#include <queue.h>
-
-QueueHandle_t qh;
-
-osThreadId_t senderThreadHandle;
-osThreadId_t receiverThreadHandle;
-
-struct queueData {
-    uint16_t buttonId;
-    uint16_t pressDuration;
-};
-
-class Sender {
-public:
-    Sender(QueueHandle_t& handle) :
-        handleRef(handle)
-    {}
-    ~Sender() = default;
-
-    void Loop() {
-        while (1) {
-            queueData data{ 0, 50 };
-            xQueueSendToBack(handleRef, (void*)&data, 10);
-            osDelay(5);
-        }
-    }
-
-    QueueHandle_t& handleRef;
-};
-
-extern UART_HandleTypeDef huart2;
-
-class Receiver {
-public:
-    Receiver(QueueHandle_t& handle) :
-        handleRef(handle)
-    {}
-    ~Receiver() = default;
-
-    void Loop() {
-        while(1) {
-            uint64_t val = uxQueueMessagesWaiting(handleRef); // xQueueReceive
-            if (val == 0) {
-                osDelay(10);
-                return;
-            }
-
-            queueData data{ };
-            if (xQueueReceive(handleRef,(void*)&data, 10) == pdTRUE) {
-                const int MSGBUFSIZE = 80;
-                char msgBuf[MSGBUFSIZE];
-                snprintf(msgBuf, MSGBUFSIZE, "button: 0x%x time: 0x%x", data.buttonId, data.pressDuration);
-                HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-            }
-
-            osDelay(10);
-        }
-    }
-
-    QueueHandle_t& handleRef;
-};
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
@@ -126,15 +63,6 @@ const osThreadAttr_t defaultTask_attributes = {
     .reserved = 0
 };
 
-void ReceiverThread(void* arg) {
-    Receiver* reciever = reinterpret_cast<Receiver*>(arg);
-    reciever->Loop();
-}
-
-void SenderThread(void* arg) {
-    Sender* sender = reinterpret_cast<Sender*>(arg);
-    sender->Loop();
-}
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -152,21 +80,6 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
  */
 void MX_FREERTOS_Init(void) {
     /* USER CODE BEGIN Init */
-    do
-    {
-        const int MSGBUFSIZE = 80;
-        char msgBuf[MSGBUFSIZE];
-        snprintf(msgBuf, MSGBUFSIZE, "%s", "setting up queue\n");
-        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-
-        qh = xQueueCreate(15, sizeof(queueData)); //TODO infinite loop...
-    } while (qh == NULL);
-
-    Receiver rec{ qh };
-    receiverThreadHandle = osThreadNew(ReceiverThread, (void*)&rec, &defaultTask_attributes);
-
-    Sender sen{ qh };
-    receiverThreadHandle = osThreadNew(SenderThread, (void*)&sen, &defaultTask_attributes);
 
     defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 }
