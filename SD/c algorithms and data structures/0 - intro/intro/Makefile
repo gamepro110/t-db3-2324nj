@@ -40,16 +40,16 @@ test: $(ASSIGNMENT_TEST)
 	@./$(ASSIGNMENT_TEST)
 
 run: Makefile $(ASSIGNMENT) $(PRODUCT_FILES)
-	@./$(ASSIGNMENT) 1 testdata/in1_1&& \
-	./$(ASSIGNMENT) 1 testdata/in1_2&& \
-	./$(ASSIGNMENT) 1 testdata/in1_3&& \
-	./$(ASSIGNMENT) 1 testdata/in1_4&& \
-	./$(ASSIGNMENT) 1 testdata/in1_5&& \
-	./$(ASSIGNMENT) 1 testdata/in1_6&& \
-	./$(ASSIGNMENT) 1 testdata/in2_1&& \
-	./$(ASSIGNMENT) 1 testdata/in2_2&& \
-	./$(ASSIGNMENT) 1 testdata/in2_3&& \
-	./$(ASSIGNMENT) 1 testdata/in2_4
+	@./$(ASSIGNMENT) 1 testdata/in1_1&&\
+	./$(ASSIGNMENT) 1 testdata/in1_2&&\
+	./$(ASSIGNMENT) 1 testdata/in1_3&&\
+	./$(ASSIGNMENT) 1 testdata/in1_4&&\
+	./$(ASSIGNMENT) 1 testdata/in1_5&&\
+	./$(ASSIGNMENT) 1 testdata/in1_6&&\
+	./$(ASSIGNMENT) 2 testdata/in2_1&&\
+	./$(ASSIGNMENT) 2 testdata/in2_2&&\
+	./$(ASSIGNMENT) 2 testdata/in2_3&&\
+	./$(ASSIGNMENT) 2 testdata/in2_4
 
 clean:
 	@rm -rf $(ASSIGNMENT) $(ASSIGNMENT).dSYM $(FILE_ELEMENT_TEST) $(ASSIGNMENT_TEST)
