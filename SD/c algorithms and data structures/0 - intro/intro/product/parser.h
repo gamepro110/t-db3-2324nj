@@ -1,5 +1,7 @@
 #ifndef PARSER_H_
 
-int parse(char* inputText, int* sizePtr, int* arrayPtr);
+#include <stddef.h>
 
-#endif // !DEBUG
+int parse(char* inputText, int* sizePtr, int** arrayPtr, int* arrayK);
+
+#endif

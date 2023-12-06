@@ -14,23 +14,17 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    for (int i = 0; i < argc; i++) {
-        printf("argv %x: %s\n", i, argv[i]);
-    }
-
     char selectedAssignment = atoi(argv[1]);
 
+    printf("assignment: %d f: '%s'\t", selectedAssignment, argv[argc -1]);
+
     int arrSize = 1000000;
-    int arr[arrSize];
+    int* arr = NULL; // array, created in parse()
     int k = -1;
 
-    if (parse(argv[2], &arrSize, arr) == -1) {
+    if (parse(argv[2], &arrSize, &arr, &k) == -1) {
         return -1;
     }
-
-    // TODO: parse data from stdin as explained in part 0 in the challenge document
-    // (obviously: parsing data is another responsibility than commandline UI stuff,
-    //  so parsing data should happen in another file!)
 
     if (selectedAssignment == 1)
     {
@@ -68,6 +62,8 @@ int main(int argc, char* argv[])
     {
         printf("Error: Unknown assignment: %d\n", selectedAssignment);
     }
+
+    free(arr);
 
     return 0;
 }

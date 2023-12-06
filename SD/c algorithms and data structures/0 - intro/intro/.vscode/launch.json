@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch",
+            "name": "(gdb) main",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/main",
             "args": [
                 "1",
-                "${workspaceFolder}/testdata/in1_1"
+                "${workspaceFolder}/testdata/in1_2"
             ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
@@ -30,7 +30,30 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "(gdb) test",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main_test",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
         }
-
     ]
 }

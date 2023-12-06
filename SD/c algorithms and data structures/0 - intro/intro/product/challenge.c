@@ -2,157 +2,159 @@
 
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
+//*
 /// @brief checks if given array contains given number and returns the index if found
 /// @param number element to be found
 /// @param index first index of the requested number
 /// @return -1 on error, 0 on found, 1 on NOT found
-int contains(int arraySize, int array[arraySize], int number, int* index)
-{
-    if (array == NULL || index == NULL)
-    {
+int contains(int arraySize, int array[arraySize], int* lastElem, int number, int* index) {
+    if (array == NULL || index == NULL || lastElem == NULL) {
         return -1;
     }
 
     int idx = 0;
-    int done = 0;
-    while (idx <= arraySize && done == 0)
-    {
-        if (array[idx] == number)
-        {
-            done = 1;
+    int returnVal = 1;
+    bool done = false;
+
+    while (idx <= arraySize && !done) {
+        if (array[idx] == number) {
+            done = true;
+            returnVal = 0;
             *index = idx;
+
+            if ((*lastElem) < idx) {
+                *index += *lastElem - *index;
+            }
+
+            if ((*lastElem) > idx) {
+                (*lastElem)--; // take 1 off to balace double takes
+            }
+
+            (*lastElem)++;
         }
 
         idx++;
     }
 
-    return !done;
-}
+    return returnVal;
+}//*/
 
 /// @brief return which numbers have been found and how many in the input array
 /// @return -1 on fail, 0 on succes
-int parseArray(int inputSize, int inputArray[inputSize], int outputArray[inputSize], int outputCount[inputSize])
-{
-    if (inputArray == NULL || outputArray == NULL || outputCount == NULL)
-    {
+int CountArray(int inputSize, int inputArray[inputSize], int** outputCount, int** outputNumber) {
+    if (inputArray == NULL || outputCount == NULL || outputNumber == NULL) {
         return -1;
     }
 
-    int idx = 0;
-    int whileCount = 1000;
-
-    for (int i = 0; i < inputSize; i++)
-    {
-        outputArray[i] = 0;
-        outputCount[i] = 0;
+    for (int idx = 0; idx < inputSize; idx++) {
+        (*outputCount)[idx] = 0;
+        (*outputNumber)[idx] = 0;
     }
 
-    int writeIdx = 0;
+    int wIdx = 0;
+    int value = 0;
+    int containsVal = 0;
+    int lastElem = 0;
 
-    while (idx < inputSize && whileCount > 0)
-    {
-        int num = inputArray[idx];
-        int countIdx = 0;
-        if (0 == contains(inputSize, outputArray, num, &countIdx))
-        {
-            outputCount[countIdx]++;
-        }
-        else
-        {
-            outputArray[writeIdx] = num;
-            outputCount[writeIdx]++;
-            writeIdx++;
-        }
+    for (int rIdx = 0; rIdx < inputSize; rIdx++) {
+        value = inputArray[rIdx];
+        containsVal = contains(inputSize, inputArray, &lastElem, value, &wIdx);
 
-        idx++;
-        whileCount--;
+        if (containsVal != 0) {
+            printf("contains check fail");
+            return -1;
+        }
+        else {
+            (*outputNumber)[wIdx] = value;
+            (*outputCount)[wIdx]++;
+        }
     }
 
     return 0;
 }
 
-int FindSmallestNumberThatIsRepeatedKTimes(
-            int* array, int size, int k, int* smallestNumber)
-{
-    if (array == NULL || smallestNumber == NULL)
-    {
+int FindSmallestNumberThatIsRepeatedKTimes(int* array, int size, int k, int* smallestNumber) {
+    if (array == NULL || smallestNumber == NULL) {
         return -1;
     }
 
     int returnVal = 0;
-    int smallest = 10000;
+    long smallest = 10000000000000;
+    int* numCount = calloc(sizeof(int), size);
+    int* numIdx = calloc(sizeof(int), size);
 
-    int numArray[size];
-    int numCount[size];
+    // printf("\nfinding K(%d) \n", k);
 
-    if (-1 == parseArray(size, array, numArray, numCount))
-    {
+    if (CountArray(size, array, &numCount, &numIdx)) {
         returnVal = -1;
     }
-    else
-    {
-        int foundIdx = 0;
-        while (foundIdx < size)
-        {
-            int amountFound = numCount[foundIdx];
-            if (amountFound == k)
-            {
-                int foundNum = numArray[foundIdx];
-                if (foundNum < smallest)
-                {
-                    smallest = foundNum;
+    else {
+        int amountFound = -1;
+
+        for (int idx = 0; idx < size; idx++) {
+            amountFound = numCount[idx];
+
+            if (amountFound == k) {
+                int num = numIdx[idx];
+
+                // fprintf(stderr, "\n");
+                // for (int i = 0; i < size; i++) {
+                //     fprintf(stderr, "%d: %d\n", numIdx[i], numCount[i]);
+                // }
+                // fprintf(stderr, "\n");
+
+                if (num < smallest) {
+                    smallest = num;
                 }
             }
-
-            foundIdx++;
         }
     }
 
+    free(numIdx);
+    free(numCount);
     *smallestNumber = smallest;
-
     return returnVal;
 }
 
-int ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(
-            int* array, int size, int k, int* difference)
-{
-    if (array == NULL || difference == NULL)
-    {
+int ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(int* array, int size, int k, int* difference) {
+    if (array == NULL || difference == NULL) {
         return -1;
     }
 
-    int numArray[size];
-    int numCount[size];
+    int* numCount = calloc(sizeof(int), size);
+    int* numIdx = calloc(sizeof(int), size);
     int largest = 0;
     int smallest = 1000000;
 
-    parseArray(size, array, numArray, numCount);
+    if (CountArray(size, array, &numCount, &numIdx)) {
+        printf("failed to count array elements");
+        return -1;
+    }
 
-    //TODO find smallest
-    //|--- use `FindSmallestNumberThatIsRepeatedKTimes` as template for function finding smallest
-    //TODO find largest
-    
-    // multiply by -1 to invert negative
-    *difference = (largest - smallest) * -1;
+    for (int i = 0; i < size; i++) {
+        int value = array[i];
+        
+        smallest = (value < smallest) ? value : smallest;
+        largest = (value > largest) ? value : largest;
+    }
 
+    free(numIdx);
+    free(numCount);
+    *difference = (largest - smallest);
     return 0;
 }
 
-int ComputeDifferenceBetweenMaxAndMinSumOfKElements_1(
-            int* array, int size, int k, int* difference)
-{
+int ComputeDifferenceBetweenMaxAndMinSumOfKElements_1(int* array, int size, int k, int* difference) {
     return -1;
 }
 
-int ComputeDifferenceBetweenMaxAndMinSumOfKElements_2(
-            int* array, int size, int k, int* difference)
-{
+int ComputeDifferenceBetweenMaxAndMinSumOfKElements_2(int* array, int size, int k, int* difference) {
     return -1;
 }
 
-int ComputeDifferenceBetweenMaxAndMinSumOfKElements_3(
-            int* array, int size, int k, int* difference)
-{
+int ComputeDifferenceBetweenMaxAndMinSumOfKElements_3(int* array, int size, int k, int* difference) {
     return -1;
 }

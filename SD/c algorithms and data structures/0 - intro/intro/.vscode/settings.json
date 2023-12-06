@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.tcc": "c",
+        "format": "c",
+        "istream": "c",
+        "cmath": "c"
+    }
+}
