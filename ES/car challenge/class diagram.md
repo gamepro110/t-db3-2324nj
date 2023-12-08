@@ -5,15 +5,24 @@
 ```mermaid
 graph
 c([car])
+d([distance Sensor])
+s1([servo motor 1])
+s2([servo motor 2])
+
+c --> d
+c --> s1
+c --> s2
 ```
 
 ## class
 
-> `<<active>>` has its own thread
+> `<<active>>` has its own thread. `TSQueue` = freeRtos messageQueue
 
 ```mermaid
 classDiagram
-    class CarSystem
+    class CarSystem {
+        -osMessageQueueId_t queueId
+    }
     class MotorController {
         <<active>>
         +Setup()
@@ -30,7 +39,9 @@ classDiagram
         +LongPress() action
     }
 
-    class ServoMotor
+    class ServoMotor {
+        -uint16_t idleSpeed
+    }
     class Button
 
     class ManualControlPanel {
@@ -42,7 +53,6 @@ classDiagram
     class TSQueue {
         +Read()
         +Write()
-        +IsMessageAvailable() bool
     }
 
     %% *.. == is a
@@ -51,7 +61,7 @@ classDiagram
 
     MotorController --> "2" IMotor
 
-    ManualControlPanel --> "4" IButton
+    ManualControlPanel --> "2" IButton
 
     IMotor <|.. ServoMotor
     IButton <|.. Button
@@ -61,9 +71,13 @@ classDiagram
     TSQueue <-- ManualControlPanel
     TSQueue <-- MotorController
 
-    CarSystem --> TSQueue
+    %%CarSystem --> TSQueue
     CarSystem --> MotorController
 ```
+
+## todo
+
+- add distance sensor to graph
 
 ### notes
 
