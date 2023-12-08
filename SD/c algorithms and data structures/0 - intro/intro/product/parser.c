@@ -49,19 +49,10 @@ int ParseArrayContent(char* fileText, const int fileContentSize, FILE* file, int
     int value = 0;
 
     // printf("\n\n");
-    while (arrStr != NULL && (*arrStr) && arrIdx < arrSize) {
-        scanVal = sscanf(arrStr, "%d ", &value);
-
-        if (scanVal > 0) {
-            (*arrayPtr)[arrIdx] = value;
-            arrIdx++;
-            arrStr += scanVal + 1; //+1 for eliminating the space
-        }
-
-        if ((strlen(arrStr) <= 2) && (*arrStr == ' ' || *arrStr == '\n')) {
-            printf("force break out of infinite loop!!");
-            return -1;
-        }
+    while (sscanf(arrStr, "%d%n", &value, &scanVal) == 1) {
+        (*arrayPtr)[arrIdx] = value;
+        arrIdx++;
+        arrStr += scanVal;
     }
 
     return 0;
