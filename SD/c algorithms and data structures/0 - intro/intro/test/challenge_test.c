@@ -49,12 +49,19 @@ void test_compute_difference_between_max_and_min_sum_of_k_elements_0(void)
     int K = 2;
     int difference = 0;
 
-    TEST_ASSERT_EQUAL(0, ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(
-        array, arraySize, K, &difference) );
+    TEST_ASSERT_EQUAL(
+        0,
+        ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(
+            array,
+            arraySize,
+            K,
+            &difference
+        )
+    );
 
-    TEST_ASSERT_EQUAL(2, difference);
+    TEST_ASSERT_EQUAL(2, difference);//FIXME invalid difference value
 
-    /*
+    //*
     K = 3;
     TEST_ASSERT_EQUAL(0, ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(
     array, arraySize, K, &difference) );

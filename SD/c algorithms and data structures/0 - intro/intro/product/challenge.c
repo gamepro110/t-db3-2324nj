@@ -5,11 +5,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-//*
+#include <limits.h> // chatgpt
+
+/*
 /// @brief checks if given array contains given number and returns the index if found
 /// @param number element to be found
 /// @param index first index of the requested number
 /// @return -1 on error, 0 on found, 1 on NOT found
+///FIXME fails on case: [5, 10, 10, 5]. sets 2 idx with 10
 int contains(int arraySize, int array[arraySize], int* lastElem, int number, int* index) {
     if (array == NULL || index == NULL || lastElem == NULL) {
         return -1;
@@ -44,51 +47,35 @@ int contains(int arraySize, int array[arraySize], int* lastElem, int number, int
 
 /// @brief return which numbers have been found and how many in the input array
 /// @return -1 on fail, 0 on succes
-int CountArray(int inputSize, int inputArray[inputSize], int** outputCount, int** outputNumber) {
-    if (inputArray == NULL || outputCount == NULL || outputNumber == NULL) {
+int CountArray(int inputSize, int inputArray[inputSize], int** outputCount) {
+    if (inputArray == NULL || outputCount == NULL) {
         return -1;
     }
 
     for (int idx = 0; idx < inputSize; idx++) {
         (*outputCount)[idx] = 0;
-        (*outputNumber)[idx] = 0;
     }
 
-    int wIdx = 0;
-    int value = 0;
-    int containsVal = 0;
-    int lastElem = 0;
-
-    for (int rIdx = 0; rIdx < inputSize; rIdx++) {
-        value = inputArray[rIdx];
-        containsVal = contains(inputSize, inputArray, &lastElem, value, &wIdx);
-
-        if (containsVal != 0) {
-            printf("contains check fail");
-            return -1;
-        }
-        else {
-            (*outputNumber)[wIdx] = value;
-            (*outputCount)[wIdx]++;
-        }
+    for (int idx = 0; idx < inputSize; idx++) {
+        int value = inputArray[idx];
+        (*outputCount)[value]++;
     }
 
     return 0;
 }
 
+//FIXME
 int FindSmallestNumberThatIsRepeatedKTimes(int* array, int size, int k, int* smallestNumber) {
     if (array == NULL || smallestNumber == NULL) {
         return -1;
     }
 
+    int arrSize = 100000;
     int returnVal = 0;
-    long smallest = 10000000000000;
-    int* numCount = calloc(sizeof(int), size);
-    int* numIdx = calloc(sizeof(int), size);
+    int smallest = 1000000000;
+    int* numCount = calloc(sizeof(int), arrSize);
 
-    // printf("\nfinding K(%d) \n", k);
-
-    if (CountArray(size, array, &numCount, &numIdx)) {
+    if (CountArray(size, array, &numCount)) {
         returnVal = -1;
     }
     else {
@@ -98,22 +85,11 @@ int FindSmallestNumberThatIsRepeatedKTimes(int* array, int size, int k, int* sma
             amountFound = numCount[idx];
 
             if (amountFound == k) {
-                int num = numIdx[idx];
-
-                // fprintf(stderr, "\n");
-                // for (int i = 0; i < size; i++) {
-                //     fprintf(stderr, "%d: %d\n", numIdx[i], numCount[i]);
-                // }
-                // fprintf(stderr, "\n");
-
-                if (num < smallest) {
-                    smallest = num;
-                }
+                smallest = idx;
             }
         }
     }
 
-    free(numIdx);
     free(numCount);
     *smallestNumber = smallest;
     return returnVal;
@@ -124,26 +100,14 @@ int ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(int* array, int size, int 
         return -1;
     }
 
-    int* numCount = calloc(sizeof(int), size);
-    int* numIdx = calloc(sizeof(int), size);
-    int largest = 0;
-    int smallest = 1000000;
+    int min_val = 0;
+    int max_val = 0;
 
-    if (CountArray(size, array, &numCount, &numIdx)) {
-        printf("failed to count array elements");
-        return -1;
-    }
+    // loop through the array from front and back
+    // add value to min and max sum when value is not 0
 
-    for (int i = 0; i < size; i++) {
-        int value = array[i];
-        
-        smallest = (value < smallest) ? value : smallest;
-        largest = (value > largest) ? value : largest;
-    }
+    *difference = max_val - min_val;
 
-    free(numIdx);
-    free(numCount);
-    *difference = (largest - smallest);
     return 0;
 }
 

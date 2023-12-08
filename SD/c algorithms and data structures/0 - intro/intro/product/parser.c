@@ -48,7 +48,6 @@ int ParseArrayContent(char* fileText, const int fileContentSize, FILE* file, int
     int arrIdx = 0;
     int value = 0;
 
-    // printf("\n\n");
     while (sscanf(arrStr, "%d%n", &value, &scanVal) == 1) {
         (*arrayPtr)[arrIdx] = value;
         arrIdx++;

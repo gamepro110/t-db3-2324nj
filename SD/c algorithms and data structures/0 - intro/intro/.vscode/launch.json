@@ -10,8 +10,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/main",
             "args": [
-                "1",
-                "${workspaceFolder}/testdata/in1_2"
+                "2",
+                "${workspaceFolder}/testdata/in1_1"
             ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
