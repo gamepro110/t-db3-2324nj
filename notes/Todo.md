@@ -45,7 +45,9 @@ tags:
   - [ ] 1 - intro
     - [x] part 0
     - [x] part 1
-    - [ ] part 2
+    - [x] part 2
+    - [ ] part 3
+      - [ ] discus with ronald how and what
     - [ ] challenge (optional)
 - [ ] c++
   - [ ] bread bake
