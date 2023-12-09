@@ -4,46 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
-#include <limits.h> // chatgpt
-
-/*
-/// @brief checks if given array contains given number and returns the index if found
-/// @param number element to be found
-/// @param index first index of the requested number
-/// @return -1 on error, 0 on found, 1 on NOT found
-///FIXME fails on case: [5, 10, 10, 5]. sets 2 idx with 10
-int contains(int arraySize, int array[arraySize], int* lastElem, int number, int* index) {
-    if (array == NULL || index == NULL || lastElem == NULL) {
-        return -1;
-    }
-
-    int idx = 0;
-    int returnVal = 1;
-    bool done = false;
-
-    while (idx <= arraySize && !done) {
-        if (array[idx] == number) {
-            done = true;
-            returnVal = 0;
-            *index = idx;
-
-            if ((*lastElem) < idx) {
-                *index += *lastElem - *index;
-            }
-
-            if ((*lastElem) > idx) {
-                (*lastElem)--; // take 1 off to balace double takes
-            }
-
-            (*lastElem)++;
-        }
-
-        idx++;
-    }
-
-    return returnVal;
-}//*/
+#include <limits.h>
 
 /// @brief return which numbers have been found and how many in the input array
 /// @return -1 on fail, 0 on succes
@@ -64,7 +25,6 @@ int CountArray(int inputSize, int inputArray[inputSize], int** outputCount) {
     return 0;
 }
 
-//FIXME
 int FindSmallestNumberThatIsRepeatedKTimes(int* array, int size, int k, int* smallestNumber) {
     if (array == NULL || smallestNumber == NULL) {
         return -1;
@@ -84,7 +44,7 @@ int FindSmallestNumberThatIsRepeatedKTimes(int* array, int size, int k, int* sma
         for (int idx = 0; idx < size; idx++) {
             amountFound = numCount[idx];
 
-            if (amountFound == k) {
+            if (amountFound == k && idx < smallest) {
                 smallest = idx;
             }
         }
@@ -95,19 +55,62 @@ int FindSmallestNumberThatIsRepeatedKTimes(int* array, int size, int k, int* sma
     return returnVal;
 }
 
+int CalcValue(int* count, int k, int value, int idx, int* out_val) {
+    if (count == NULL || out_val == NULL) {
+        printf("[CalcValue()] invalid pointer provided");
+        return -1;
+    }
+
+    if ((*count) < k && value) {
+        for (int i = 0; i < value && (*count) < k; i++) {
+            (*count)++;
+            (*out_val) += idx;
+        }
+    }
+
+    return 0;
+}
+
 int ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(int* array, int size, int k, int* difference) {
     if (array == NULL || difference == NULL) {
+        return -1;
+    }
+
+    const int maxValue = 10000;
+    int* countedArray = calloc(sizeof(int), maxValue);
+
+    if (CountArray(size, array, &countedArray)) {
+        printf("faild to count array");
         return -1;
     }
 
     int min_val = 0;
     int max_val = 0;
 
-    // loop through the array from front and back
-    // add value to min and max sum when value is not 0
+    int minCount = 0;
+    int maxCount = 0;
+    int idx = 0;
+    int valueMin = 0;
+    int valueMax = 0;
+    int reverseIdx = 0;
 
+    while ((minCount < k || maxCount < k) && idx < size) {
+        valueMin = countedArray[idx];
+        reverseIdx = (size - 1) - idx;
+        valueMax = countedArray[reverseIdx];
+
+        if (CalcValue(&minCount, k, valueMin, idx, &min_val)) {
+            return -1;
+        }
+        if (CalcValue(&maxCount, k, valueMax, reverseIdx, &max_val)) {
+            return -1;
+        }
+
+        idx++;
+    }
+
+    free(countedArray);
     *difference = max_val - min_val;
-
     return 0;
 }
 

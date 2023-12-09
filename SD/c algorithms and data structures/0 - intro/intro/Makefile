@@ -40,16 +40,16 @@ test: $(ASSIGNMENT_TEST)
 	@./$(ASSIGNMENT_TEST)
 
 run: Makefile $(ASSIGNMENT) $(PRODUCT_FILES)
-	@./$(ASSIGNMENT) 1 testdata/in1_1&&\
-	./$(ASSIGNMENT) 1 testdata/in1_2&&\
-	./$(ASSIGNMENT) 1 testdata/in1_3&&\
-	./$(ASSIGNMENT) 1 testdata/in1_4&&\
-	./$(ASSIGNMENT) 1 testdata/in1_5&&\
-	./$(ASSIGNMENT) 1 testdata/in1_6&&\
-	./$(ASSIGNMENT) 2 testdata/in2_1&&\
-	./$(ASSIGNMENT) 2 testdata/in2_2&&\
-	./$(ASSIGNMENT) 2 testdata/in2_3&&\
-	./$(ASSIGNMENT) 2 testdata/in2_4
+	@./$(ASSIGNMENT) 1 < testdata/in1_1 > testdata/myOut1_1 &&\
+	./$(ASSIGNMENT) 1 < testdata/in1_2 > testdata/myOut1_2 &&\
+	./$(ASSIGNMENT) 1 < testdata/in1_3 > testdata/myOut1_3 &&\
+	./$(ASSIGNMENT) 1 < testdata/in1_4 > testdata/myOut1_4 &&\
+	./$(ASSIGNMENT) 1 < testdata/in1_5 > testdata/myOut1_5 &&\
+	./$(ASSIGNMENT) 1 < testdata/in1_6 > testdata/myOut1_6 &&\
+	./$(ASSIGNMENT) 2 < testdata/in2_1 > testdata/myOut2_1 &&\
+	./$(ASSIGNMENT) 2 < testdata/in2_2 > testdata/myOut2_2 &&\
+	./$(ASSIGNMENT) 2 < testdata/in2_3 > testdata/myOut2_3 &&\
+	./$(ASSIGNMENT) 2 < testdata/in2_4 > testdata/myOut2_4
 
 clean:
 	@rm -rf $(ASSIGNMENT) $(ASSIGNMENT).dSYM $(FILE_ELEMENT_TEST) $(ASSIGNMENT_TEST)

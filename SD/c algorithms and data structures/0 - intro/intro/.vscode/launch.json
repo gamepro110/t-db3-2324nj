@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/main",
             "args": [
                 "2",
-                "${workspaceFolder}/testdata/in1_1"
+                "${workspaceFolder}/testdata/in2_0"
             ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

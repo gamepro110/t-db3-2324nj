@@ -17,33 +17,51 @@ void tearDown(void)
     // This is run after EACH test
 }
 
-void test_find_smallest_number_for_number_of_wanted_occurences(void)
-{
+//pre provided test
+void test_find_smallest_number_for_number_of_wanted_occurences(void) {
     int array[] = {10,10,2,2,1,1,1,4,5,4};
     int arraySize = sizeof(array)/sizeof(array[0]);
     int K = 2;
     int smallestNumber = 0;
 
-    TEST_ASSERT_EQUAL(0, FindSmallestNumberThatIsRepeatedKTimes(
-        array, arraySize, K, &smallestNumber) );
+    TEST_ASSERT_EQUAL(
+        0,
+        FindSmallestNumberThatIsRepeatedKTimes(
+                array,
+                arraySize,
+                K,
+                &smallestNumber
+        ));
 
     TEST_ASSERT_EQUAL(2, smallestNumber);
 
     K = 3;
-    TEST_ASSERT_EQUAL(0, FindSmallestNumberThatIsRepeatedKTimes(
-    array, arraySize, K, &smallestNumber) );
-
+    TEST_ASSERT_EQUAL(
+        0,
+        FindSmallestNumberThatIsRepeatedKTimes(
+            array,
+            arraySize,
+            K,
+            &smallestNumber
+        ));
     TEST_ASSERT_EQUAL(1, smallestNumber);
 
     K = 1;
-    TEST_ASSERT_EQUAL(0, FindSmallestNumberThatIsRepeatedKTimes(
-    array, arraySize, K, &smallestNumber) );
+    TEST_ASSERT_EQUAL(
+        0,
+        FindSmallestNumberThatIsRepeatedKTimes(
+            array,
+            arraySize,
+            K,
+            &smallestNumber
+        )
+    );
 
     TEST_ASSERT_EQUAL(5, smallestNumber);
 }
 
-void test_compute_difference_between_max_and_min_sum_of_k_elements_0(void)
-{
+// own test, fix values
+void test_compute_difference_between_max_and_min_sum_of_k_elements_0(void) {
     int array[] = {10,10,2,2,1,1,1,4,5,4};
     int arraySize = sizeof(array)/sizeof(array[0]);
     int K = 2;
@@ -61,19 +79,31 @@ void test_compute_difference_between_max_and_min_sum_of_k_elements_0(void)
 
     TEST_ASSERT_EQUAL(2, difference);//FIXME invalid difference value
 
-    //*
     K = 3;
-    TEST_ASSERT_EQUAL(0, ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(
-    array, arraySize, K, &difference) );
+    TEST_ASSERT_EQUAL(
+        0,
+        ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(
+            array,
+            arraySize,
+            K,
+            &difference
+        )
+    );
 
     TEST_ASSERT_EQUAL(1, difference);
 
     K = 1;
-    TEST_ASSERT_EQUAL(0, ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(
-    array, arraySize, K, &difference) );
+    TEST_ASSERT_EQUAL(
+        0,
+        ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(
+            array,
+            arraySize,
+            K,
+            &difference
+        )
+    );
 
     TEST_ASSERT_EQUAL(5, difference);
-    //TODO */
 }
 
 int main (int argc, char * argv[])

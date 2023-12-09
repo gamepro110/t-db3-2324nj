@@ -62,6 +62,7 @@ int parse(char* inputFile, int* sizePtr, int** arrayPtr, int* arrayK) {
         return -1;
     }
 
+    //TODO remove FILE*, use stdin instead
     FILE* file = fopen(inputFile, "r");
     if (file == NULL) {
         printf("failed to open file '%s'\n", inputFile);
