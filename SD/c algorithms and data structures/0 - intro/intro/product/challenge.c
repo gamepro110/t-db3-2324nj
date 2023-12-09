@@ -84,25 +84,25 @@ int ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(int* array, int size, int 
         return -1;
     }
 
-    int min_val = 0;
-    int max_val = 0;
+    int minTotalValue = 0;
+    int maxTotalValue = 0;
 
-    int minCount = 0;
-    int maxCount = 0;
+    int itemsAddedToMin = 0;
+    int itemsAddedToMax = 0;
     int idx = 0;
     int valueMin = 0;
     int valueMax = 0;
     int reverseIdx = 0;
 
-    while ((minCount < k || maxCount < k) && idx < size) {
+    while ((itemsAddedToMin < k || itemsAddedToMax < k) && idx < maxValue) { //TODO debug through to check why wrong values are being added
         valueMin = countedArray[idx];
-        reverseIdx = (size - 1) - idx;
+        reverseIdx = (maxValue - 1) - idx;
         valueMax = countedArray[reverseIdx];
 
-        if (CalcValue(&minCount, k, valueMin, idx, &min_val)) {
+        if (CalcValue(&itemsAddedToMin, k, valueMin, idx, &minTotalValue)) {
             return -1;
         }
-        if (CalcValue(&maxCount, k, valueMax, reverseIdx, &max_val)) {
+        if (CalcValue(&itemsAddedToMax, k, valueMax, reverseIdx, &maxTotalValue)) {
             return -1;
         }
 
@@ -110,7 +110,7 @@ int ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(int* array, int size, int 
     }
 
     free(countedArray);
-    *difference = max_val - min_val;
+    *difference = maxTotalValue - minTotalValue;
     return 0;
 }
 
