@@ -8,21 +8,18 @@
 
 int main(int argc, char* argv[])
 {
-    if (argc != 3) // 2 originally
-    {
+    if (argc != 2) {
         printf("Please provide argument to select assignment.\n");
         return -1;
     }
 
     char selectedAssignment = atoi(argv[1]);
 
-    printf("assignment: %d f: '%s'\t", selectedAssignment, argv[argc -1]);
-
     int arrSize = 1000000;
     int* arr = NULL; // array, created in parse()
     int k = -1;
 
-    if (parse(argv[2], &arrSize, &arr, &k) == -1) {
+    if (parse(&arrSize, &arr, &k) == -1) {
         return -1;
     }
 

@@ -2,6 +2,6 @@
 
 #include <stddef.h>
 
-int parse(char* inputText, int* sizePtr, int** arrayPtr, int* arrayK);
+int parse(int* sizePtr, int** arrayPtr, int* arrayK);
 
 #endif

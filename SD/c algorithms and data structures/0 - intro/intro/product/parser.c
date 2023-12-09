@@ -4,101 +4,84 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
 
-bool CheckSubStrNull(const char* sub) {
-    return sub == NULL;
-}
+/// @brief gets array size
+/// @return -1 on error, 0 on succes
+int parseArrSize(int* sizePtr);
 
-/// @return -1 on error
-bool GetLineFromFile(char* fileText, int fileContentSize, FILE* file) {
-    if (fileText == NULL || file == NULL) {
-        return NULL;
-    }
+/// @brief parses stdin and fills the array
+/// @return -1 on error, 0 on succes
+int parseArrContent(int* sizePtr, int** arrayPtr);
 
-    char* OutStr = fgets(fileText, fileContentSize, file);
+/// @brief parses stdin and populates arrayK
+/// @return -1 on error, 0 on succes
+int parseArrK(int* arrayK);
 
-    return CheckSubStrNull(OutStr) && OutStr == fileText;
-}
-
-/// @return -1 on error. 0 on succes
-int ParseSingleNr(char* fileText, const int fileContentSize, FILE* file, int* sizePtr) {
-    if (fileText == NULL || file == NULL) {
+int parse(int* sizePtr, int** arrayPtr, int* arrayK) {
+    if (sizePtr == NULL || arrayPtr == NULL || arrayK == NULL) {
         return -1;
     }
 
-    if (GetLineFromFile(fileText, fileContentSize, file)) {
-        printf("failed to fetch arraySize str\n");
-        return -1;
-    }
+    parseArrSize(sizePtr);
 
-    (*sizePtr) = atoi(fileText);
-    return 0;
-}
-
-
-/// @return -1 on error. 0 on succes
-int ParseArrayContent(char* fileText, const int fileContentSize, FILE* file, int** arrayPtr, const int arrSize) {
-    if (GetLineFromFile(fileText, fileContentSize, file)) {
-        printf("failed to fetch arrayContent str\n");
-        return -1;
-    }
-
-    char* arrStr = fileText;
-    int scanVal = 0;
-    int arrIdx = 0;
-    int value = 0;
-
-    while (sscanf(arrStr, "%d%n", &value, &scanVal) == 1) {
-        (*arrayPtr)[arrIdx] = value;
-        arrIdx++;
-        arrStr += scanVal;
-    }
-
-    return 0;
-}
-
-int parse(char* inputFile, int* sizePtr, int** arrayPtr, int* arrayK) {
-    if (inputFile == NULL || sizePtr == NULL || arrayPtr == NULL || arrayK == NULL) {
-        return -1;
-    }
-
-    //TODO remove FILE*, use stdin instead
-    FILE* file = fopen(inputFile, "r");
-    if (file == NULL) {
-        printf("failed to open file '%s'\n", inputFile);
-        return -1;
-    }
-
-    const int fileContentSize = 1000000; // 1 mil
-    char fileText[fileContentSize];
-
-    // setting array size
-    int size = 0;
-    if (ParseSingleNr(fileText, fileContentSize, file, &size)) {
-        printf("failed to parse arraySize\n");
-        // return -1;
-    }
-    *sizePtr = size;
-
-    (*arrayPtr) = (int*)calloc(sizeof(int), size);
+    // make array with correct size
+    (*arrayPtr) = (int*)calloc(sizeof(int), *sizePtr);
 
     if ((*arrayPtr) == NULL) {
         printf("failed to create array\n");
         return -1;
     }
 
-    // filling array
-    if (ParseArrayContent(fileText, fileContentSize * 6, file, arrayPtr, *sizePtr)) {
-        printf("failed to parse arrayContent\n");
+    parseArrContent(sizePtr, arrayPtr);
+    parseArrK(arrayK);
+
+    return 0;
+}
+
+int parseArrSize(int* sizePtr) {
+    if (sizePtr == NULL) {
+        return -1;
     }
 
-    //
-    if (ParseSingleNr(fileText, fileContentSize, file, arrayK)) {
-        printf("failed to parse arrayK");
+    int size = 0;
+
+    if (scanf("%d", &size) < 1) {
+        printf("failed to parse arraySize\n");
     }
 
-    fclose(file);
-    file = NULL;
+    *sizePtr = size;
+    return 0;
+}
 
+int parseArrContent(int* sizePtr, int** arrayPtr) {
+    if (sizePtr == NULL || arrayPtr == NULL) {
+        return -1;
+    }
+
+    int value = 0;
+    int scanVal = 0;
+    int arrIdx = 0;
+
+    while (arrIdx < (*sizePtr) && scanf("%d%n", &value, &scanVal) == 1) {
+        (*arrayPtr)[arrIdx] = value;
+        arrIdx++;
+    }
+
+    return 0;
+}
+
+int parseArrK(int* arrayK) {
+    if (arrayK == NULL) {
+        return -1;
+    }
+
+    int k = 0;
+
+    if (scanf("%d", &k) < 1) {
+        printf("failed to parse arrayK\n");
+    }
+
+    *arrayK = k;
     return 0;
 }
