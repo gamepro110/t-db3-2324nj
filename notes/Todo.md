@@ -37,18 +37,22 @@ tags:
 
 ## #Proftaak
 
-- [ ] poc (check trello)
+- [x] poc (check trello)
 
 ## #SD
 
 - [ ] C data-structure algorithm Challenges (started preemptively)
-  - [ ] 1 - intro
+  - [/] 1 intro
     - [x] part 0
     - [x] part 1
     - [x] part 2
     - [ ] part 3
-      - [ ] discus with ronald how and what
-    - [ ] challenge (optional)
+      - [ ] find 3 algorithms and implement them
+        - can be googled and copied
+  - [ ] 2 linked list vs queue
+  - [ ] 3 stack vs queue
+    - > can be skipped when in a time crunch
+  - [ ] 4 graph tree
 - [ ] c++
   - [ ] bread bake
 

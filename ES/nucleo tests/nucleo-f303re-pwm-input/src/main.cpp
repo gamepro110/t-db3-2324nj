@@ -22,6 +22,94 @@ int main(void)
     MX_GPIO_Init();
     MX_USART2_UART_Init();
 
+    #if 0 // setting pwm output on tim2
+        // enable timer 2
+    RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+
+    // set prescaler
+    // 7.2 MHz / 72 = 100 KHz
+    TIM2->PSC = 72 - 1;
+    
+    // set auto-reload register for desired time period
+    // 100 KHz / 2000 = 50 Hz
+    TIM2->ARR = 20000 - 1;
+
+    // TIM2->CCMR1 (capture/compare mode register)
+    // Set CCMR to output mode
+    TIM2->CCMR1 = (
+        (TIM2->CCMR1 & ~0b11) |
+        (0b00 << 0)
+    );
+
+    // set output mode to pwm
+    TIM2->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2;
+
+    //TIM_CCER_CC1E
+    // enable CCR1 as output
+    TIM2->CCER = (
+        (TIM2->CCER & ~(0b1UL << 0U)) |
+        (0b1 << 0)
+    );
+
+    // set capture/compare 1 output polarity to active high
+    TIM2->CCER = (
+        (TIM2->CCER & ~(0b1UL << 1U)) |
+        (0b0 << 1)
+    );
+    
+    TIM2->CCR1 = 1280;
+
+    // start timer (timer_ControlRegister_ClockENable)
+    TIM2->CR1 |= TIM_CR1_CEN;
+
+    // TIM2->CCMR2 (capture/compare mode register)
+    // Set CCMR to output mode
+    TIM2->CCMR2 = (
+        (TIM2->CCMR2 & ~0b11) |
+        (0b00 << 0)
+    );
+    //TIM_CCER_CC1E;
+
+    // set output mode to pwm
+    TIM2->CCMR1 |= TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2;
+
+    // set capture/compare 2 output polarity to active high
+    TIM2->CCER = (
+        (TIM2->CCER & ~(0b1UL << 4U)) |
+        (0b1 << 4)
+    );
+    //TIM_CCER_CC2E;
+
+    TIM2->CCR2 = 1720;
+
+    // start timer (timer_ControlRegister_ClockENable)
+    TIM2->CR2 |= TIM_CR1_CEN;
+
+    // set pin A0 to alternate function mode
+    GPIOA->MODER = (
+        (GPIOA->MODER & ~GPIO_MODER_MODER0) |
+        (0b10 << GPIO_MODER_MODER0_Pos)
+    );
+
+    // set pin A1 to alternate function mode
+    GPIOA->MODER = (
+        (GPIOA->MODER & ~GPIO_MODER_MODER1) |
+        (0b10 << GPIO_MODER_MODER1_Pos)
+    );
+
+    // set alt func mode AF1 for pin 0
+    GPIOA->AFR[0] = (
+        (GPIOA->AFR[0] & ~GPIO_AFRL_AFRL0) |
+        (0b0001 << GPIO_AFRL_AFRL0_Pos)
+    );
+
+    // set alt func mode AF1 for pin 1
+    GPIOA->AFR[0] = (
+        (GPIOA->AFR[0] & ~GPIO_AFRL_AFRL1) |
+        (0b0001 << GPIO_AFRL_AFRL1_Pos)
+    );
+    #endif
+
     #if 1 // setting pwm input
     //1---------------------------------------------------------
     // enable tim3
@@ -98,8 +186,8 @@ int main(void)
         }
 
         rpm = CalcRpm(delta, curTime);
-
-        snprintf(msgBuf, MSGBUFSIZE, "time: %03lu\t duty: %03lu\t rpm: %0.2f\t angle: %lu\t delta: %02lu\n", curTime, curDuty, rpm, curAngle, delta);
+//TODO fix rpm calc
+        snprintf(msgBuf, MSGBUFSIZE, "time: %03lu\t duty: %03lu\t rpm: %0.2f\t angle: %lu\t delta: %02f\n", curTime, curDuty, rpm, curAngle, delta);
         vprint(msgBuf);
     }
 }
