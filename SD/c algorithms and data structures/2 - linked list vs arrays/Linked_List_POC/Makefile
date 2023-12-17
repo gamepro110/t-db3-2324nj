@@ -19,6 +19,12 @@ all: $(ASSIGNMENT)
 $(ASSIGNMENT): Makefile $(ASSIGNMENT_FILES)  $(HEADER_FILES)
 	$(CC) $(INC_DIRS) $(SYMBOLS) $(ASSIGNMENT_FILES) -o $(ASSIGNMENT)
 
+run: $(ASSIGNMENT)
+	./$(ASSIGNMENT)
+
+runValgrind: $(ASSIGNMENT)
+	valgrind -s --leak-check=yes --show-leak-kinds=all ./$(ASSIGNMENT)
+
 clean:
 	@rm -f $(ASSIGNMENT)
 	@rm -rf kwinject.out .kwlp .kwps

@@ -14,7 +14,7 @@ ASSIGNMENT_FILES=$(SHARED_FILES) \
 
 ASSIGNMENT_TEST_FILES=$(SHARED_FILES) \
 	           $(UNITY_FOLDER)/unity.c \
-	           test/empty_test.c
+	           test/linkedList_test.c
 
 HEADER_FILES=product/*.h
 

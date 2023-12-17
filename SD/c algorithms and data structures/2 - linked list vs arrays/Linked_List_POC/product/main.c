@@ -18,6 +18,19 @@
  */
 static void PrintAllElements()
 {
+    Element* elem = ListGetHead();
+
+    if (elem == NULL) {
+        printf("  <empty>\n");
+        return;
+    }
+
+    int idx = 0;
+    while (elem != NULL) {
+        printf("% 3d: addr: % 3d size: % 3d\n", idx, elem->address, elem->size);
+        elem = elem->next;
+        idx++;
+    }
 }
 
 int main()
