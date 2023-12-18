@@ -193,8 +193,8 @@ int main(void)
 }
 
 int32_t CalcDeg(const int32_t& curDuty, const uint32_t& unitsFullCircle) {
-    const int32_t dutyCycleMin{ 29 };
-    const int32_t dutyCycleMax{ 966 };
+    const int32_t dutyCycleMin{ 26 };
+    const int32_t dutyCycleMax{ 972 };
     return ((curDuty - dutyCycleMin) * unitsFullCircle)/(dutyCycleMax - dutyCycleMin + 1);
 }
 
