@@ -2,7 +2,7 @@
 #define LINKED_LIST_H
 
 typedef struct element Element;
-struct element {
+struct element { //TODO add void* data
     int      address;
     int      size;
     Element* next;

@@ -12,8 +12,7 @@ void MX_FREERTOS_Init(void);
 int32_t CalcDeg(const int32_t& curDuty, const uint32_t& unitsFullCircle);
 double CalcRpm(const double& delta, const int32_t& time);
 
-int main(void)
-{
+int main(void) {
     const int MSGBUFSIZE = 100;
     char msgBuf[MSGBUFSIZE];
 
@@ -22,7 +21,7 @@ int main(void)
     MX_GPIO_Init();
     MX_USART2_UART_Init();
 
-    #if 0 // setting pwm output on tim2
+    #if 1 // setting pwm output on tim2
         // enable timer 2
     RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
 
@@ -171,23 +170,29 @@ int main(void)
     int32_t curAngle{ 0 };
     int32_t lastAngle{ 0 };
 
-
-
     while (1) {
-        curTime = TIM3->CCR1;
-        curDuty = TIM3->CCR2;
-        delta = curAngle - lastAngle;
+        curTime = static_cast<int32_t>(TIM3->CCR1);
+        curDuty = static_cast<int32_t>(TIM3->CCR2);
+        delta = static_cast<double>(curAngle - lastAngle);
+
+        if (delta > 340) { // fix masive delta
+            delta -= 360;
+        }
+        if (delta < -340) {
+            delta += 360;
+        }
 
         lastAngle = curAngle;
         curAngle = CalcDeg(curDuty, 360);
 
-        if (delta < 0) {
-            delta *= -1;
-        }
-
-        rpm = CalcRpm(delta, curTime);
-//TODO fix rpm calc
-        snprintf(msgBuf, MSGBUFSIZE, "time: %03lu\t duty: %03lu\t rpm: %0.2f\t angle: %lu\t delta: %02f\n", curTime, curDuty, rpm, curAngle, delta);
+        rpm = CalcRpm(delta, curTime / 100);
+        // snprintf(msgBuf, MSGBUFSIZE, "time: %03lu\t duty: %03lu\t rpm: %0.2f\t angle: %lu\t delta: %02f\n", curTime, curDuty, rpm, curAngle, delta);
+        // snprintf(msgBuf, MSGBUFSIZE, "rpm: %0.2f\r", rpm);
+        snprintf(
+            msgBuf,
+            MSGBUFSIZE,
+            "cd: % 4d\t c^: %03d\t !^: %03d\t d^: %+2.1f\t time: %03d\t rpm: %+2.2f\n",
+            curDuty, curAngle, lastAngle, delta, curTime, rpm);
         vprint(msgBuf);
     }
 }

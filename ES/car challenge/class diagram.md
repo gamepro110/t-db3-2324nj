@@ -39,7 +39,7 @@ s2 --> sm2
 | component | amount | input | output |
 | :---: | :---: | :---: | :---: |
 | servo | 2 | pwm in (50hz) | 1: motor movement, 2: pwm out (910hz) |
-| distance FeedbackSensor | 1 | pin trigger pulse | ? |
+| distance FeedbackSensor | 1 | pin trigger pulse | pwm timing |
 | button | 4 | physical interaction | interrupt |
 <!-- |  |  |  | -->
 
@@ -49,20 +49,17 @@ s2 --> sm2
 
 ```mermaid
 classDiagram
-    class CarSystem {
-        -osMessageQueueId_t queueId
-    }
     class TSQueue {
         +Read()
         +Write()
     }
+    class CarSystem {
+        <<active>>
+        -osMessageQueueId_t queueId
+    }
     class MotorController {
         <<active>>
         -osMessageQueueId_t queueId
-        -wheelLeft : IMotor
-        -wheelRight : IMotor
-        -fbLeft : IFeedbackSensor
-        -fbRight : IFeedbackSensor 
         +Setup()
         +Loop()
     }
@@ -71,57 +68,101 @@ classDiagram
         +SetSpeed(int8_t value)
     }
     class ServoMotor {
+        -NucleoPin motorInputPin
     }
     class ManualControlPanel {
         <<active>>
         -osMessageQueueId_t queueId
+        -IButton but1
+        -IButton but2
+        -IButton but3
+        -IButton but4
         +Setup()
         +Loop()
     }
-    class IButton {
-        +SetupIrq()
+    class IBtnIRQ {
         +HandleIRQ()
+        +SetupIrq()
+    }
+    class IButton {
         +shortPress() action
         +LongPress() action
     }
-    class Button
+    class Button {
+        -NucleoPin btnPin
+    }
     class IDistanceSensor {
-        GetDistance() float
+        +GetDistance() float
     }
     class HC_SR04_DistSensor {
+        +HC_SR04_DistSensor( NucleoPin echo, NucleoPin trigger)
+        -NucleoPin echoPin
+        -NucleoPin triggerPin
     }
-    class Pid
+    class Pid {
+        -int kp
+        -int ki
+        -int kd
+    }
     class IFeedbackSensor {
-        GetSpeed() float
+        +GetSpeed() float
+    }
+    class FeedbackSensor {
+        +FeedbackSensor(NucleoPin inputSignal)
+        -NucleoPin InputSignalPin
+    }
+    class PinMode {
+        <<enum>>
+        digital_input
+        digital_input_pullup
+        digital_output
+        altMode
+    }
+    class NucleoPin {
+        -GpioTypedef block
+        -uint8_t pin
+        -PinMode mode
+        +NucleoPin(GpioTypedef* block, uint8_t pinNr, PinMode mode)
+        +SetAltMode(unit8_t mode)
+        +Setup() bool
+        +Write()
+        +Read() bool
     }
 
     %% *.. == is a
     %% <-- == has a
     %% <|.. == implements interface
 
-    TSQueue <-- ManualControlPanel
-    TSQueue <-- MotorController
-    CarSystem --> ManualControlPanel
-    ManualControlPanel --> "2" IButton
+    TSQueue -- ManualControlPanel
+    TSQueue -- MotorController
+    CarSystem o-- ManualControlPanel
+    ManualControlPanel o-- "2" IButton
+    IBtnIRQ <-- IButton
     IButton <|.. Button
 
-    MotorController --> "2" IMotor
-    MotorController --> "2" IFeedbackSensor
-    MotorController --> "2" Pid
+    MotorController o-- "2" IMotor
+    MotorController o-- "2" IFeedbackSensor
+    MotorController o-- "2" Pid
 
     IMotor <|.. ServoMotor
 
     CarSystem --> MotorController
 
-    CarSystem --> IDistanceSensor
+    CarSystem o-- IDistanceSensor
     IDistanceSensor <|.. HC_SR04_DistSensor
 
     IFeedbackSensor <|.. FeedbackSensor
+
+    HC_SR04_DistSensor o-- NucleoPin
+    FeedbackSensor o-- NucleoPin
+    ServoMotor o-- NucleoPin
+    Button o-- NucleoPin
+    NucleoPin o-- PinMode
 ```
 
 ### TODO
 
-- change some `has a` arrows to `aggragation` arrows
+- why does motorController have 2 instances of the interfaces??
 
 ### notes
 
