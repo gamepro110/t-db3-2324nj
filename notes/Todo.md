@@ -7,21 +7,20 @@ tags:
 
 ## #ES
 
-- [ ] look at timer challenge
-  - [/] PWM
+- [x] look at timer challenge
+  - [x] PWM
     - [x] input
     - [x] output
-    - [ ] check timer challenge
-      - [ ] write report
 - [ ] look at closed-loop challenge
   - [ ] requirements
     - [ ] software serial
-      - [x] polling
+      - [/] polling
+        - [x] arduino
+        - [ ] nucleo
       - [ ] interrupt
 - [ ] car challenge
   - [x] [main question](<ES/notes.md#main question>)
-  - [ ] [sub questions](<ES/notes.md#sub questions>)
-    - [ ] update
+  - [x] [sub questions](<ES/notes.md#sub questions>)
   - [ ] [class diagram](<../ES/car challenge/class diagram.md>) [wip]
 
 ## #COMM
@@ -50,6 +49,7 @@ tags:
       - [ ] find 3 algorithms and implement them
         - can be googled and copied
   - [ ] 2 linked list vs queue
+    - started, trouble logic
   - [ ] 3 stack vs queue
     - > can be skipped when in a time crunch
   - [ ] 4 graph tree
@@ -58,4 +58,4 @@ tags:
 
 ## #PO
 
-- [ ] update [portfolio](<https://fhict.instructure.com/accounts/1/external_tools/23360?launch_type=global_navigation>) for sprint 3
+- update [portfolio](<https://fhict.instructure.com/accounts/1/external_tools/23360?launch_type=global_navigation>) for next sprint
