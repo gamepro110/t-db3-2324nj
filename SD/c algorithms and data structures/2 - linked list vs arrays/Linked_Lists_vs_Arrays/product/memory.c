@@ -11,13 +11,7 @@ static LinkedList AllocList;
  * post: memory administration is constructed
  */
 void ConstructMemory(int size) {
-    (void)size; //TODO
-    (void)StartAddress; //TODO
-
-    (void)freeList;
-    (void)AllocList;
-
-    ListAddAfter(freeList, StartAddress, size, NULL);
+    ListAddAfter(&freeList, StartAddress, size, NULL);
 }
 
 /* function: DestructMemory
@@ -25,8 +19,8 @@ void ConstructMemory(int size) {
  * post: memory administration is destructed
  */
 void DestructMemory() {
-    ListRemoveAll(AllocList);
-    ListRemoveAll(freeList);
+    ListRemoveAll(&AllocList);
+    ListRemoveAll(&freeList);
 }
 
 
@@ -39,6 +33,9 @@ int PrintList(FILE* stream) {
     if (stream == NULL) {
         return -1;
     }
+
+    //TODO call func that prints list on both free and alloc + check format from output example
+
     return -1;
 }
 
@@ -48,6 +45,10 @@ int PrintList(FILE* stream) {
  *       otherwise the first block that is large enough is claimed and the start address is returned
  */
 int ClaimMemory(int nrofBytes) {
+    //TODO resize freelist (variable only)
+    //TODO update freelist address
+    //TODO make new element for alloc list with original address of freelist and size requested
+
     (void)nrofBytes; //TODO
     return -1;
 }
@@ -58,6 +59,9 @@ int ClaimMemory(int nrofBytes) {
  *
  */
 int FreeMemory(int addr) {
+    //TODO move element from alloc to free list
+    //TODO if element + size + 1 == next element. merge
+
     (void)addr; //TODO
     return -1;
 }
