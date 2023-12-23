@@ -5,6 +5,7 @@ typedef struct element Element;
 struct element { //TODO add void* data
     int      address;
     int      size;
+    //void*    data;
     Element* next;
 };
 

@@ -4,7 +4,7 @@
 static const int StartAddress = 1000;
 
 static LinkedList freeList;
-static LinkedList AllocList;
+static LinkedList allocList;
 
 /* function: ConstructMemory
  * pre: -
@@ -19,10 +19,25 @@ void ConstructMemory(int size) {
  * post: memory administration is destructed
  */
 void DestructMemory() {
-    ListRemoveAll(&AllocList);
+    ListRemoveAll(&allocList);
     ListRemoveAll(&freeList);
 }
 
+void printSelectedList(FILE* stream, LinkedList* list) {
+    Element* elem = list->head;
+    int idx = 0;
+    
+    if (elem == NULL) {
+        fprintf(stream, "  <empty>\n");
+        return;
+    }
+
+    while (elem != NULL) {
+        fprintf(stream, "  %d:  addr:%d  size: %d\n", idx, elem->address, elem->size);
+        elem = elem->next;
+        idx++;
+    }
+}
 
 /* function: PrintList
  * pre: -
@@ -34,7 +49,11 @@ int PrintList(FILE* stream) {
         return -1;
     }
 
-    //TODO call func that prints list on both free and alloc + check format from output example
+    fprintf(stream, "FreeList:\n---------\n");
+    printSelectedList(stream, &freeList);
+
+    fprintf(stream, "AllocList:\n----------\n");
+    printSelectedList(stream, &allocList);
 
     return -1;
 }
@@ -45,12 +64,31 @@ int PrintList(FILE* stream) {
  *       otherwise the first block that is large enough is claimed and the start address is returned
  */
 int ClaimMemory(int nrofBytes) {
+    Element* freeHead = freeList.head;
+    while (freeHead != NULL && freeHead->next != NULL) {
+        freeHead = freeHead->next;
+    }
+
+    if (freeHead->size < nrofBytes) {
+        return -1;
+    }
+
     //TODO resize freelist (variable only)
     //TODO update freelist address
-    //TODO make new element for alloc list with original address of freelist and size requested
+    Element* elem = freeList.head;
 
-    (void)nrofBytes; //TODO
-    return -1;
+    elem->address += nrofBytes;
+    elem->size -= nrofBytes;
+
+    //TODO make new element for alloc list with original address of freelist and size requested
+    Element* allocElem = allocList.head;
+    while (allocElem != NULL) {
+        allocElem = allocElem->next; // get last elem
+    }
+    //! debug check if this function is correct
+    ListAddAfter(&allocList, StartAddress, nrofBytes, allocElem);
+
+    return 0;
 }
 
 /* function: FreeMemory
