@@ -136,11 +136,19 @@ int ListRemove(LinkedList* list, Element** element) {
 
     Element** prev = &list->head;
 
-    while ((*prev) != (*element) && (*prev)->next != NULL) {
-        (*prev) = (*prev)->next;
+    // if head != element
+    if ((*prev)->address != (*element)->address) {
+        while ((*prev)->next != (*element) && (*prev)->next != NULL) {
+            (*prev) = (*prev)->next;
+        }
+
+        (*prev)->next = (*element)->next;
+    }
+    else {
+        // if head == element
+        list->head = (*element)->next;
     }
 
-    (*prev) = (*element)->next;
     free(*element);
     (*element) = NULL;
 
