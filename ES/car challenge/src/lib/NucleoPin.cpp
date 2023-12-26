@@ -5,16 +5,22 @@ NucleoPin::NucleoPin(GPIO_TypeDef* block, uint8_t pinNr, PinMode mode) :
 {
 }
 
-void NucleoPin::SetAltMode(const AltModeValue& modeValue) {
+NucleoPin::NucleoPin(GPIO_TypeDef* block, uint8_t pinNr, const AltModeValue& value) :
+    block(block), pin(pinNr), pinMode(PinMode::altMode)
+{
+    SetAltMode(value);
+}
+
+void NucleoPin::SetAltMode(const AltModeValue& modeValue) const {
     block->AFR[0] |= modeValue.low;
     block->AFR[1] |= modeValue.high;
 }
 
-bool NucleoPin::Setup() {
+bool NucleoPin::Setup() const {
     const uint8_t digitalOutput{ 0b01 };
     const uint8_t digitalInput{ 0b00 };
     const uint8_t pullUp{ 0b01 };
-    // const uint8_t altMode{ 0b10 };
+    const uint8_t altMode{ 0b10 };
 
     switch (pinMode)
     {
@@ -30,11 +36,11 @@ bool NucleoPin::Setup() {
         break;
         }
     case PinMode::altMode: {
-        return false;
-        // break;
+        block->MODER |= (altMode << PinModerLoc());
+        break;
         }
     default:
-        break;
+        return false;
     }
 
     return true;
