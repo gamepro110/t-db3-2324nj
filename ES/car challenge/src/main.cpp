@@ -45,12 +45,17 @@ int main(void) {
     MX_GPIO_Init();
     MX_USART2_UART_Init();
 
+    /*
     osMessageQueueId_t queueId = nullptr;
 
+    vprint("\n");
+
     while(queueId == NULL) {
-        vprint("setting up queue");
+        vprint("setting up queue\r");
         queueId = osMessageQueueNew(20, sizeof(MsgQueueData), nullptr);
     }
+
+    vprint("\n");
 
     CarSystem system{ queueId };
 
@@ -77,36 +82,32 @@ int main(void) {
 
     ManualControlPanel controlPanel{ button1, button2, button3, button4 };
 
-    NucleoPin pinMotorLeft = NucleoPin{ GPIOA, 0, PinMode::altMode };
-    AltModeValue v{ 0U };
-    pinMotorLeft.SetAltMode(v);
-    ServoMotor motorLeft{ pinMotorLeft, false };
+    ServoMotor motorLeft{ { GPIOA, 0, 0 }, false };
+    ServoMotor motorRight{ { GPIOA, 0, 0 }, false };
 
-    NucleoPin pinMotorRight = NucleoPin{ GPIOA, 0, PinMode::altMode };
-    pinMotorRight.SetAltMode(v);
-    ServoMotor motorRight{ pinMotorRight, false };
-
-    NucleoPin pinSensorLeft{ GPIOA, 0, PinMode::altMode };
-    FeedbackSensor sensorLeft{
-        pinSensorLeft,
-    };
-
-    NucleoPin pinSensorRight{ GPIOA, 0, PinMode::altMode };
-    FeedbackSensor sensorRight{
-        pinSensorRight,
-    };
+    FeedbackSensor sensorLeft{ { GPIOA, 0, 0 } };
+    FeedbackSensor sensorRight{ { GPIOA, 0, 0 } };
 
     MotorController motorController{
         motorLeft,
         motorRight,
         sensorLeft,
         sensorRight
-    };//*/
+    };
+    //*/
 
     HC_SR04_DistSensor distSensor{
-        NucleoPin{ GPIOA, 0, PinMode::altMode },
-        NucleoPin{ GPIOA, 0, PinMode::altMode }
+        NucleoPin{ GPIOB, 6, 2 },
+        NucleoPin{ GPIOB, 8, 2 },
+        HardwareTimer{ TIM4 }
     };
+
+#   if !USE_FREERTOS
+    //! temp!! (call and vars)
+    if (distSensor.Setup(72, 100000, 3, 100, 1, 2)) {
+        vprint("failed setting up the distance sensor\n");
+    }
+#   endif
 
 #   if USE_FREERTOS
     const osThreadAttr_t defaultTask_attributes = {
@@ -121,7 +122,6 @@ int main(void) {
         .reserved = 0
     };
 
-
     /* Init scheduler */
     // ES Course Comments: Uncomment the three lines below to enable FreeRTOS.
     osKernelInitialize(); /* Call init function for freertos objects (in freertos.c) */
@@ -133,14 +133,31 @@ int main(void) {
 
     /* We should never get here as control is now taken by the scheduler */
     /* Infinite loop */
-    snprintf(msgBuf, MSGBUFSIZE, "%s", "Hello World!\r\n");
+    snprintf(msgBuf, MSGBUFSIZE, "%s", "Hello World!\n");
     HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
 
+    uint8_t dist = 0;
+    uint32_t tim4Cnt = 0;
+    uint32_t timCcr1 = 0;
+    uint32_t timCcr2 = 0;
+    uint32_t timCcr3 = 0;
+    uint32_t timCcr4 = 0;
+
     while (1) {
-        snprintf(msgBuf, MSGBUFSIZE, "%s", "In loop!\n");
+        dist = distSensor.GetDistance();
+        tim4Cnt = TIM4->CNT;
+        timCcr1 = TIM4->CCR1;
+        timCcr2 = TIM4->CCR2;
+        timCcr3 = TIM4->CCR3;
+        timCcr4 = TIM4->CCR4;
+
+        snprintf(
+            msgBuf,
+            MSGBUFSIZE,
+            "d: % 3d tim: % 6ld cc1: %-3ld cc2: %-3ld cc3: %-3ld cc4: %-3ld   \r",
+            dist, tim4Cnt, timCcr1, timCcr2, timCcr3, timCcr4
+        );
         HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-        GPIOA->ODR ^= (1 << 5); // Toggle GPIO pin PA5 (onboard green LED).
-        HAL_Delay(1000);
     }
 }
 

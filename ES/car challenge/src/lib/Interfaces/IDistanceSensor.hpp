@@ -1,9 +1,12 @@
 #ifndef LIB_IDISTANCESENSOR_HPP_
 #define LIB_IDISTANCESENSOR_HPP_
 
+#include <cstdint>
+
 class IDistanceSensor {
 public:
-    virtual float GetDistance() = 0;
+    virtual ~IDistanceSensor() {}
+    virtual uint8_t GetDistance() = 0;
 };
 
 #endif

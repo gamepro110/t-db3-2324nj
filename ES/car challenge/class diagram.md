@@ -163,6 +163,7 @@ classDiagram
 ### TODO
 
 - why does motorController have 2 instances of the interfaces??
+- add `HardwareTimer` to diagram
 
 ### notes
 
