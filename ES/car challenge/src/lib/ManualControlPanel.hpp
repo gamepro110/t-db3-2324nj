@@ -5,17 +5,15 @@
 
 class ManualControlPanel {
 public:
-    ManualControlPanel(IButton& btn1, IButton& btn2, IButton& btn3, IButton& btn4);
+    ManualControlPanel(IButton& btn1, IButton& btn2);
     ~ManualControlPanel();
 
-    void Setup();
+    bool Setup();
     void Loop();
 
 private:
     IButton& button1;
     IButton& button2;
-    IButton& button3;
-    IButton& button4;
 };
 
 #endif

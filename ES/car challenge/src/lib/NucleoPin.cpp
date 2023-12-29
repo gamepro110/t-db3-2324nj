@@ -63,8 +63,12 @@ bool NucleoPin::Read() {
     return (block->IDR & (1 << pin)) == 1;
 }
 
-const uint8_t &NucleoPin::GetPinNr() const {
+const uint8_t& NucleoPin::GetPinNr() const {
     return pin;
+}
+
+const GPIO_TypeDef* const NucleoPin::GetPinBlock() const {
+    return block;
 }
 
 constexpr uint8_t NucleoPin::PinModerLoc() const {

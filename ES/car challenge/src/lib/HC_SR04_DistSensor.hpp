@@ -10,7 +10,8 @@ public:
     HC_SR04_DistSensor(const NucleoPin pinEcho, const NucleoPin pinTrigger, const HardwareTimer tim);
     ~HC_SR04_DistSensor() override;
 
-    int Setup(const uint16_t prescaler, const uint32_t resetValue, const uint8_t outputChannel, const uint32_t outputCCR, const uint8_t inputChannel1, const uint8_t inputChannel2);
+    bool Setup() override;
+    bool SetupTimer(const uint16_t prescaler, const uint32_t resetValue, const uint8_t outputChannel, const uint32_t outputCCR, const uint8_t inputChannel1, const uint8_t inputChannel2);
     uint8_t GetDistance() override;
 
 private:

@@ -38,6 +38,7 @@ public:
     bool Read();
 
     const uint8_t& GetPinNr() const;
+    const GPIO_TypeDef* const GetPinBlock() const;
 
 private:
     constexpr uint8_t PinModerLoc() const;

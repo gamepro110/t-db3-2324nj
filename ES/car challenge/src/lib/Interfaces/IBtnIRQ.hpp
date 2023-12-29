@@ -5,7 +5,7 @@ class IBtnIrq {
 public:
     virtual ~IBtnIrq() {}
     virtual void HandleIrq() = 0;
-    virtual void SetupIrq() = 0;
+    virtual bool SetupIrq() = 0;
 };
 
 #endif

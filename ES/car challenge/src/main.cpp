@@ -3,6 +3,7 @@
 #include "lib/Interfaces/IDistanceSensor.hpp"
 #include "lib/Interfaces/IFeedbackSensor.hpp"
 
+#include "lib/MsgQueueData.hpp"
 #include "lib/CarSystem.hpp"
 #include "lib/ManualControlPanel.hpp"
 #include "lib/FeedbackSensor.hpp"
@@ -12,6 +13,8 @@
 #include "lib/Pid.hpp"
 #include "lib/ServoMotor.hpp"
 #include "lib/HC_SR04_DistSensor.hpp"
+#include "lib/Logger.hpp"
+#include "lib/Watchdog.hpp"
 
 #include "main.h"
 #include "cmsis_os.h"
@@ -20,147 +23,226 @@
 #include <string.h>
 #include <stdio.h>
 
-#define USE_FREERTOS 0
+#define EnableWatchdog 1
+#define USE_FREERTOS 1
 
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 
-struct MsgQueueData {
-    int butNr;
-    int Duration;
+#   if USE_FREERTOS
+    // const osThreadAttr_t defaultTask_attributes = {
+    //     .name = "defaultTask",
+    //     .attr_bits = osThreadDetached,
+    //     .cb_mem = NULL,
+    //     .cb_size = 0,
+    //     .stack_mem = NULL,
+    //     .stack_size = 128 * 4,
+    //     .priority = (osPriority_t)osPriorityNormal,
+    //     .tz_module = 0,
+    //     .reserved = 0
+    // };
+
+    const osThreadAttr_t CarSysTask_attributes = {
+        .name = "carSysTask",
+    };
+    const osThreadAttr_t MCPTask_attributes = {
+        .name = "mcpTask",
+    };
+    const osThreadAttr_t watchdogTask_attributes = {
+        .name = "watchdogTask"
+    };
+#   endif
+
+IButton* but0{ nullptr };
+IButton* but1{ nullptr };
+
+Watchdog watchdog{
+    #if EnableWatchdog
+    1 << 11
+    #else
+    0
+    #endif
 };
 
-void vprint(const char* text) {
-    const int MSGBUFSIZE = 80;
-    char msgBuf[MSGBUFSIZE];
-    snprintf(msgBuf, MSGBUFSIZE, "%s", text);
-    HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+void carSysThreadFunc(void* sys);
+void mcpThreadFunc(void* mcpPtr);
+void watchdogTaskFunc(void* watchdog);
+void thing(void*) {
+    while (1) {
+        osDelay(1);
+    }
 }
 
 int main(void) {
-    const int MSGBUFSIZE = 80;
-    char msgBuf[MSGBUFSIZE];
     HAL_Init();
     SystemClock_Config();
     MX_GPIO_Init();
     MX_USART2_UART_Init();
+    logger.Log("program start\n");
 
-    /*
-    osMessageQueueId_t queueId = nullptr;
+    osMessageQueueId_t buttonQueueId = nullptr;
+    osMessageQueueId_t sensorQueueId = nullptr;
 
-    vprint("\n");
+#   if USE_FREERTOS
 
-    while(queueId == NULL) {
-        vprint("setting up queue\r");
-        queueId = osMessageQueueNew(20, sizeof(MsgQueueData), nullptr);
+    while(buttonQueueId == NULL) {
+        buttonQueueId = osMessageQueueNew(20, sizeof(BtnMsgData), nullptr);
+    }
+    while(sensorQueueId == NULL) {
+        sensorQueueId = osMessageQueueNew(20, sizeof(SensorMsgData), nullptr);
     }
 
-    vprint("\n");
-
-    CarSystem system{ queueId };
-
-    Button button1 = Button({
-        NucleoPin{ GPIOA, 0, PinMode::digital_input_pullup },
-        []{},
-        []{}
-    });
-    Button button2 = Button({
-        NucleoPin{ GPIOA, 0, PinMode::digital_input_pullup },
-        []{},
-        []{}
-    });
-    Button button3 = Button({
-        NucleoPin{ GPIOA, 0, PinMode::digital_input_pullup },
-        []{},
-        []{}
-    });
-    Button button4 = Button({
-        NucleoPin{ GPIOA, 0, PinMode::digital_input_pullup },
-        []{},
-        []{}
-    });
-
-    ManualControlPanel controlPanel{ button1, button2, button3, button4 };
-
-    ServoMotor motorLeft{ { GPIOA, 0, 0 }, false };
-    ServoMotor motorRight{ { GPIOA, 0, 0 }, false };
-
-    FeedbackSensor sensorLeft{ { GPIOA, 0, 0 } };
-    FeedbackSensor sensorRight{ { GPIOA, 0, 0 } };
-
-    MotorController motorController{
-        motorLeft,
-        motorRight,
-        sensorLeft,
-        sensorRight
-    };
-    //*/
-
-    HC_SR04_DistSensor distSensor{
+    HC_SR04_DistSensor sensor{
         NucleoPin{ GPIOB, 6, 2 },
         NucleoPin{ GPIOB, 8, 2 },
         HardwareTimer{ TIM4 }
     };
 
+    CarSystem carSystem{
+        buttonQueueId,
+        sensor
+    };
+#   endif
+
+    Button button0 = Button({
+        NucleoPin{ GPIOC, 0, PinMode::digital_input_pullup },
+        EXTI0_IRQn,
+        buttonQueueId,
+        // []{ logger.Log("shortPress c0\n"); },
+        // []{ logger.Log("longPress c0\n"); }
+    });
+    Button button1 = Button({
+        NucleoPin{ GPIOC, 1, PinMode::digital_input_pullup },
+        EXTI1_IRQn,
+        buttonQueueId,
+        // []{ logger.Log("shortPress c1"); },
+        // []{ logger.Log("longPress c1"); }
+    });
+
+    but0 = &button0;
+    but1 = &button1;
+
+    ManualControlPanel controlPanel{
+        button0,
+        button1
+    };
+
+
 #   if !USE_FREERTOS
     //! temp!! (call and vars)
-    if (distSensor.Setup(72, 100000, 3, 100, 1, 2)) {
-        vprint("failed setting up the distance sensor\n");
+    if (!controlPanel.Setup()) {
+        logger.Error("failed setting up MCP\n");
     }
 #   endif
 
 #   if USE_FREERTOS
-    const osThreadAttr_t defaultTask_attributes = {
-        .name = "defaultTask",
-        .attr_bits = osThreadDetached,
-        .cb_mem = NULL,
-        .cb_size = 0,
-        .stack_mem = NULL,
-        .stack_size = 128 * 4,
-        .priority = (osPriority_t)osPriorityNormal,
-        .tz_module = 0,
-        .reserved = 0
-    };
-
     /* Init scheduler */
     // ES Course Comments: Uncomment the three lines below to enable FreeRTOS.
     osKernelInitialize(); /* Call init function for freertos objects (in freertos.c) */
 
-    // add threads
+    osThreadId_t threadWatchdog     { osThreadNew(watchdogTaskFunc, &watchdog, &watchdogTask_attributes) };
+    osThreadId_t threadCarSys       { osThreadNew(carSysThreadFunc, &carSystem, &CarSysTask_attributes) };
+    // osThreadId_t threadMCP          { osThreadNew(mcpThreadFunc, &controlPanel, &MCPTask_attributes) };
+    osThreadId_t threadThing        { osThreadNew(thing, nullptr, nullptr) };
+
+    // add threads.
+    if (!(threadWatchdog
+        && threadCarSys
+        // && threadMCP
+        && threadThing
+    )) {
+        logger.Error("failed setting up threads");
+    }
 
     osKernelStart(); /* Start scheduler */
-#   endif
-
+#   else
     /* We should never get here as control is now taken by the scheduler */
     /* Infinite loop */
-    snprintf(msgBuf, MSGBUFSIZE, "%s", "Hello World!\n");
-    HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-
-    uint8_t dist = 0;
-    uint32_t tim4Cnt = 0;
-    uint32_t timCcr1 = 0;
-    uint32_t timCcr2 = 0;
-    uint32_t timCcr3 = 0;
-    uint32_t timCcr4 = 0;
+    logger.Log("Hello World!\n");
 
     while (1) {
-        dist = distSensor.GetDistance();
-        tim4Cnt = TIM4->CNT;
-        timCcr1 = TIM4->CCR1;
-        timCcr2 = TIM4->CCR2;
-        timCcr3 = TIM4->CCR3;
-        timCcr4 = TIM4->CCR4;
+        controlPanel.Loop();
+    }
+#   endif
+}
 
-        snprintf(
-            msgBuf,
-            MSGBUFSIZE,
-            "d: % 3d tim: % 6ld cc1: %-3ld cc2: %-3ld cc3: %-3ld cc4: %-3ld   \r",
-            dist, tim4Cnt, timCcr1, timCcr2, timCcr3, timCcr4
-        );
-        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+//! irq are broken inside freeRtos..... wtf
+/*
+// create task for irq?
+// vTaskSuspend(nullptr) pauses its own task
+// BaseType_t checkIfYieldRequired{ }; //<https://youtu.be/8lJuSn1xKfY?t=397>
+extern "C" void EXTI0_IRQHandler(void) {
+    // if (EXTI->PR & EXTI_PR_PR0) {
+        EXTI->PR |= EXTI_PR_PR0;
+
+        if (but0 != nullptr) {
+            but0->HandleIrq();
+        }
+    // }
+}
+
+extern "C" void EXTI1_IRQHandler(void) {
+    // if (EXTI->PR & EXTI_PR_PR1) {
+        EXTI->PR |= EXTI_PR_PR1;
+
+        if (but1 != nullptr) {
+            but1->HandleIrq();
+        }
+    // }
+}
+//*/
+
+void carSysThreadFunc(void* sys) {
+    CarSystem* car = (CarSystem*)sys;
+
+    if (car == nullptr) {
+        osThreadExit();
+        return;
+    }
+
+    if (!car->Setup()) {
+        logger.Error("failed to init MCP. terminated thread\n\n");
+        osThreadExit();
+    }
+
+    while (car != nullptr) {
+        car->Update();
+    }
+
+    osThreadExit();
+}
+
+void mcpThreadFunc(void* mcpPtr) {
+    ManualControlPanel* mcp = (ManualControlPanel*)mcpPtr; // void* > mcp* > mcp&
+
+    if (mcp == nullptr) {
+        osThreadExit();
+        return;
+    }
+
+    watchdog.Reset();
+
+    if (!mcp->Setup()) {
+        logger.Error("failed to init MCP. terminated thread\n\n");
+        osThreadExit();
+    }
+
+    while (mcp != nullptr) {
+        mcp->Loop();
+    }
+
+    osThreadExit();
+}
+
+void watchdogTaskFunc(void* watchdog) {
+    Watchdog& wd = *(Watchdog*)watchdog;
+
+    while (1) {
+        wd.Reset();
     }
 }
 
+#if 1 // hidden
 /**
  * @brief System Clock Configuration
  * @retval None
@@ -264,3 +346,4 @@ void assert_failed(uint8_t *file, uint32_t line)
 #endif /* USE_FULL_ASSERT */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+#endif
