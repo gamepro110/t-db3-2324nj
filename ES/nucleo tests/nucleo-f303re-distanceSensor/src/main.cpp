@@ -19,29 +19,21 @@ int main(void) {
     MX_USART2_UART_Init();
     const int MSGBUFSIZE = 80;
     char msgBuf[MSGBUFSIZE];
-    snprintf(msgBuf, MSGBUFSIZE, "%s", "Hello World!\r\n");
+    snprintf(msgBuf, MSGBUFSIZE, "%s", "Hello World!\n");
     HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
 
     NucleoPin pb6{ GPIOB, 6, 2 };
-    NucleoPin pb8{ GPIOB, 8, 2 }; //TODO check correct alt func setup
+    NucleoPin pb8{ GPIOB, 8, 2 };
     UltraSonicDistSensor sonicDist{
         TIM4,
         pb6,
         pb8
     };
 
-    const char txt[] = "%p:% 1d  afl:% 8x  afh:% 8x\n";
-
-    snprintf(msgBuf, MSGBUFSIZE, txt, pb6.GetPinBlock(), pb6.GetPinNr(), GPIOB->AFR[0], GPIOB->AFR[1]);
-    HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-
-    if (!sonicDist.Setup(72, 100000, 100, 3, 1, 2)) {
+    if (!sonicDist.Setup(72U, 100000U, 100U, 3U, 1U, 2U)) {
         snprintf(msgBuf, MSGBUFSIZE, "%s", "failed setting up ultrasonic sensor\n");
         HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
     }
-
-    snprintf(msgBuf, MSGBUFSIZE, txt, pb6.GetPinBlock(), pb6.GetPinNr(), GPIOB->AFR[0], GPIOB->AFR[1]);
-    HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
 
     IDistSensor& idist{ sonicDist };
 
@@ -58,7 +50,12 @@ int main(void) {
 
     while (1) {
         distance = idist.GetDist();
-        snprintf(msgBuf, MSGBUFSIZE, "d:% 3d  cnt:% 6d  cc1: % 4ld  cc2: % 4ld  cc3: % 4ld  cc4: % 4ld\r", distance, TIM4->CNT, TIM4->CCR1, TIM4->CCR2, TIM4->CCR3, TIM4->CCR4);
+        snprintf(
+            msgBuf,
+            MSGBUFSIZE,
+            "d:% 3d\r",
+            distance
+        );
         HAL_UART_Transmit(&huart2, (uint8_t*)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
     }
 }
