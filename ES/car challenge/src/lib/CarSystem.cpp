@@ -19,8 +19,7 @@ bool CarSystem::Setup() {
 
 void CarSystem::Update() {
     uint8_t dist{ distSensor.GetDistance() };
-    data.butNr = 0;
-    data.Duration = dist;
+    data.distance = dist;
     osMessageQueuePut(queueId, &data, 0, osWaitForever);
     osDelay(1);
 }

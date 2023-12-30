@@ -6,7 +6,7 @@
 class IDistanceSensor {
 public:
     virtual ~IDistanceSensor() {}
-    virtual bool Setup();
+    /// @return distance in cm
     virtual uint8_t GetDistance() = 0;
 };
 

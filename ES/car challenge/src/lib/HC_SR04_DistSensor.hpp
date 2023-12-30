@@ -7,16 +7,15 @@
 
 class HC_SR04_DistSensor : public IDistanceSensor {
 public:
-    HC_SR04_DistSensor(const NucleoPin pinEcho, const NucleoPin pinTrigger, const HardwareTimer tim);
+    HC_SR04_DistSensor(NucleoPin& pinEcho, NucleoPin& pinTrigger, const HardwareTimer tim);
     ~HC_SR04_DistSensor() override;
 
-    bool Setup() override;
-    bool SetupTimer(const uint16_t prescaler, const uint32_t resetValue, const uint8_t outputChannel, const uint32_t outputCCR, const uint8_t inputChannel1, const uint8_t inputChannel2);
+    bool Setup(uint8_t prescaler, uint32_t arrValue, uint32_t outputCCValue, const uint8_t outputChannel, const uint8_t inputChannel1, const uint8_t intputChannel2);
     uint8_t GetDistance() override;
 
 private:
-    NucleoPin echoPin;
-    NucleoPin triggerPin;
+    NucleoPin& echoPin;
+    NucleoPin& trigPin;
     HardwareTimer timer;
 };
 

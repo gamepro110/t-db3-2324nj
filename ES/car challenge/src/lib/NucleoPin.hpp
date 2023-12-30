@@ -25,12 +25,15 @@ union AltModeValue {
     void operator=(uint64_t val) {
         value = val;
     }
+    AltModeValue operator<<(uint32_t val) {
+        return { value << val };
+    }
 };
 
 class NucleoPin {
 public:
     NucleoPin(GPIO_TypeDef* block, uint8_t pinNr, PinMode mode);
-    NucleoPin(GPIO_TypeDef* block, uint8_t pinNr, const AltModeValue& value);
+    NucleoPin(GPIO_TypeDef* block, uint8_t pinNr, AltModeValue value);
     void SetAltMode(const AltModeValue& modeValue) const;
     bool Setup() const;
     void Write(bool high);
@@ -46,6 +49,7 @@ private:
     GPIO_TypeDef* block;
     uint8_t pin;
     PinMode pinMode;
+    AltModeValue value;
 };
 
 #endif

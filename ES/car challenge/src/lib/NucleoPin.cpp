@@ -1,15 +1,18 @@
 #include "NucleoPin.hpp"
 
 NucleoPin::NucleoPin(GPIO_TypeDef* block, uint8_t pinNr, PinMode mode) :
-    block(block), pin(pinNr), pinMode(mode)
-{
-}
+    block(block),
+    pin(pinNr),
+    pinMode(mode),
+    value(0)
+{}
 
-NucleoPin::NucleoPin(GPIO_TypeDef* block, uint8_t pinNr, const AltModeValue& value) :
-    block(block), pin(pinNr), pinMode(PinMode::altMode)
-{
-    SetAltMode(value);
-}
+NucleoPin::NucleoPin(GPIO_TypeDef* block, uint8_t pinNr, AltModeValue val) :
+    block(block),
+    pin(pinNr),
+    pinMode(PinMode::altMode),
+    value((val << (4 * pinNr)))
+{}
 
 void NucleoPin::SetAltMode(const AltModeValue& modeValue) const {
     block->AFR[0] |= modeValue.low;
@@ -37,6 +40,7 @@ bool NucleoPin::Setup() const {
         }
     case PinMode::altMode: {
         block->MODER |= (altMode << PinModerLoc());
+            SetAltMode(value);
         break;
         }
     default:

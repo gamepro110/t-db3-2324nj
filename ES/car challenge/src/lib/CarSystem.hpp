@@ -17,7 +17,7 @@ public:
 private:
     osMessageQueueId_t queueId;
     IDistanceSensor& distSensor;
-    BtnMsgData data;
+    SensorMsgData data;
 };
 
 #endif
