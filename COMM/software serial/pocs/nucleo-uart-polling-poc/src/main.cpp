@@ -1,4 +1,4 @@
-#include "lib/Pin.hpp"
+#include "lib/NucleoPin.hpp"
 #include "lib/SoftUart.hpp"
 
 #include "main.h"
@@ -12,25 +12,34 @@ void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 
 int main(void) {
-    const int MSGBUFSIZE = 80;
-    char msgBuf[MSGBUFSIZE];
-
-    SoftUart<uint8_t, 8, 1, 0> uart(
-        Pin{GPIOC, 9, PinMode::input}, // rx
-        Pin{GPIOC, 8, PinMode::output}, // tx
-        Pin{GPIOA, 5, PinMode::output}, // debug rx
-        Pin{GPIOA, 6, PinMode::output}, // debug tx
-        9600U
-    );
-
     HAL_Init();
     SystemClock_Config();
     MX_GPIO_Init();
     MX_USART2_UART_Init();
 
+    const int MSGBUFSIZE = 80;
+    char msgBuf[MSGBUFSIZE];
+
+    NucleoPin prx { GPIOC, 9, PinMode::digital_input };     // rx
+    NucleoPin ptx { GPIOC, 8, PinMode::digital_output };    // tx
+    NucleoPin pdrx { GPIOA, 5, PinMode::digital_output };   // debug rx
+    NucleoPin pdtx { GPIOA, 6, PinMode::digital_output };   // debug tx
+
+    SoftUart<uint8_t, 8, 1, 0> uart{ prx, ptx, pdrx, pdtx, 9600U };
+
+    if (!uart.Setup()) {
+        snprintf(msgBuf, MSGBUFSIZE, "%s", "failed to setup uart!\n");
+        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+    }
+
     snprintf(msgBuf, MSGBUFSIZE, "%s", "Hello World!\n");
     HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+
+    uart.WriteByte('A');
+    uart.WriteByte('\t');
     uart.Write("Hello World!\n");
+    return 0;
+
     uint8_t byte{ 0 };
 
     while (1) {
