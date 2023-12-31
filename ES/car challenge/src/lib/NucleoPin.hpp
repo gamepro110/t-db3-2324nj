@@ -36,9 +36,9 @@ public:
     NucleoPin(GPIO_TypeDef* block, uint8_t pinNr, AltModeValue value);
     void SetAltMode(const AltModeValue& modeValue) const;
     bool Setup() const;
-    void Write(bool high);
-    void Toggle();
-    bool Read();
+    void Write(bool high) const;
+    void Toggle() const;
+    bool Read() const;
 
     const uint8_t& GetPinNr() const;
     const GPIO_TypeDef* const GetPinBlock() const;

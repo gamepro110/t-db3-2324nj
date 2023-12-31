@@ -20,10 +20,10 @@ void NucleoPin::SetAltMode(const AltModeValue& modeValue) const {
 }
 
 bool NucleoPin::Setup() const {
-    const uint8_t digitalOutput{ 0b01 };
-    const uint8_t digitalInput{ 0b00 };
-    const uint8_t pullUp{ 0b01 };
-    const uint8_t altMode{ 0b10 };
+    const uint8_t digitalOutput     { 0b01 };
+    const uint8_t digitalInput      { 0b11 }; // inverse of 0b00
+    const uint8_t pullUp            { 0b01 };
+    const uint8_t altMode           { 0b10 };
 
     switch (pinMode)
     {
@@ -50,7 +50,7 @@ bool NucleoPin::Setup() const {
     return true;
 }
 
-void NucleoPin::Write(bool high) {
+void NucleoPin::Write(bool high) const {
     if (high) {
         block->ODR |= (1 << pin);
     }
@@ -59,12 +59,12 @@ void NucleoPin::Write(bool high) {
     }
 }
 
-void NucleoPin::Toggle() {
+void NucleoPin::Toggle() const {
     block->ODR ^= (1 << pin);
 }
 
-bool NucleoPin::Read() {
-    return (block->IDR & (1 << pin)) == 1;
+bool NucleoPin::Read() const {
+    return block->IDR & (1 << pin);
 }
 
 const uint8_t& NucleoPin::GetPinNr() const {
