@@ -23,8 +23,8 @@ tags:
 ## #COMM
 
 - [ ] [uart challenge](<COMM/software serial/>)
-  - [ ] uno
-    - [ ] check speeds
+  - [x] uno
+    - [x] check speeds
   - [ ] nucleo
     - [ ] transfer code from uno to nucleo
 

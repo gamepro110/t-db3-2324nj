@@ -23,8 +23,8 @@ tags:
     - [x] 19200 (failed, not fast enough)
     - [x] 115200 (failed, not fast enough)
 - [x] write serial reader poc on uno
-- [ ] write DMA serial writer poc on uno
-- [ ] write DMA serial reader poc on uno
+- [x] write MMIO serial writer poc on uno
+- [x] write MMIO serial reader poc on uno
 - [ ] write serial writer poc on nucleo
 - [ ] write serial reader poc on nucleo
 

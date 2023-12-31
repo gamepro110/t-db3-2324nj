@@ -49,7 +49,7 @@ tags:
       - [ ] find 3 algorithms and implement them
         - can be googled and copied
   - [ ] 2 linked list vs queue
-    - started, trouble logic
+    - started, trouble with logic
   - [ ] 3 stack vs queue
     - > can be skipped when in a time crunch
   - [ ] 4 graph tree
