@@ -70,6 +70,8 @@ int ListAddAfter(LinkedList* list, int address, int size, Element* element) {
         list->head = new;
     }
 
+    list->size++;
+
     return 0;
 }
 

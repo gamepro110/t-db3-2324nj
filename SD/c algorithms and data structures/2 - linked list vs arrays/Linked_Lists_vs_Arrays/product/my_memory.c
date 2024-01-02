@@ -1,4 +1,4 @@
-#include "memory.h"
+#include "my_memory.h"
 #include "linked_list.h"
 
 #include <stdbool.h>
@@ -43,13 +43,17 @@ int PrintList(FILE* stream) {
 int ClaimMemory(int nrofBytes) {
     Element* freeHead = GetLastElement(&freeList);
 
-    if (freeHead->size < nrofBytes) {
+    if (freeHead->size < nrofBytes || nrofBytes < 1) {
         return -1;
     }
 
     //tODO resize freelist (variable only)
     //tODO update freelist address
     Element* elem = freeList.head;
+
+    if (elem == NULL) {
+        return -1;
+    }
 
     elem->address += nrofBytes;
     elem->size -= nrofBytes;
@@ -60,8 +64,35 @@ int ClaimMemory(int nrofBytes) {
     int newAddr = (allocElem == NULL) ? StartAddress : (allocElem->address + allocElem->size);
     ListAddAfter(&allocList, newAddr, nrofBytes, allocElem);
 
+    if (freeHead->size == 0) {
+        ListRemoveTail(&freeList);
+    }
+
     return newAddr;
 }
+
+void dbPrintList(const char* listName, int addr, LinkedList* list, Element* lastFound) {
+    printf("%s <addr % 4d>", listName, addr);
+    
+    if (lastFound == NULL) {
+        printf("%s ", "(NILL)");
+    }
+    else {
+        printf("(lastElem % 3d|% 3d) ", lastFound->address, lastFound->size);
+    }
+
+    printf(":");
+    Element* elem = list->head;
+
+    while (elem != NULL) {
+        printf("{% 3d|% 3d}, ", elem->address, elem->size);
+        elem = elem->next;
+    }
+
+    printf("\n");
+}
+
+#define prntDb 0
 
 /* function: FreeMemory
  * pre: Parameter addr must match the start of an allocatd memory block. Otherwhise return -1.
@@ -81,44 +112,65 @@ int FreeMemory(int addr) {
 
     // save size for return value
     int size = addrElem->size;
+    Element* foundElem = NULL;
 
-    // check if there is a preseading address
-    Element* prevAddr = freeList.head;
+    #if prntDb
+    printf("\n");
+    dbPrintList("preFree", addr, &freeList, NULL);
+    #endif
 
-    //TODO check why 1050 gets inserted before 1000
-    // probably related to the if on :103
-
-    bool prevNotNull = prevAddr != NULL;
-    bool prevNextNotNull = prevAddr->next != NULL;
-    bool nextAddrGreaterThanAddr = (prevNextNotNull && prevAddr->next->address <= addr);
-
-    while (prevNotNull && prevNextNotNull && nextAddrGreaterThanAddr) {
-        prevAddr = prevAddr->next;
-
-        prevNotNull = prevAddr != NULL;
-        prevNextNotNull = prevAddr->next != NULL;
-        nextAddrGreaterThanAddr = (prevNextNotNull && prevAddr->next->address >= addr);
-    }
-
-    if (prevAddr == freeList.head) {
-        prevAddr = NULL;
-    }
-
-    ListAddAfter(&freeList, addrElem->address, addrElem->size, prevAddr);
-    ListRemove(&allocList, &addrElem);
-
-    // clean up
-    Element* elem = freeList.head;
-    Element* next = elem->next;
-
-    while (elem != NULL && elem->next != NULL) {
-        if (elem->address + elem->size == next->address) {
-            elem->size += next->size;
-            ListRemove(&freeList, &next);
+    if (freeList.size <= 1) {
+        if (freeList.head != NULL && addrElem->address > freeList.head->address) {
+            foundElem = GetLastElement(&freeList);
         }
 
-        elem = elem->next;
+        ListAddAfter(&freeList, addrElem->address, addrElem->size, foundElem);
+        ListRemove(&allocList, &addrElem);
     }
+    else if (freeList.size > 1) {
+        // check if there is a preseading address
+        foundElem = freeList.head;
+        Element* next = foundElem->next;
+
+        //! flipping causes other logic to break, but this inserts 1050 after 1052
+        while (next != NULL && foundElem->address <= addr) {
+            foundElem = next;
+            next = foundElem->next;
+        }
+
+        if (foundElem == freeList.head && foundElem->address > addr) {
+            foundElem = NULL;
+        }
+
+        ListAddAfter(&freeList, addrElem->address, addrElem->size, foundElem);
+        ListRemove(&allocList, &addrElem);
+    }
+
+    // clean up
+    Element* step = freeList.head;
+
+    while (step != NULL && step->next != NULL) {
+        Element* elem = step;
+        Element* next = step->next;
+        int count = 0;
+
+        while (elem != NULL && elem->next != NULL && count < freeList.size) {
+            if (elem->address + elem->size == next->address) {
+                elem->size += next->size;
+                ListRemove(&freeList, &next);
+                next = elem->next;
+            }
+            count++;
+        }
+
+        step = next;
+    }
+
+    #if prntDb
+    dbPrintList("postFree", addr, &freeList, foundElem);
+    printf("\n");
+    #endif
+
 
     return size;
 }

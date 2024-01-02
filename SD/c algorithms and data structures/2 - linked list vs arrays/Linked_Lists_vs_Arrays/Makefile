@@ -9,18 +9,19 @@ SHARED_FILES=product/linked_list.c
 
 ASSIGNMENT_FILES=$(SHARED_FILES) \
 	      product/main.c \
-	      product/memory.c \
+	      product/my_memory.c \
 	      product/terminal_io.c
 
 ASSIGNMENT_TEST_FILES=$(SHARED_FILES) \
 	           $(UNITY_FOLDER)/unity.c \
-	           test/linkedList_test.c
+	           product/my_memory.c \
+	           test/linkedlist_test.c
 
 HEADER_FILES=product/*.h
 
 CC=gcc
 
-SYMBOLS=-g  -O0 -std=c99 -Wall -Wextra -Werror
+SYMBOLS= -g -O0 -std=c99 -Wall -Wextra -Werror
 TEST_SYMBOLS=$(SYMBOLS) -DTEST
 
 TESTDATA_DIR=./testdata
@@ -30,7 +31,7 @@ COMPARE_FILE=$(TESTDATA_DIR)/correct
 
 .PHONY: clean test klocwork klocwork_after_makefile_change
 
-all: $(ASSIGNMENT)
+all: $(ASSIGNMENT) $(ASSIGNMENT_TEST)
 
 $(ASSIGNMENT): Makefile $(ASSIGNMENT_FILES)  $(HEADER_FILES)
 	$(CC) $(INC_DIRS) $(SYMBOLS) $(ASSIGNMENT_FILES) -o $(ASSIGNMENT)
@@ -39,9 +40,14 @@ $(ASSIGNMENT_TEST): Makefile $(ASSIGNMENT_TEST_FILES)  $(HEADER_FILES)
 	$(CC) $(TEST_INC_DIRS) $(TEST_SYMBOLS) $(ASSIGNMENT_TEST_FILES) -o $(ASSIGNMENT_TEST)
 
 run_simple: $(ASSIGNMENT)
-	@clear
 	@./$(ASSIGNMENT) < $(INPUT_FILE)_simple.txt > $(OUTPUT_FILE)_simple.txt
 	./compareOut.sh $(COMPARE_FILE)_simple.txt $(OUTPUT_FILE)_simple.txt
+
+run_full: $(ASSIGNMENT)
+	@./$(ASSIGNMENT) < $(INPUT_FILE)_full.txt > $(OUTPUT_FILE)_full.txt
+	./compareOut.sh $(COMPARE_FILE)_full.txt $(OUTPUT_FILE)_full.txt
+
+run: run_simple run_full
 
 clean:
 	@rm -f $(ASSIGNMENT) $(ASSIGNMENT_TEST)
