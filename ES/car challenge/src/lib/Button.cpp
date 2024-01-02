@@ -17,6 +17,14 @@ Button::Button(NucleoPin inputPin, IRQn_Type irq, osMessageQueueId_t id) : //, s
 Button::~Button() {
 }
 
+Button &Button::operator=(const Button &other) {
+    btnPin = other.btnPin;
+    irq = other.irq;
+    id = other.id;
+
+    return *this;
+}
+
 bool Button::SetupIrq() {
     if (!btnPin.Setup()) {
         return false;

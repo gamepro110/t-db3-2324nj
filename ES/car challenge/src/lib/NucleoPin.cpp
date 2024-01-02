@@ -20,6 +20,10 @@ void NucleoPin::SetAltMode(const AltModeValue& modeValue) const {
 }
 
 bool NucleoPin::Setup() const {
+    if (pinMode == PinMode::none) {
+        return false;
+    }
+
     const uint8_t digitalOutput     { 0b01 };
     const uint8_t digitalInput      { 0b11 }; // inverse of 0b00
     const uint8_t pullUp            { 0b01 };

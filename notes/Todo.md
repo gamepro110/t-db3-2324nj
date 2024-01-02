@@ -22,6 +22,7 @@ tags:
   - [x] [main question](<ES/notes.md#main question>)
   - [x] [sub questions](<ES/notes.md#sub questions>)
   - [ ] [class diagram](<../ES/car challenge/class diagram.md>) [wip]
+  - `car challenge` does not work..., continue in `nucleo tests/car-test/`
 
 ## #COMM
 

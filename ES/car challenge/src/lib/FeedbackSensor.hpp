@@ -6,12 +6,16 @@
 
 class FeedbackSensor : public IFeedbackSensor {
 public:
+    FeedbackSensor() = default;
     FeedbackSensor(NucleoPin pinSensor);
     ~FeedbackSensor();
+
+    FeedbackSensor& operator=(const FeedbackSensor& other);
+
     float GetSpeed() override;
 
 private:
-    const NucleoPin sensorPin;
+    NucleoPin sensorPin{ GPIOA, 0 };
     float speed{ 0.0f };
 };
 

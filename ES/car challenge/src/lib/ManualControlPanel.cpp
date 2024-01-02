@@ -8,18 +8,24 @@
 extern Watchdog watchdog;
 
 ManualControlPanel::ManualControlPanel(IButton& btn1, IButton& btn2) :
-    button1(btn1), button2(btn2)
-{}
+    button1(&btn1), button2(&btn2)
+{
+}
 
-ManualControlPanel::~ManualControlPanel()
-{}
+ManualControlPanel::~ManualControlPanel() {
+}
+
+ManualControlPanel &ManualControlPanel::operator=(const ManualControlPanel &other) {
+    button1 = other.button1;
+    button2 = other.button2;
+
+    return *this;
+}
 
 bool ManualControlPanel::Setup() {
-    watchdog.Reset();
-    bool b1{ button1.SetupIrq() };
-    watchdog.Reset();
-    bool b2{ button2.SetupIrq() };
-    watchdog.Reset();
+    bool b1{ button1->SetupIrq() };
+    bool b2{ button2->SetupIrq() };
+
     return (b1 && b2);
 }
 

@@ -5,15 +5,18 @@
 
 class ManualControlPanel {
 public:
+    ManualControlPanel() = default;
     ManualControlPanel(IButton& btn1, IButton& btn2);
     ~ManualControlPanel();
+
+    ManualControlPanel& operator=(const ManualControlPanel& other);
 
     bool Setup();
     void Loop();
 
 private:
-    IButton& button1;
-    IButton& button2;
+    IButton* button1{ nullptr };
+    IButton* button2{ nullptr };
 };
 
 #endif

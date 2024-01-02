@@ -8,16 +8,19 @@
 
 class CarSystem {
 public:
+    CarSystem() = default;
     CarSystem(osMessageQueueId_t id, IDistanceSensor& sensor);
     ~CarSystem();
+
+    CarSystem& operator=(const CarSystem& other);
 
     bool Setup();
     void Update();
 
 private:
-    osMessageQueueId_t queueId;
-    IDistanceSensor& distSensor;
-    SensorMsgData data;
+    osMessageQueueId_t queueId{ nullptr };
+    IDistanceSensor* distSensor{ nullptr };
+    SensorMsgData data{ };
 };
 
 #endif

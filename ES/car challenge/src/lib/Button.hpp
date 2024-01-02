@@ -11,8 +11,11 @@
 
 class Button : public IButton {
 public:
+    Button() = default;
     Button(NucleoPin inputPin, IRQn_Type irq, osMessageQueueId_t id);//, std::function<void()> actionShort, std::function<void()> actionLong);
     ~Button() override;
+
+    Button& operator=(const Button& other);
 
     bool SetupIrq() override;
     void HandleIrq() override;
@@ -20,12 +23,12 @@ public:
     void LongPress() override;
 
 private:
-    const NucleoPin btnPin;
-    IRQn_Type irq;
+    NucleoPin btnPin{ GPIOH, 0 };
+    IRQn_Type irq{ };
     volatile bool triggered{ false };
     uint32_t startTime{ 0 };
-    const osMessageQueueId_t id;
-    BtnMsgData data;
+    osMessageQueueId_t id{ nullptr };
+    BtnMsgData data{ };
     // std::function<void()> shortPressFunc;
     // std::function<void()> longPressFunc;
 };
