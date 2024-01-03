@@ -4,11 +4,13 @@
 #include <stdbool.h>
 
 static const int StartAddress = 1000;
+static int startSize = 0;
 
 static LinkedList freeList;
 static LinkedList allocList;
 
 void ConstructMemory(int size) {
+    startSize = size;
     ListAddAfter(&freeList, StartAddress, size, NULL);
 }
 
@@ -43,13 +45,14 @@ int PrintList(FILE* stream) {
 int ClaimMemory(int nrofBytes) {
     Element* freeHead = GetLastElement(&freeList);
 
-    if (freeHead->size < nrofBytes || nrofBytes < 1) {
+    if (freeHead == NULL || freeHead->size < nrofBytes || nrofBytes < 1) {
         return -1;
     }
 
     //tODO resize freelist (variable only)
     //tODO update freelist address
     Element* elem = freeList.head;
+    int newAddr = 0;
 
     if (elem == NULL) {
         return -1;
@@ -59,9 +62,39 @@ int ClaimMemory(int nrofBytes) {
     elem->size -= nrofBytes;
 
     //tODO make new element for alloc list with original address of freelist and size requested
-    Element* allocElem = GetLastElement(&allocList);
+    Element* allocElem = allocList.head;
 
-    int newAddr = (allocElem == NULL) ? StartAddress : (allocElem->address + allocElem->size);
+    if (allocElem == NULL) {
+        newAddr = StartAddress;
+    }
+    else {
+        if (allocElem->address - StartAddress >= nrofBytes) {
+            allocElem = NULL;
+            newAddr = StartAddress;
+        }
+        else {
+            int sizeBetween = 0;
+            if (allocList.size > 1) {
+                while (allocElem != NULL && allocElem->next != NULL && sizeBetween <= nrofBytes) {
+                    sizeBetween = allocElem->next->address - (allocElem->address + allocElem->size);
+                    allocElem = allocElem->next;
+                }
+
+                if (allocElem->next != NULL && sizeBetween >= nrofBytes) {
+                    allocElem = allocElem->next;
+                    // printf("________________________________________________\n");
+                }
+            }
+
+            newAddr = allocElem->address + allocElem->size;
+        }
+
+        if (newAddr >= StartAddress + startSize) {
+            // printf("<<<<OUT OF BOUND.>>>>\n");
+            return -1; // should never hit
+        }
+    }
+
     ListAddAfter(&allocList, newAddr, nrofBytes, allocElem);
 
     if (freeHead->size == 0) {
@@ -71,14 +104,14 @@ int ClaimMemory(int nrofBytes) {
     return newAddr;
 }
 
-void dbPrintList(const char* listName, int addr, LinkedList* list, Element* lastFound) {
-    printf("%s <addr % 4d>", listName, addr);
+void dbPrintList(const char* listName, LinkedList* list, Element* lastFound) {
+    printf("%s", listName);
     
     if (lastFound == NULL) {
-        printf("%s ", "(NILL)");
+        printf("%s ", "(last NILL)");
     }
     else {
-        printf("(lastElem % 3d|% 3d) ", lastFound->address, lastFound->size);
+        printf("(last % 2d|% 2d) ", lastFound->address, lastFound->size);
     }
 
     printf(":");
@@ -114,37 +147,36 @@ int FreeMemory(int addr) {
     int size = addrElem->size;
     Element* foundElem = NULL;
 
-    #if prntDb
-    printf("\n");
-    dbPrintList("preFree", addr, &freeList, NULL);
-    #endif
 
     if (freeList.size <= 1) {
         if (freeList.head != NULL && addrElem->address > freeList.head->address) {
             foundElem = GetLastElement(&freeList);
         }
-
-        ListAddAfter(&freeList, addrElem->address, addrElem->size, foundElem);
-        ListRemove(&allocList, &addrElem);
     }
     else if (freeList.size > 1) {
         // check if there is a preseading address
         foundElem = freeList.head;
-        Element* next = foundElem->next;
+        Element* prev = NULL;
 
-        //! flipping causes other logic to break, but this inserts 1050 after 1052
-        while (next != NULL && foundElem->address <= addr) {
-            foundElem = next;
-            next = foundElem->next;
+        #if prntDb
+        dbPrintList("preFree ", &freeList, foundElem);
+        #endif
+
+        while (foundElem->next != NULL && foundElem->address < addr) {
+            prev = foundElem;
+            foundElem = foundElem->next;
         }
 
-        if (foundElem == freeList.head && foundElem->address > addr) {
-            foundElem = NULL;
-        }
+        foundElem = prev;
 
-        ListAddAfter(&freeList, addrElem->address, addrElem->size, foundElem);
-        ListRemove(&allocList, &addrElem);
+        #if prntDb
+        dbPrintList("postFree", &freeList, foundElem);
+        #endif
+
     }
+
+    ListAddAfter(&freeList, addrElem->address, addrElem->size, foundElem);
+    ListRemove(&allocList, &addrElem);
 
     // clean up
     Element* step = freeList.head;
@@ -165,12 +197,6 @@ int FreeMemory(int addr) {
 
         step = next;
     }
-
-    #if prntDb
-    dbPrintList("postFree", addr, &freeList, foundElem);
-    printf("\n");
-    #endif
-
 
     return size;
 }
