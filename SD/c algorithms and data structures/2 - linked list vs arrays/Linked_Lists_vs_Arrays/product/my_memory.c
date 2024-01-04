@@ -43,33 +43,48 @@ int PrintList(FILE* stream) {
  *       otherwise the first block that is large enough is claimed and the start address is returned
  */
 int ClaimMemory(int nrofBytes) {
-    Element* freeHead = GetLastElement(&freeList);
-
-    if (freeHead == NULL || freeHead->size < nrofBytes || nrofBytes < 1) {
+    if (freeList.head == NULL || nrofBytes < 1) { //TODO add loop to check past freelis.head, now only the first gets checked...
         return -1;
     }
 
-    //tODO resize freelist (variable only)
-    //tODO update freelist address
-    int newAddr = 0;
+    Element* freeElem = freeList.head; // TODO remove freeElem var, prevents redundent multiple null check
+    bool spaceAvailable = false;
 
-    if (freeList.head == NULL) {
-        return -1;
+    if (freeList.size > 1) {
+        while (freeElem != NULL && freeElem->next != NULL && spaceAvailable == false) {
+            spaceAvailable = freeElem->next->address - (freeElem->address + freeElem->size) > nrofBytes;
+
+            if (!spaceAvailable) { // dont move ptr when there is space
+                freeElem = freeElem->next;
+            }
+        }
+
+        if (!spaceAvailable) {
+            return -1;
+        }
+    }
+    else {
+        if (nrofBytes > freeElem->size) {
+            return -1;
+        }
     }
 
-    freeList.head->address += nrofBytes;
-    freeList.head->size -= nrofBytes;
+    //// resize freelist (variable only)
+    int newAddr = freeElem->address;
+    freeElem->address += nrofBytes; //TODO fix blindly adding to the head...
+    freeElem->size -= nrofBytes;
 
+    //// update freelist address
     //tODO make new element for alloc list with original address of freelist and size requested
     Element* allocElem = allocList.head;
 
     if (allocElem == NULL) {
-        newAddr = StartAddress;
+        //newAddr = StartAddress;
     }
     else {
         if (allocElem->address - StartAddress >= nrofBytes) {
             allocElem = NULL;
-            newAddr = StartAddress;
+            //newAddr = StartAddress;
         }
         else { // checked preseading addrs?
             int sizeBetween = 0;
@@ -84,7 +99,7 @@ int ClaimMemory(int nrofBytes) {
                 }
             }
 
-            newAddr = allocElem->address + allocElem->size;
+            //newAddr = allocElem->address + allocElem->size;
         }
 
         if (newAddr >= StartAddress + startSize) {
@@ -94,7 +109,7 @@ int ClaimMemory(int nrofBytes) {
 
     ListAddAfter(&allocList, newAddr, nrofBytes, allocElem);
 
-    if (freeHead->size == 0) {
+    if (freeElem->size == 0) {
         ListRemoveTail(&freeList);
     }
 
@@ -123,21 +138,30 @@ int FreeMemory(int addr) {
 
     if (freeList.size <= 1) {
         if (freeList.head != NULL && addrElem->address > freeList.head->address) {
-            foundElem = GetLastElement(&freeList);
+            foundElem = freeList.head;
         }
     }
     else if (freeList.size > 1) {
-        foundElem = GetLastElement(&freeList);
-        if (foundElem != NULL && foundElem->address + foundElem->size >= addr) {
-            foundElem = freeList.head;
-            Element* prev = NULL;
+        foundElem = freeList.head;
 
-            while (foundElem->next != NULL && foundElem->address < addr) {
-                prev = foundElem;
-                foundElem = foundElem->next;
+        // if (foundElem != NULL)
+        {
+            int sumAddrSize = foundElem->address + foundElem->size;
+            if (sumAddrSize >= addr) { //ERROR logic
+                // printf("AAA__________________________________________________________________________________\n");
+                Element* prev = NULL;
+
+                while (foundElem->next != NULL && foundElem->address < addr) {
+                    prev = foundElem;
+                    foundElem = foundElem->next;
+                }
+
+                foundElem = prev;
             }
-
-            foundElem = prev;
+            else if (sumAddrSize <= addr) {
+                // printf("BBB__________________________________________________________________________________\n");
+                foundElem = GetLastElement(&freeList);
+            }
         }
     }
 
