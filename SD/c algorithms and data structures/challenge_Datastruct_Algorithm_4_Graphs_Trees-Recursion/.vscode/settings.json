@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        ".viminfo": "ini",
+        "linked_list.h": "c"
+    }
+}

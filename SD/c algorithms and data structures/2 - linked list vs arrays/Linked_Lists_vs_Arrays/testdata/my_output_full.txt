@@ -1,0 +1,523 @@
+PRC 'MemoryC' (version 5)
+-------------------------
+
+
+MENU
+====
+  [1] Allocate mMemory
+  [2] Free memory
+  [3] Show lists
+  [4] Show/hide menu
+  [5] Quit
+choice: printing of MENU is diabled
+FreeList:
+---------
+  0:  addr:1000  size: 100
+AllocList:
+----------
+  <empty>
+[ALLOC] not enough memory for 1000 byte
+[ALLOC] address: 1000 (100 byte)
+FreeList:
+---------
+  <empty>
+AllocList:
+----------
+  0:  addr:1000  size: 100
+[FREE]  address:  100 was not allocated
+[FREE]  address: 2000 was not allocated
+[FREE]  address: 1000 (100 byte)
+[ALLOC] address: 1000 (50 byte)
+FreeList:
+---------
+  0:  addr:1050  size:  50
+AllocList:
+----------
+  0:  addr:1000  size:  50
+[ALLOC] not enough memory for 100 byte
+[ALLOC] address: 1050 (50 byte)
+[FREE]  address:  100 was not allocated
+[FREE]  address: 1040 was not allocated
+[FREE]  address: 1060 was not allocated
+[FREE]  address: 1050 (50 byte)
+[FREE]  address:  100 was not allocated
+[FREE]  address: 1040 was not allocated
+[FREE]  address: 1000 (50 byte)
+FreeList:
+---------
+  0:  addr:1000  size: 100
+AllocList:
+----------
+  <empty>
+[ALLOC] address: 1000 (60 byte)
+[ALLOC] address: 1060 (40 byte)
+[FREE]  address: 1000 (60 byte)
+[FREE]  address: 1060 (40 byte)
+FreeList:
+---------
+  0:  addr:1000  size: 100
+AllocList:
+----------
+  <empty>
+[ALLOC] address: 1000 (10 byte)
+[ALLOC] address: 1010 (10 byte)
+[ALLOC] address: 1020 (20 byte)
+[ALLOC] address: 1040 (10 byte)
+FreeList:
+---------
+  0:  addr:1050  size:  50
+AllocList:
+----------
+  0:  addr:1000  size:  10
+  1:  addr:1010  size:  10
+  2:  addr:1020  size:  20
+  3:  addr:1040  size:  10
+[ALLOC] address: 1050 (30 byte)
+[ALLOC] address: 1080 (20 byte)
+[FREE]  address: 1000 (10 byte)
+[FREE]  address: 1020 (20 byte)
+[FREE]  address: 1050 (30 byte)
+FreeList:
+---------
+  0:  addr:1000  size:  10
+  1:  addr:1020  size:  20
+  2:  addr:1050  size:  30
+AllocList:
+----------
+  0:  addr:1040  size:  10
+  1:  addr:1080  size:  20
+[ALLOC] not enough memory for 40 byte
+[ALLOC] address: 1000 (10 byte)
+[FREE]  address: 1000 (10 byte)
+[ALLOC] address: 1000 (20 byte)
+[FREE]  address: 1020 was not allocated
+FreeList:
+---------
+  0:  addr:1020  size: -10
+  1:  addr:1020  size:  20
+  2:  addr:1050  size:  30
+AllocList:
+----------
+  0:  addr:1000  size:  20
+  1:  addr:1040  size:  10
+  2:  addr:1080  size:  20
+[ALLOC] not enough memory for 30 byte
+[FREE]  address: 1050 was not allocated
+[ALLOC] not enough memory for 8 byte
+[ALLOC] not enough memory for 2 byte
+FreeList:
+---------
+  0:  addr:1060  size: -50
+  1:  addr:1020  size:  20
+  2:  addr:1050  size:  30
+AllocList:
+----------
+  0:  addr:1000  size:  20
+  1:  addr:1040  size:  10
+  2:  addr:1080  size:  20
+[FREE]  address: 1000 (20 byte)
+[FREE]  address: 1008 was not allocated
+[ALLOC] address: 1000 (18 byte)
+FreeList:
+---------
+  0:  addr:1018  size:   2
+  1:  addr:1060  size: -50
+  2:  addr:1020  size:  20
+  3:  addr:1050  size:  30
+AllocList:
+----------
+  0:  addr:1000  size:  18
+  1:  addr:1040  size:  10
+  2:  addr:1080  size:  20
+[FREE]  address: 1020 was not allocated
+[ALLOC] not enough memory for 28 byte
+[FREE]  address: 1050 was not allocated
+[ALLOC] not enough memory for 10 byte
+[ALLOC] not enough memory for 18 byte
+[ALLOC] not enough memory for 2 byte
+FreeList:
+---------
+  0:  addr:1076  size: -56
+  1:  addr:1060  size: -50
+  2:  addr:1020  size:  20
+  3:  addr:1050  size:  30
+AllocList:
+----------
+  0:  addr:1000  size:  18
+  1:  addr:1040  size:  10
+  2:  addr:1080  size:  20
+[FREE]  address: 1000 (18 byte)
+[FREE]  address: 1020 was not allocated
+[FREE]  address: 1038 was not allocated
+[ALLOC] address: 1000 (10 byte)
+[ALLOC] not enough memory for 20 byte
+[ALLOC] not enough memory for 28 byte
+[ALLOC] not enough memory for 2 byte
+[FREE]  address: 1000 (10 byte)
+[FREE]  address: 1020 was not allocated
+[FREE]  address: 1050 was not allocated
+[FREE]  address: 1078 was not allocated
+[FREE]  address: 1010 was not allocated
+[ALLOC] address: 1000 (10 byte)
+[ALLOC] not enough memory for 10 byte
+[FREE]  address: 1000 (10 byte)
+[FREE]  address: 1040 (10 byte)
+[FREE]  address: 1080 (20 byte)
+FreeList:
+---------
+  0:  addr:1000  size:  10
+  1:  addr:1020  size: -10
+  2:  addr:1040  size:  10
+  3:  addr:1060  size: -42
+  4:  addr:1076  size: -56
+  5:  addr:1060  size: -50
+  6:  addr:1020  size:  20
+  7:  addr:1080  size:  20
+  8:  addr:1050  size:  30
+AllocList:
+----------
+  <empty>
+[ALLOC] address: 1000 (12 byte)
+[ALLOC] address: 1012 (12 byte)
+[ALLOC] address: 1024 (12 byte)
+[ALLOC] address: 1036 (12 byte)
+FreeList:
+---------
+  0:  addr:1048  size: -38
+  1:  addr:1020  size: -10
+  2:  addr:1040  size:  10
+  3:  addr:1060  size: -42
+  4:  addr:1076  size: -56
+  5:  addr:1060  size: -50
+  6:  addr:1020  size:  20
+  7:  addr:1080  size:  20
+  8:  addr:1050  size:  30
+AllocList:
+----------
+  0:  addr:1000  size:  12
+  1:  addr:1012  size:  12
+  2:  addr:1024  size:  12
+  3:  addr:1036  size:  12
+[FREE]  address: 1020 was not allocated
+[FREE]  address: 1044 was not allocated
+[FREE]  address: 1032 was not allocated
+[FREE]  address: 1056 was not allocated
+[ALLOC] address: 1048 (20 byte)
+[ALLOC] address: 1068 (20 byte)
+[FREE]  address: 1020 was not allocated
+[FREE]  address: 1040 was not allocated
+[ALLOC] address: 1088 (2 byte)
+[FREE]  address: 1010 was not allocated
+[FREE]  address: 1000 (12 byte)
+[ALLOC] address: 1000 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+[ALLOC] address: 1036 (1 byte)
+FreeList:
+---------
+  0:  addr:1030  size: -18
+  1:  addr:1090  size: -80
+  2:  addr:1020  size: -10
+  3:  addr:1040  size:  10
+  4:  addr:1060  size: -42
+  5:  addr:1076  size: -56
+  6:  addr:1060  size: -50
+  7:  addr:1020  size:  20
+  8:  addr:1080  size:  20
+  9:  addr:1050  size:  30
+AllocList:
+----------
+  0:  addr:1000  size:   1
+  1:  addr:1012  size:  12
+  2:  addr:1024  size:  12
+  3:  addr:1036  size:   1
+  4:  addr:1036  size:   1
+  5:  addr:1036  size:   1
+  6:  addr:1036  size:   1
+  7:  addr:1036  size:   1
+  8:  addr:1036  size:   1
+  9:  addr:1036  size:   1
+  10:  addr:1036  size:   1
+  11:  addr:1036  size:   1
+  12:  addr:1036  size:   1
+  13:  addr:1036  size:   1
+  14:  addr:1036  size:   1
+  15:  addr:1036  size:   1
+  16:  addr:1036  size:   1
+  17:  addr:1036  size:   1
+  18:  addr:1036  size:   1
+  19:  addr:1036  size:   1
+  20:  addr:1036  size:   1
+  21:  addr:1036  size:   1
+  22:  addr:1036  size:   1
+  23:  addr:1036  size:   1
+  24:  addr:1036  size:   1
+  25:  addr:1036  size:   1
+  26:  addr:1036  size:   1
+  27:  addr:1036  size:   1
+  28:  addr:1036  size:   1
+  29:  addr:1036  size:   1
+  30:  addr:1036  size:   1
+  31:  addr:1036  size:   1
+  32:  addr:1036  size:  12
+  33:  addr:1048  size:  20
+  34:  addr:1068  size:  20
+  35:  addr:1088  size:   2
+[FREE]  address: 1030 was not allocated
+[FREE]  address: 1030 was not allocated
+[FREE]  address: 1027 was not allocated
+[FREE]  address: 1021 was not allocated
+[FREE]  address: 1006 was not allocated
+[FREE]  address: 1026 was not allocated
+[FREE]  address: 1003 was not allocated
+[FREE]  address: 1018 was not allocated
+[FREE]  address: 1015 was not allocated
+[FREE]  address: 1012 (12 byte)
+[FREE]  address: 1030 was not allocated
+FreeList:
+---------
+  0:  addr:1012  size:  12
+  1:  addr:1030  size: -18
+  2:  addr:1090  size: -80
+  3:  addr:1020  size: -10
+  4:  addr:1040  size:  10
+  5:  addr:1060  size: -42
+  6:  addr:1076  size: -56
+  7:  addr:1060  size: -50
+  8:  addr:1020  size:  20
+  9:  addr:1080  size:  20
+  10:  addr:1050  size:  30
+AllocList:
+----------
+  0:  addr:1000  size:   1
+  1:  addr:1024  size:  12
+  2:  addr:1036  size:   1
+  3:  addr:1036  size:   1
+  4:  addr:1036  size:   1
+  5:  addr:1036  size:   1
+  6:  addr:1036  size:   1
+  7:  addr:1036  size:   1
+  8:  addr:1036  size:   1
+  9:  addr:1036  size:   1
+  10:  addr:1036  size:   1
+  11:  addr:1036  size:   1
+  12:  addr:1036  size:   1
+  13:  addr:1036  size:   1
+  14:  addr:1036  size:   1
+  15:  addr:1036  size:   1
+  16:  addr:1036  size:   1
+  17:  addr:1036  size:   1
+  18:  addr:1036  size:   1
+  19:  addr:1036  size:   1
+  20:  addr:1036  size:   1
+  21:  addr:1036  size:   1
+  22:  addr:1036  size:   1
+  23:  addr:1036  size:   1
+  24:  addr:1036  size:   1
+  25:  addr:1036  size:   1
+  26:  addr:1036  size:   1
+  27:  addr:1036  size:   1
+  28:  addr:1036  size:   1
+  29:  addr:1036  size:   1
+  30:  addr:1036  size:   1
+  31:  addr:1036  size:  12
+  32:  addr:1048  size:  20
+  33:  addr:1068  size:  20
+  34:  addr:1088  size:   2
+[FREE]  address: 1019 was not allocated
+[FREE]  address: 1016 was not allocated
+[FREE]  address: 1005 was not allocated
+[FREE]  address: 1025 was not allocated
+[FREE]  address: 1004 was not allocated
+[FREE]  address: 1000 (1 byte)
+[FREE]  address: 1017 was not allocated
+[FREE]  address: 1013 was not allocated
+FreeList:
+---------
+  0:  addr:1000  size:   1
+  1:  addr:1012  size:  12
+  2:  addr:1030  size: -18
+  3:  addr:1090  size: -80
+  4:  addr:1020  size: -10
+  5:  addr:1040  size:  10
+  6:  addr:1060  size: -42
+  7:  addr:1076  size: -56
+  8:  addr:1060  size: -50
+  9:  addr:1020  size:  20
+  10:  addr:1080  size:  20
+  11:  addr:1050  size:  30
+AllocList:
+----------
+  0:  addr:1024  size:  12
+  1:  addr:1036  size:   1
+  2:  addr:1036  size:   1
+  3:  addr:1036  size:   1
+  4:  addr:1036  size:   1
+  5:  addr:1036  size:   1
+  6:  addr:1036  size:   1
+  7:  addr:1036  size:   1
+  8:  addr:1036  size:   1
+  9:  addr:1036  size:   1
+  10:  addr:1036  size:   1
+  11:  addr:1036  size:   1
+  12:  addr:1036  size:   1
+  13:  addr:1036  size:   1
+  14:  addr:1036  size:   1
+  15:  addr:1036  size:   1
+  16:  addr:1036  size:   1
+  17:  addr:1036  size:   1
+  18:  addr:1036  size:   1
+  19:  addr:1036  size:   1
+  20:  addr:1036  size:   1
+  21:  addr:1036  size:   1
+  22:  addr:1036  size:   1
+  23:  addr:1036  size:   1
+  24:  addr:1036  size:   1
+  25:  addr:1036  size:   1
+  26:  addr:1036  size:   1
+  27:  addr:1036  size:   1
+  28:  addr:1036  size:   1
+  29:  addr:1036  size:   1
+  30:  addr:1036  size:  12
+  31:  addr:1048  size:  20
+  32:  addr:1068  size:  20
+  33:  addr:1088  size:   2
+[FREE]  address: 1010 was not allocated
+[FREE]  address: 1023 was not allocated
+[FREE]  address: 1024 (12 byte)
+[FREE]  address: 1030 was not allocated
+[FREE]  address: 1020 was not allocated
+[FREE]  address: 1014 was not allocated
+[FREE]  address: 1011 was not allocated
+[FREE]  address: 1008 was not allocated
+FreeList:
+---------
+  0:  addr:1012  size:  24
+  1:  addr:1030  size: -18
+  2:  addr:1090  size: -80
+  3:  addr:1020  size: -10
+  4:  addr:1040  size:  10
+  5:  addr:1060  size: -42
+  6:  addr:1076  size: -56
+  7:  addr:1060  size: -50
+  8:  addr:1020  size:  20
+  9:  addr:1080  size:  20
+  10:  addr:1050  size:  30
+AllocList:
+----------
+  0:  addr:1036  size:   1
+  1:  addr:1036  size:   1
+  2:  addr:1036  size:   1
+  3:  addr:1036  size:   1
+  4:  addr:1036  size:   1
+  5:  addr:1036  size:   1
+  6:  addr:1036  size:   1
+  7:  addr:1036  size:   1
+  8:  addr:1036  size:   1
+  9:  addr:1036  size:   1
+  10:  addr:1036  size:   1
+  11:  addr:1036  size:   1
+  12:  addr:1036  size:   1
+  13:  addr:1036  size:   1
+  14:  addr:1036  size:   1
+  15:  addr:1036  size:   1
+  16:  addr:1036  size:   1
+  17:  addr:1036  size:   1
+  18:  addr:1036  size:   1
+  19:  addr:1036  size:   1
+  20:  addr:1036  size:   1
+  21:  addr:1036  size:   1
+  22:  addr:1036  size:   1
+  23:  addr:1036  size:   1
+  24:  addr:1036  size:   1
+  25:  addr:1036  size:   1
+  26:  addr:1036  size:   1
+  27:  addr:1036  size:   1
+  28:  addr:1036  size:   1
+  29:  addr:1036  size:  12
+  30:  addr:1048  size:  20
+  31:  addr:1068  size:  20
+  32:  addr:1088  size:   2
+[FREE]  address: 1028 was not allocated
+[FREE]  address: 1002 was not allocated
+[FREE]  address: 1009 was not allocated
+[FREE]  address: 1022 was not allocated
+[FREE]  address: 1007 was not allocated
+[FREE]  address: 1030 was not allocated
+[FREE]  address: 1001 was not allocated
+[FREE]  address: 1029 was not allocated
+[FREE]  address: 1030 was not allocated
+FreeList:
+---------
+  0:  addr:1012  size:  24
+  1:  addr:1030  size: -18
+  2:  addr:1090  size: -80
+  3:  addr:1020  size: -10
+  4:  addr:1040  size:  10
+  5:  addr:1060  size: -42
+  6:  addr:1076  size: -56
+  7:  addr:1060  size: -50
+  8:  addr:1020  size:  20
+  9:  addr:1080  size:  20
+  10:  addr:1050  size:  30
+AllocList:
+----------
+  0:  addr:1036  size:   1
+  1:  addr:1036  size:   1
+  2:  addr:1036  size:   1
+  3:  addr:1036  size:   1
+  4:  addr:1036  size:   1
+  5:  addr:1036  size:   1
+  6:  addr:1036  size:   1
+  7:  addr:1036  size:   1
+  8:  addr:1036  size:   1
+  9:  addr:1036  size:   1
+  10:  addr:1036  size:   1
+  11:  addr:1036  size:   1
+  12:  addr:1036  size:   1
+  13:  addr:1036  size:   1
+  14:  addr:1036  size:   1
+  15:  addr:1036  size:   1
+  16:  addr:1036  size:   1
+  17:  addr:1036  size:   1
+  18:  addr:1036  size:   1
+  19:  addr:1036  size:   1
+  20:  addr:1036  size:   1
+  21:  addr:1036  size:   1
+  22:  addr:1036  size:   1
+  23:  addr:1036  size:   1
+  24:  addr:1036  size:   1
+  25:  addr:1036  size:   1
+  26:  addr:1036  size:   1
+  27:  addr:1036  size:   1
+  28:  addr:1036  size:   1
+  29:  addr:1036  size:  12
+  30:  addr:1048  size:  20
+  31:  addr:1068  size:  20
+  32:  addr:1088  size:   2
