@@ -31,15 +31,19 @@ AllocList:
 [FREE]  address: 1000 (20 byte)
 FreeList:
 ---------
-  0:  addr:1000  size:  50
-  1:  addr:1052  size:  48
+  0:  addr:1020  size:  30
+  1:  addr:1000  size:  20
+  2:  addr:1052  size:  48
 AllocList:
 ----------
   0:  addr:1050  size:   2
 [FREE]  address: 1050 (2 byte)
 FreeList:
 ---------
-  0:  addr:1000  size: 100
+  0:  addr:1020  size:  30
+  1:  addr:1000  size:  20
+  2:  addr:1050  size:   2
+  3:  addr:1052  size:  48
 AllocList:
 ----------
   <empty>

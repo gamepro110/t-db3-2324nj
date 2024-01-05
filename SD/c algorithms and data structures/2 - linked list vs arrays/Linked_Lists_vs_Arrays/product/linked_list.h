@@ -60,4 +60,6 @@ int ListRemove(LinkedList* list, Element** element);
  */
 void ListRemoveAll(LinkedList* list);
 
+int GetListSize(LinkedList* list);
+
 #endif

@@ -37,22 +37,58 @@ int PrintList(FILE* stream) {
     return 0;
 }
 
+void dbPrintElement(Element* elem) {
+    if (elem == NULL) {
+        printf("{%8s}", "<NULL>");
+    }
+    else {
+        printf("{% 3d;% 2d}", elem->address, elem->size);
+    }
+}
+void dbPrintList(LinkedList* list) {
+    Element* elem = list->head;
+
+    while (elem != NULL)
+    {
+        dbPrintElement(elem);
+
+        if (elem->next != NULL) {
+            printf(", ");
+        }
+
+        elem = elem->next;
+    }
+    
+}
+void dbPrint(const char* note, Element* del, Element *element) {
+    printf("%s del node: ", note);
+    dbPrintElement(del);
+    printf("__ elem: ");
+    dbPrintElement(element);
+    printf("\nfl: ");
+    dbPrintList(&freeList);
+    printf("\nal: ");
+    dbPrintList(&allocList);
+    printf("\n");
+
+}
+
 /* function: ClaimMemory
  * pre: nrofBytes > 0
  * post: if no memory block of nrofBytes available return -1
  *       otherwise the first block that is large enough is claimed and the start address is returned
  */
 int ClaimMemory(int nrofBytes) {
-    if (freeList.head == NULL || nrofBytes < 1) { //TODO add loop to check past freelis.head, now only the first gets checked...
+    if (freeList.head == NULL || nrofBytes < 1) {
         return -1;
     }
 
-    Element* freeElem = freeList.head; // TODO remove freeElem var, prevents redundent multiple null check
+    Element* freeElem = freeList.head;
     bool spaceAvailable = false;
 
     if (freeList.size > 1) {
         while (freeElem != NULL && freeElem->next != NULL && spaceAvailable == false) {
-            spaceAvailable = freeElem->next->address - (freeElem->address + freeElem->size) > nrofBytes;
+            spaceAvailable = freeElem->next->address - (freeElem->address + freeElem->size) >= nrofBytes;
 
             if (!spaceAvailable) { // dont move ptr when there is space
                 freeElem = freeElem->next;
@@ -69,22 +105,14 @@ int ClaimMemory(int nrofBytes) {
         }
     }
 
-    //// resize freelist (variable only)
     int newAddr = freeElem->address;
-    freeElem->address += nrofBytes; //TODO fix blindly adding to the head...
+    freeElem->address += nrofBytes;
     freeElem->size -= nrofBytes;
-
-    //// update freelist address
-    //tODO make new element for alloc list with original address of freelist and size requested
     Element* allocElem = allocList.head;
 
-    if (allocElem == NULL) {
-        //newAddr = StartAddress;
-    }
-    else {
+    if (allocElem != NULL) {
         if (allocElem->address - StartAddress >= nrofBytes) {
             allocElem = NULL;
-            //newAddr = StartAddress;
         }
         else { // checked preseading addrs?
             int sizeBetween = 0;
@@ -98,8 +126,6 @@ int ClaimMemory(int nrofBytes) {
                     allocElem = allocElem->next;
                 }
             }
-
-            //newAddr = allocElem->address + allocElem->size;
         }
 
         if (newAddr >= StartAddress + startSize) {
@@ -110,7 +136,7 @@ int ClaimMemory(int nrofBytes) {
     ListAddAfter(&allocList, newAddr, nrofBytes, allocElem);
 
     if (freeElem->size == 0) {
-        ListRemoveTail(&freeList);
+        ListRemove(&freeList, &freeElem);
     }
 
     return newAddr;
@@ -122,10 +148,7 @@ int ClaimMemory(int nrofBytes) {
  *
  */
 int FreeMemory(int addr) {
-    //TODO move element from alloc to free list
-    //TODO if element + size + 1 == next element. merge
-
-    // find element at addres
+    //TODO check order of free, simple <1020 -> 1000 -> 1052>...
     Element* addrElem = GetElementAtAddr(&allocList, addr);
 
     if (addrElem == NULL) {
@@ -136,56 +159,45 @@ int FreeMemory(int addr) {
     const int size = addrElem->size;
     Element* foundElem = NULL;
 
-    if (freeList.size <= 1) {
-        if (freeList.head != NULL && addrElem->address > freeList.head->address) {
-            foundElem = freeList.head;
-        }
+    if (freeList.size == 1 && addrElem->address > freeList.head->address) {
+        foundElem = freeList.head;
     }
     else if (freeList.size > 1) {
         foundElem = freeList.head;
+        int sumAddrSize = foundElem->address + foundElem->size;
 
-        // if (foundElem != NULL)
-        {
-            int sumAddrSize = foundElem->address + foundElem->size;
-            if (sumAddrSize >= addr) { //ERROR logic
-                // printf("AAA__________________________________________________________________________________\n");
-                Element* prev = NULL;
+        if (sumAddrSize >= addr) {
+            Element* prev = NULL;
 
-                while (foundElem->next != NULL && foundElem->address < addr) {
-                    prev = foundElem;
-                    foundElem = foundElem->next;
-                }
+            while (foundElem->next != NULL && foundElem->address < addr) {
+                prev = foundElem;
+                foundElem = foundElem->next;
+            }
 
+            if (prev != NULL) {
                 foundElem = prev;
             }
-            else if (sumAddrSize <= addr) {
-                // printf("BBB__________________________________________________________________________________\n");
-                foundElem = GetLastElement(&freeList);
-            }
+        }
+        else if (sumAddrSize <= addr) {
+            foundElem = GetLastElement(&freeList);
         }
     }
 
     ListAddAfter(&freeList, addrElem->address, addrElem->size, foundElem);
     ListRemove(&allocList, &addrElem);
 
-    // clean up
-    Element* step = freeList.head;
+    Element* elem = freeList.head;
+    Element* next = elem->next;
 
-    while (step != NULL && step->next != NULL) {
-        Element* elem = step;
-        Element* next = step->next;
-        int count = 0;
-
-        while (elem != NULL && elem->next != NULL && count < freeList.size) {
-            if (elem->address + elem->size == next->address) {
-                elem->size += next->size;
-                ListRemove(&freeList, &next);
-                next = elem->next;
-            }
-            count++;
+    while (freeList.size > 1 && elem->next != NULL) {
+        if (elem->address + elem->size == next->address) {
+            elem->size += next->size;
+            ListRemove(&freeList, &next);
+            next = elem->next;
         }
-
-        step = next;
+        else {
+            elem = elem->next;
+        }
     }
 
     return size;

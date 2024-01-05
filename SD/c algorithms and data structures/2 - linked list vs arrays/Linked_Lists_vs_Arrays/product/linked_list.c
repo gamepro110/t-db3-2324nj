@@ -112,7 +112,8 @@ int ListRemoveTail(LinkedList* list) {
         current = current->next;
     }
 
-    free(current); 
+    free(current);
+    current = NULL;
 
     if (last != NULL) {
         last->next = NULL; 
@@ -136,15 +137,15 @@ int ListRemove(LinkedList* list, Element** element) {
         return -1;
     }
 
-    Element** prev = &list->head;
+    Element* prev = list->head;
 
     // if head != element
-    if ((*prev)->address != (*element)->address) {
-        while ((*prev)->next != (*element) && (*prev)->next != NULL) {
-            (*prev) = (*prev)->next;
+    if (prev->address != (*element)->address) {
+        while (prev->next != (*element) && prev->next != NULL) {
+            prev = prev->next;
         }
 
-        (*prev)->next = (*element)->next;
+        prev->next = (*element)->next;
     }
     else {
         // if head == element
@@ -179,4 +180,20 @@ void ListRemoveAll(LinkedList* list) {
 
     list->size = 0;
     list->head = NULL;
+}
+
+int GetListSize(LinkedList *list) {
+    if (list == NULL) {
+        return -1;
+    }
+
+    int count = 0;
+    Element* e = list->head;
+
+    while (e != NULL) {
+        count++;
+        e = e->next;
+    }
+
+    return count;
 }
