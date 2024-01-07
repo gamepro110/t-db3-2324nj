@@ -70,7 +70,6 @@ void dbPrint(const char* note, Element* del, Element *element) {
     printf("\nal: ");
     dbPrintList(&allocList);
     printf("\n");
-
 }
 
 /* function: ClaimMemory
@@ -88,11 +87,17 @@ int ClaimMemory(int nrofBytes) {
 
     if (freeList.size > 1) {
         while (freeElem != NULL && freeElem->next != NULL && spaceAvailable == false) {
-            spaceAvailable = freeElem->next->address - (freeElem->address + freeElem->size) >= nrofBytes;
+            // int sumAddrSize = freeElem->address + freeElem->size;
+            // int bytesLeft = freeElem->next->address - sumAddrSize;
+            spaceAvailable = freeElem->size >= nrofBytes;
 
-            if (!spaceAvailable) { // dont move ptr when there is space
+            if (!spaceAvailable) {
                 freeElem = freeElem->next;
             }
+        }
+
+        if (freeElem->next == NULL) {
+            spaceAvailable = freeElem->size >= nrofBytes;
         }
 
         if (!spaceAvailable) {
@@ -108,15 +113,21 @@ int ClaimMemory(int nrofBytes) {
     int newAddr = freeElem->address;
     freeElem->address += nrofBytes;
     freeElem->size -= nrofBytes;
+
+    if (freeElem->size == 0) { // move up
+        ListRemove(&freeList, &freeElem);
+    }
+
     Element* allocElem = allocList.head;
 
     if (allocElem != NULL) {
         if (allocElem->address - StartAddress >= nrofBytes) {
             allocElem = NULL;
         }
-        else { // checked preseading addrs?
-            int sizeBetween = 0;
+        else {
             if (allocList.size > 1) {
+                int sizeBetween = allocElem->next->address - (allocElem->address + allocElem->size);
+
                 while (allocElem != NULL && allocElem->next != NULL && sizeBetween <= nrofBytes) {
                     sizeBetween = allocElem->next->address - (allocElem->address + allocElem->size);
                     allocElem = allocElem->next;
@@ -134,10 +145,6 @@ int ClaimMemory(int nrofBytes) {
     }
 
     ListAddAfter(&allocList, newAddr, nrofBytes, allocElem);
-
-    if (freeElem->size == 0) {
-        ListRemove(&freeList, &freeElem);
-    }
 
     return newAddr;
 }
@@ -159,27 +166,32 @@ int FreeMemory(int addr) {
     const int size = addrElem->size;
     Element* foundElem = NULL;
 
-    if (freeList.size == 1 && addrElem->address > freeList.head->address) {
-        foundElem = freeList.head;
+    if (freeList.size == 1) {
+        if (addrElem->address > freeList.head->address) {
+            foundElem = freeList.head;
+        }
     }
     else if (freeList.size > 1) {
         foundElem = freeList.head;
-        int sumAddrSize = foundElem->address + foundElem->size;
 
-        if (sumAddrSize >= addr) {
+        if (addr < foundElem->address) {
+            foundElem = NULL;
+        }
+        else if (addr == foundElem->address) {
+            // doubt this will get hit...
+            printf("_________________________________________________________________________________\n");
+            //TODO debug this
+        }
+        else {
             Element* prev = NULL;
-
-            while (foundElem->next != NULL && foundElem->address < addr) {
+            while (foundElem->address < addr && foundElem->next !=  NULL) {
                 prev = foundElem;
                 foundElem = foundElem->next;
             }
 
-            if (prev != NULL) {
+            if (prev != NULL && foundElem->address > addr) {
                 foundElem = prev;
             }
-        }
-        else if (sumAddrSize <= addr) {
-            foundElem = GetLastElement(&freeList);
         }
     }
 
