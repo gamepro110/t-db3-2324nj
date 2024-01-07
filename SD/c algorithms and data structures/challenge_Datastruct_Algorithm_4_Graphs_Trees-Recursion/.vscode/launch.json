@@ -7,7 +7,10 @@
             "request": "launch",
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
-            "program": "${workspaceFolder}/linkedlist",
+            "program": "${workspaceFolder}/graphTree",
+            "args": [
+                "3"
+            ],
             "MIMode": "gdb",
             "miDebuggerPath": "gdb",
             "setupCommands": [
@@ -30,7 +33,7 @@
             "request": "launch",
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
-            "program": "${workspaceFolder}/linkedlist_test",
+            "program": "${workspaceFolder}/graphTree_test",
             "MIMode": "gdb",
             "miDebuggerPath": "gdb",
             "setupCommands": [

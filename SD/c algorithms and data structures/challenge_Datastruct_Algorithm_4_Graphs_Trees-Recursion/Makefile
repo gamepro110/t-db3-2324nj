@@ -5,17 +5,14 @@ UNITY_FOLDER=./Unity
 INC_DIRS=-Iproduct
 TEST_INC_DIRS=$(INC_DIRS) -I$(UNITY_FOLDER)
 
-SHARED_FILES=product/linked_list.c
+SHARED_FILES=product/Tree.c
 
 ASSIGNMENT_FILES=$(SHARED_FILES) \
 	      product/main.c \
-	      product/my_memory.c \
-	      product/terminal_io.c
 
 ASSIGNMENT_TEST_FILES=$(SHARED_FILES) \
 	           $(UNITY_FOLDER)/unity.c \
-	           product/my_memory.c \
-	           test/linkedlist_test.c
+	           test/graphTree_test.c
 
 HEADER_FILES=product/*.h
 
@@ -25,9 +22,9 @@ SYMBOLS= -g -O0 -std=c99 -Wall -Wextra -Werror
 TEST_SYMBOLS=$(SYMBOLS) -DTEST
 
 TESTDATA_DIR=./testdata
-OUTPUT_FILE=$(TESTDATA_DIR)/my_output
-INPUT_FILE=$(TESTDATA_DIR)/input
-COMPARE_FILE=$(TESTDATA_DIR)/correct
+OUTPUT_FILE=$(TESTDATA_DIR)/my_out
+INPUT_FILE=$(TESTDATA_DIR)/in
+COMPARE_FILE=$(TESTDATA_DIR)/out
 
 .PHONY: clean test klocwork klocwork_after_makefile_change
 
@@ -38,6 +35,40 @@ $(ASSIGNMENT): Makefile $(ASSIGNMENT_FILES)  $(HEADER_FILES)
 
 $(ASSIGNMENT_TEST): Makefile $(ASSIGNMENT_TEST_FILES)  $(HEADER_FILES)
 	@$(CC) $(TEST_INC_DIRS) $(TEST_SYMBOLS) $(ASSIGNMENT_TEST_FILES) -o $(ASSIGNMENT_TEST)
+
+3_1: $(ASSIGNMENT)
+	@./$(ASSIGNMENT) 3 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
+
+3_2: $(ASSIGNMENT)
+	@./$(ASSIGNMENT) 3 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
+
+3_3: $(ASSIGNMENT)
+	@./$(ASSIGNMENT) 3 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
+
+4_1: $(ASSIGNMENT)
+	@./$(ASSIGNMENT) 4 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
+
+4_2: $(ASSIGNMENT)
+	@./$(ASSIGNMENT) 4 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
+
+4_3: $(ASSIGNMENT)
+	@./$(ASSIGNMENT) 4 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
+
+4_4: $(ASSIGNMENT)
+	@./$(ASSIGNMENT) 4 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
+
+3_: 3_1 3_2 3_3
+
+4_: 4_1 4_2 4_3 4_4
+
+run: 3_ 4_
 
 clean:
 	@rm -f $(ASSIGNMENT) $(ASSIGNMENT_TEST)

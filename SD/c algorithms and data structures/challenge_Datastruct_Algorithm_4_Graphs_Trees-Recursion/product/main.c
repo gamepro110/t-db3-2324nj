@@ -1,9 +1,18 @@
-#include "my_memory.h"
-#include "terminal_io.h"
+#include "Tree.h"
 
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+
+//TODO move to parse.h
+int ParseNumTests(int* t);
+int ParseInputData(int* n, int* m);
+int ParseTreeData(Tree* tree, int m);
+void PrintTree(Tree* tree);
+
+#define dbPrint 0
+#define dbPrintTree 1
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
@@ -13,166 +22,170 @@ int main(int argc, char* argv[]) {
 
     char selectedAssignment = atoi(argv[1]);
 
-    int t = 0; // amount of cases
-    int n = 0; // max value(?)
-    int m = 0; // lines of x,y points
-    
+    int tTests = 0; // amount of cases
+    int nFindNum = 0; // max value(?)
+    int mNumDataLines = 0; // lines of x,y points
 
-    //TODO make tree node struct
-    //TODO parse input
-
-    if (selectedAssignment == 3)
-    {
-        int shortestPath = 0;
-        // FindSmallestNumberThatIsRepeatedKTimes(arr, arrSize, k, &smallestNumber);
-        FindShortestPathInGraphTree(&tree, &shortestPath);
-
-        printf("%d\n", shortestPath);
-    }
-    else if (selectedAssignment == 4)
-    {
-        int difference = 0;
-        // ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(arr, arrSize, k, &difference);
-        
-
-        printf("%d\n", difference);
-    }
-    //----------------------------------------------------------------------------
-    const int MemorySize = 100;
-
-    MenuOptions choice = MO_ALLOCATE_MEMORY;
-    
-    PrintProgramHeader();
-
-    if (argc != 1) {
-        fprintf(stderr, "%s: argc=%d\n", argv[0], argc);
+    if (ParseNumTests(&tTests) == -1) {
+        printf("faild to parse t");
+        return -1;
     }
 
-    /* initialisate van lijsten dus freeList bevat alle geheugen en allocList is
-     * leeg */
-    ConstructMemory(MemorySize);
+    #if dbPrint
+    printf("nTests: %d\n", tTests);
+    #endif
 
-    while (choice != MO_QUIT) {
-        choice = GetMenuChoice();
+    for (int i = 0; i < tTests; i++) {
+        if (ParseInputData(&nFindNum, &mNumDataLines) == -1) {
+            printf("failed to parse input\n");
+            return -1;
+        }
 
-        switch (choice) {
-            case MO_ALLOCATE_MEMORY: {
-                int nrofBytes = GetInt("Give nr of bytes: ");
-                int addr = ClaimMemory(nrofBytes);
-                if (addr == -1)
-                {
-                    printf("[ALLOC] not enough memory for %d byte\n", nrofBytes);
-                }
-                else
-                {
-                    printf("[ALLOC] address: %4d (%d byte)\n", addr, nrofBytes);
-                }
-                break;
+        #if dbPrint
+        printf("%d data lines, %s: %d\n", mNumDataLines, "\U0001F50D", nFindNum);
+        #endif
+
+        Tree tree = CreateTree();
+
+        if (ParseTreeData(&tree, mNumDataLines) == -1) {
+            return -1;
+        }
+
+        #if dbPrint || dbPrintTree
+        PrintTree(&tree);
+        #endif
+
+        if (selectedAssignment == 3) {
+            int shortestPath = 0;
+            FindShortestPathInGraphTree(&tree, &shortestPath, nFindNum);
+
+            printf("%d\n", shortestPath);
+        }
+        else if (selectedAssignment == 4) {
+            int difference = -1;
+            // recursive thing...
+
+            printf("%d\n", difference);
+        }
+
+        ChopDownTree(&tree);
+    }
+
+    return 0;
+}
+
+int ParseNumTests(int* t) {
+    if (t == NULL) {
+        return -1;
+    }
+
+    if (scanf("%d", t) < 1) {
+        printf("failed to parse T\n");
+        return -1;
+    }
+
+    return 0;
+}
+
+int ParseInputData(int* n, int* m) {
+    if (n == NULL || m == NULL) {
+        printf("NUll passed to ParseTreeData\n");
+        return -1;
+    }
+
+    if (scanf("%d %d", n, m) < 1) {
+        printf("failed to parse nm\n");
+        return -1;
+    }
+
+    return 0;
+}
+
+int ParseTreeData(Tree* tree, int m) {
+    if (tree == NULL) {
+        printf("NUll passed to ParseTreeData\n");
+        return -1;
+    }
+
+    for (int i = 0; i < m; i++) {
+        int x = 0;
+        int y = 0;
+
+        if (scanf("%d %d", &x, &y) < 1) {
+            printf("failed to parse xy\n");
+            return -1;
+        }
+
+        if (tree->root.head == NULL) {
+            if (TreeAddNode(&tree->root, x) == -1) {
+                return -1;
             }
-            case MO_FREE_MEMORY: {
-                int addr = GetInt("Give address to be freed: ");
-                int nrofBytes = FreeMemory(addr);
-                if (nrofBytes == -1)
-                {
-                    printf("[FREE]  address: %4d was not allocated\n", addr);
-                }
-                else
-                {
-                    printf("[FREE]  address: %4d (%d byte)\n", addr, nrofBytes);
-                }
-                break;
-            }
-            case MO_SHOW_LISTS: {
-                PrintList(stdout);
-                break;
-            }
-            case MO_SHOW_HIDE_MENU: {
-                ToggleMenuPrinting();
-                break;
-            }
-            case MO_QUIT: {
-                // nothing to do here
-                break;
-            }
-            default: {
-                printf("invalid choice: %d\n", choice);
-                break;
-            }
+        }
+
+        TreeNode* nodeX = FindNodeWithValue(tree->root.head, x);
+        TreeNode* nodeY = FindNodeWithValue(tree->root.head, y);
+
+        if (nodeX == NULL) {
+            TreeAddNode(&tree->root, x);
+            nodeX = FindNodeWithValue(tree->root.head, x);
+        }
+
+        if (nodeY == NULL) {
+            TreeNode* newNode = CreateNode(y, nodeX);
+            TreeAddChildNode(nodeX, newNode);
+        }
+        else {
+            // TreeAddNodeAfter(nodeX, y, NULL); // incorrect
+            TreeAddChildNode(nodeY, nodeX);
+            // nodeX->next = nodeY;
+            TreeAddChildNode(nodeX, nodeY);
         }
     }
 
-    /* opruimen van de lijsten */
-    DestructMemory();
-
     return 0;
 }
 
-//! ref <1 intro/main.c>
-/*
-#include "parser.h"
-
-#include "challenge.h"
-
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-int main(int argc, char* argv[])
-{
-    if (argc != 2) {
-        printf("Please provide argument to select assignment.\n");
-        return -1;
+void printLeaf(TreeNode* leaf, int indent) {
+    if (leaf == NULL) {
+        return;
     }
 
-    char selectedAssignment = atoi(argv[1]);
-
-    int arrSize = 1000000;
-    int* arr = NULL; // array, created in parse()
-    int k = -1;
-
-    if (parse(&arrSize, &arr, &k) == -1) {
-        return -1;
+    for (int i = 0; i < indent; i++) {
+        printf("\t");
     }
-
-    if (selectedAssignment == 1)
-    {
-        int smallestNumber = 0;
-        FindSmallestNumberThatIsRepeatedKTimes(arr, arrSize, k, &smallestNumber);
-
-        printf("%d\n", smallestNumber);
-    }
-    else if (selectedAssignment == 2)
-    {
-        int difference = 0;
-        ComputeDifferenceBetweenMaxAndMinSumOfKElements_0(arr, arrSize, k, &difference);
-
-        printf("%d\n", difference);
-    }
-    else if (selectedAssignment == 31)
-    {
-        int difference = 0;
-        ComputeDifferenceBetweenMaxAndMinSumOfKElements_1(arr, arrSize, k, &difference);
-        printf("%d\n", difference);
-    }
-    else if (selectedAssignment == 32)
-    {
-        int difference = 0;
-        ComputeDifferenceBetweenMaxAndMinSumOfKElements_2(arr, arrSize, k, &difference);
-        printf("%d\n", difference);
-    }
-    else if (selectedAssignment == 33)
-    {
-        int difference = 0;
-        ComputeDifferenceBetweenMaxAndMinSumOfKElements_3(arr, arrSize, k, &difference);
-        printf("%d\n", difference);
-    }
-    else
-    {
-        printf("Error: Unknown assignment: %d\n", selectedAssignment);
-    }
-
-    free(arr);
-
-    return 0;
+    
+    printf("{% 3d (% 1d)}\n", leaf->data, leaf->branches.size);
 }
-*/
+
+void printBranch(TreeNode* node, int indent) {
+    if (node == NULL) {
+        return;
+    }
+
+    printLeaf(node, indent);
+
+    if (node->branches.size > 0) {
+        TreeNode* branch = node->branches.head;
+        int count = node->branches.size;
+
+        while (branch != NULL && count != 0) {
+            count--;
+            if (branch->parrent == node) {
+                printBranch(branch, indent + 1);
+            }
+            else {
+                printLeaf(branch, indent + 1); //TODO fix indent
+            }
+
+            branch = branch->next;
+        }
+    }
+}
+
+void PrintTree(Tree* tree) {
+    if (tree == NULL) {
+        return;
+    }
+
+    printBranch(tree->root.head, 0);
+}
