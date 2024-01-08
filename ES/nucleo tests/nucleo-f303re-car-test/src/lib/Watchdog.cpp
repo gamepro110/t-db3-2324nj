@@ -1,4 +1,4 @@
-#include "watchdog.hpp"
+#include "Watchdog.hpp"
 
 #include "stm32f303xe.h"
 

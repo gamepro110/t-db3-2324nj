@@ -79,6 +79,13 @@ bool Button::SetupIrq() {
     // Enable EXTI interrupt
     EXTI->IMR |= (1 << pinNr);
 
+    NVIC_SetPriority(irq, 8);
+    //! note down
+    // 1 == 16
+    // 2 == 32
+    // 4 == 64
+    // etc. priority should be above 80. this is a weird qwirk...
+
     // Enable the EXTI interrupt in NVIC
     NVIC_EnableIRQ(irq);
 
@@ -86,10 +93,8 @@ bool Button::SetupIrq() {
 }
 
 //!TEMP
-#if !USE_FREERTOS
-#   include "usart.h"
-#   include <cstring>
-#endif
+#include "usart.h"
+#include <cstring>
 //!TEMP
 
 void Button::HandleIrq() {
@@ -103,18 +108,15 @@ void Button::HandleIrq() {
     else {
         triggered = false;
         delta = tick - startTime;
+        data.butNr = btnPin.GetPinNr();
         data.Duration = delta;
 
-#       if USE_FREERTOS
-        // const uint8_t msgPrio = 0;
-        // const uint32_t timeout = 0; //must be zero <https://www.keil.com/pack/doc/CMSIS/RTOS2/html/group__CMSIS__RTOS__Message.html#gaa515fc8b956f721a8f72b2c505813bfc>
-        // osMessageQueuePut(id, &data, msgPrio, timeout);
-#       endif
+        const uint8_t msgPrio = 0;
+        const uint32_t timeout = 0; //must be zero <https://www.keil.com/pack/doc/CMSIS/RTOS2/html/group__CMSIS__RTOS__Message.html#gaa515fc8b956f721a8f72b2c505813bfc>
+        osMessageQueuePut(id, &data, msgPrio, timeout);
     }
 
-#   if !USE_FREERTOS
-    logger.Logf("IRQ: p% 1d __ t% 5ld __ ^% 3ld\n", btnPin.GetPinNr(), tick, delta);
-#   endif
+    // logger.Logf("\nIRQ: p% 1d __ t% 5ld __ ^% 3ld\n", btnPin.GetPinNr(), tick, delta);
 }
 
 void Button::ShortPress() {

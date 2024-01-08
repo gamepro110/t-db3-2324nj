@@ -118,7 +118,7 @@ private:
 
         do
         {
-            tick = HAL_GetTick();
+            tick = HAL_GetTick(); //TODO change to custom timer
         }
         while (tick < duration);
     }

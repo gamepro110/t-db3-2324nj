@@ -31,6 +31,6 @@ bool ManualControlPanel::Setup() {
 
 void ManualControlPanel::Loop() {
     osDelay(100);
-    logger.Log("loop\r");
+    // logger.Log("loop\r");
     //TODO add serial options
 }

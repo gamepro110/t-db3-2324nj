@@ -44,6 +44,11 @@ int main(void) {
     SystemClock_Config();
     MX_GPIO_Init();
     MX_USART2_UART_Init();
+
+    /* Init scheduler */
+    // ES Course Comments: Uncomment the three lines below to enable FreeRTOS.
+    osKernelInitialize(); /* Call init function for freertos objects (in freertos.c) */
+
     const int MSGBUFSIZE = 80;
     char msgBuf[MSGBUFSIZE];
     snprintf(msgBuf, MSGBUFSIZE, "%s", "Hello World!\n");
@@ -62,8 +67,8 @@ int main(void) {
     distSensor = HC_SR04_DistSensor{ sensorEcho, sensorTrig, TIM4 };
     distSensor.Setup(72, 100000, 100, 3, 1, 2);
 
-    but_a = Button{ { GPIOC, 0, PinMode::digital_input_pullup }, EXTI0_IRQn, btnMsgQId};
-    but_b = Button{ { GPIOC, 1, PinMode::digital_input_pullup }, EXTI1_IRQn, btnMsgQId};
+    but_a = Button{ { GPIOC, 0, PinMode::digital_input_pullup }, EXTI0_IRQn, btnMsgQId };
+    but_b = Button{ { GPIOC, 1, PinMode::digital_input_pullup }, EXTI1_IRQn, btnMsgQId };
 
     iBut_a = &but_a;
     iBut_b = &but_b;
@@ -71,9 +76,7 @@ int main(void) {
     mcp = ManualControlPanel{ but_a, but_b };
     carSys = CarSystem{ distMsgQId, distSensor, mcp };
 
-    /* Init scheduler */
-    // ES Course Comments: Uncomment the three lines below to enable FreeRTOS.
-    osKernelInitialize(); /* Call init function for freertos objects (in freertos.c) */
+    //-----------------------------------
     MX_FREERTOS_Init();
     osKernelStart(); /* Start scheduler */
 
