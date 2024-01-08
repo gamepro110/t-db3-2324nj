@@ -128,14 +128,14 @@ int ClaimMemory(int nrofBytes) {
             if (allocList.size > 1) {
                 int sizeBetween = allocElem->next->address - (allocElem->address + allocElem->size);
 
-                while (allocElem != NULL && allocElem->next != NULL && sizeBetween <= nrofBytes) {
+                while (allocElem != NULL && allocElem->next != NULL && sizeBetween < nrofBytes) {
                     sizeBetween = allocElem->next->address - (allocElem->address + allocElem->size);
                     allocElem = allocElem->next;
                 }
 
-                if (allocElem->next != NULL && sizeBetween >= nrofBytes) {
-                    allocElem = allocElem->next;
-                }
+                // if (allocElem->next != NULL && sizeBetween >= nrofBytes) {
+                //     allocElem = allocElem->next;
+                // }
             }
         }
 
@@ -180,7 +180,6 @@ int FreeMemory(int addr) {
         else if (addr == foundElem->address) {
             // doubt this will get hit...
             printf("_________________________________________________________________________________\n");
-            //TODO debug this
         }
         else {
             Element* prev = NULL;
@@ -205,11 +204,11 @@ int FreeMemory(int addr) {
         if (elem->address + elem->size == next->address) {
             elem->size += next->size;
             ListRemove(&freeList, &next);
-            next = elem->next;
         }
         else {
             elem = elem->next;
         }
+        next = elem->next;
     }
 
     return size;
@@ -225,7 +224,7 @@ void printSelectedList(FILE* stream, LinkedList* list) {
     }
 
     while (elem != NULL) {
-        fprintf(stream, "  %d:  addr:%4d  size: %3d\n", idx, elem->address, elem->size);
+        fprintf(stream, "% 3d:  addr:%4d  size: %3d\n", idx, elem->address, elem->size);
         elem = elem->next;
         idx++;
     }

@@ -29,6 +29,8 @@ OUTPUT_FILE=$(TESTDATA_DIR)/my_output
 INPUT_FILE=$(TESTDATA_DIR)/input
 COMPARE_FILE=$(TESTDATA_DIR)/correct
 
+VALGRIND=valgrind --leak-check=full --leak-check=summary --show-leak-kinds=all --track-origins=yes
+
 .PHONY: clean test klocwork klocwork_after_makefile_change
 
 all: $(ASSIGNMENT) $(ASSIGNMENT_TEST)
@@ -40,16 +42,12 @@ $(ASSIGNMENT_TEST): Makefile $(ASSIGNMENT_TEST_FILES)  $(HEADER_FILES)
 	@$(CC) $(TEST_INC_DIRS) $(TEST_SYMBOLS) $(ASSIGNMENT_TEST_FILES) -o $(ASSIGNMENT_TEST)
 
 run_simple: $(ASSIGNMENT)
-	@./$(ASSIGNMENT) < $(INPUT_FILE)_simple.txt > $(OUTPUT_FILE)_simple.txt
+	@$(VALGRIND) ./$(ASSIGNMENT) < $(INPUT_FILE)_simple.txt > $(OUTPUT_FILE)_simple.txt
 	./compareOut.sh $(COMPARE_FILE)_simple.txt $(OUTPUT_FILE)_simple.txt
 
 run_full: $(ASSIGNMENT)
-	@./$(ASSIGNMENT) < $(INPUT_FILE)_full.txt > $(OUTPUT_FILE)_full.txt
+	@$(VALGRIND) ./$(ASSIGNMENT) < $(INPUT_FILE)_full.txt > $(OUTPUT_FILE)_full.txt
 	./compareOut.sh $(COMPARE_FILE)_full.txt $(OUTPUT_FILE)_full.txt
-
-runStripped: $(ASSIGNMENT)
-	@./$(ASSIGNMENT) < $(INPUT_FILE)_full.txt > $(OUTPUT_FILE)_full_stripped.txt
-	./compareOut.sh $(COMPARE_FILE)_full_stripped.txt $(OUTPUT_FILE)_full_stripped.txt
 
 run: run_simple run_full
 
