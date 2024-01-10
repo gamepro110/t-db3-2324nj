@@ -5,6 +5,7 @@
 #include <cstdint>
 
 enum class PinMode {
+    none,
     digital_input,
     digital_input_pullup,
     digital_output,
@@ -32,9 +33,15 @@ union AltModeValue {
 
 class NucleoPin {
 public:
-    NucleoPin(GPIO_TypeDef* block, uint8_t pinNr, PinMode mode);
+    NucleoPin();
+    NucleoPin(GPIO_TypeDef* block, uint8_t pinNr, PinMode mode = PinMode::none);
     NucleoPin(GPIO_TypeDef* block, uint8_t pinNr, AltModeValue value);
-    void SetAltMode(const AltModeValue& modeValue) const;
+    NucleoPin(const NucleoPin& other);
+    ~NucleoPin() = default;
+
+    NucleoPin& operator=(const NucleoPin& other);
+    
+    void SetAltMode() const;
     bool Setup() const;
     void Write(bool high) const;
     void Toggle() const;
@@ -49,7 +56,7 @@ private:
     GPIO_TypeDef* block;
     uint8_t pin;
     PinMode pinMode;
-    AltModeValue value;
+    AltModeValue altModeVal;
 };
 
 #endif

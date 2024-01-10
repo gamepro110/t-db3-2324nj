@@ -2,6 +2,7 @@
 #define LIB_SOFTUART_H_
 
 #include "NucleoPin.hpp"
+#include "HardwareTimer.hpp"
 
 #include "stm32f3xx_hal.h"
 
@@ -11,11 +12,16 @@
 #define HIGH 1
 #define LOW 0
 
-template<typename DataType, uint8_t numDataBits, uint8_t numStopBits, uint8_t numParityBits>
+template<typename DataType, uint8_t numDataBits = 8, uint8_t numStopBits = 1, uint8_t numParityBits = 0, uint8_t bufferSize = 80>
 class SoftUart final {
 public:
-    SoftUart(NucleoPin& rx, NucleoPin& tx, NucleoPin& debugRx, NucleoPin& debugTx, uint32_t baudrate = 9600) :
-        rx(rx), tx(tx), debugRx(debugRx), debugTx(debugTx), baud(baudrate)
+    SoftUart(NucleoPin rx, NucleoPin tx, HardwareTimer timer, NucleoPin debugRx, NucleoPin debugTx, uint32_t baudrate = 9600) :
+        rx(rx),
+        tx(tx),
+        tim(timer),
+        debugRx(debugRx),
+        debugTx(debugTx),
+        baud(baudrate)
     {
         static_assert(numDataBits >= 5);
         static_assert(numDataBits <= 8);
@@ -31,8 +37,12 @@ public:
     bool Setup() {
         rx.Write(true);
         tx.Write(true);
-        debugRx.Write(true);
-        debugTx.Write(true);
+        tim.SetEnablePeripheralClock();
+        tim.SetPrescaler(72); // 1MHz
+        // tim.SetAutoReload();
+        tim.SetTimerEnable();
+        debugRx.Write(false);
+        debugTx.Write(false);
 
         return (
             rx.Setup() &&
@@ -43,7 +53,7 @@ public:
     }
 
     bool ReadByte(uint8_t& outputValue) {
-        uint64_t nextBitTime = HAL_GetTick();
+        uint64_t nextBitTime = tim.GetTimerCount();
 
         if (rx.Read() != BITSTART) {
             return false;
@@ -71,7 +81,7 @@ public:
     }
 
     void WriteByte(uint8_t byte) {
-        uint64_t nextBitTime = HAL_GetTick();
+        uint64_t nextBitTime = tim.GetTimerCount();
 
         tx.Write(BITSTART); // start bit
         updateTimerAndWait(nextBitTime);
@@ -118,16 +128,19 @@ private:
 
         do
         {
-            tick = HAL_GetTick(); //TODO change to custom timer
+            tick = tim.GetTimerCount();
         }
         while (tick < duration);
     }
 
-    const NucleoPin& rx;
-    const NucleoPin& tx;
-    const NucleoPin& debugRx;
-    const NucleoPin& debugTx;
+    NucleoPin rx;
+    NucleoPin tx;
+    HardwareTimer tim;
+    NucleoPin debugRx;
+    NucleoPin debugTx;
 
+    // char writeBuffer[bufferSize];
+    // char readBuffer[bufferSize];
     const uint32_t baud;
 
     const bool BITSTART =       LOW;

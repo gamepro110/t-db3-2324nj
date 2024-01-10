@@ -20,12 +20,14 @@ int main(void) {
     const int MSGBUFSIZE = 80;
     char msgBuf[MSGBUFSIZE];
 
-    NucleoPin prx { GPIOC, 9, PinMode::digital_input };     // rx
-    NucleoPin ptx { GPIOC, 8, PinMode::digital_output };    // tx
-    NucleoPin pdrx { GPIOA, 5, PinMode::digital_output };   // debug rx
-    NucleoPin pdtx { GPIOA, 6, PinMode::digital_output };   // debug tx
-
-    SoftUart<uint8_t, 8, 1, 0> uart{ prx, ptx, pdrx, pdtx, 9600U };
+    SoftUart<uint8_t> uart{
+        { GPIOC, 9, PinMode::digital_input },   // rx
+        { GPIOC, 8, PinMode::digital_output },  // tx
+        TIM15,
+        { GPIOA, 5, PinMode::digital_output },  // debug rx
+        { GPIOA, 6, PinMode::digital_output },  // debug tx
+        57600U
+    };
 
     if (!uart.Setup()) {
         snprintf(msgBuf, MSGBUFSIZE, "%s", "failed to setup uart!\n");
@@ -38,14 +40,13 @@ int main(void) {
     uart.WriteByte('A');
     uart.WriteByte('\t');
     uart.Write("Hello World!\n");
-    return 0;
-
     uint8_t byte{ 0 };
 
     while (1) {
+        byte = 0;
         if (uart.ReadByte(byte)) {
-            snprintf(msgBuf, MSGBUFSIZE, "read: %c\n", byte);
-            HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+            // snprintf(msgBuf, MSGBUFSIZE, "read: %c\n", byte);
+            // HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
             byte++;
             uart.WriteByte(byte);
         }
