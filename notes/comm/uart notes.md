@@ -25,8 +25,18 @@ tags:
 - [x] write serial reader poc on uno
 - [x] write MMIO serial writer poc on uno
 - [x] write MMIO serial reader poc on uno
-- [ ] write serial writer poc on nucleo
-- [ ] write serial reader poc on nucleo
+- [x] write serial reader/writer poc on nucleo
+  - tested speeds
+    - [x] 9600 (succes)
+    - [x] 38400 (succes)
+    - [x] 57600 (succes)
+    - [x] 115200 (does not work. output gets garbeld)
+- [x] state diagram
+  - use the function names to link them
+- [ ] report
+  - you got the info, restructure it into a doc
+  - [ ] analysis!
+  - [ ] advice!
 
 ## info
 
@@ -37,3 +47,60 @@ tags:
 | `on` | digital `1` | on value of the bit in the byte |
 | `off` | digital `0` | off value of the bit in the byte |
 | `idle` | digital `1` | idle state of the serial line |
+
+## class diagram
+
+```mermaid
+classDiagram
+class SoftUart~typename DataType, uint8_t numDataBits, uint8_t numStopBits, uint8_t numParityBits, uint8_t bufferSize~ {
+  +Setup() bool
+  +ReadByte(char& byte) bool
+  +WriteByte(uint8_t byte)
+  +Write(string_view text)
+  -BitDuration() uint64_t
+  -updateTimerAndWait(const uint64_t& duration)
+
+  -NucleoPin rx
+  -NucleoPin tx
+  -HardwareTimer tim
+  -const uint32_t baud
+  -const bool BITSTART
+  -const bool BITSTOP
+  -const bool BITONE
+  -const bool BITZERO
+  -const bool BITIDLE
+}
+```
+
+## state diagram
+
+```mermaid
+stateDiagram-v2
+state "Write" as w
+state "WriteByte" as wb
+state "start bit" as wsta
+state "data bits" as wd
+state "parity bits" as wp
+state "stop bits" as ws
+
+wsta : exit / updateTimerAndWait
+wd : exit / updateTimerAndWait
+wp : exit / updateTimerAndWait
+ws : exit / updateTimerAndWait
+
+state w {
+  state wb{
+    [*] --> wsta
+    wsta --> wd
+    wd --> wp
+    wp --> ws
+    ws --> [*]
+  }
+
+  [*] --> wb
+  wb --> [*]
+}
+
+[*] --> w
+w --> [*]
+```

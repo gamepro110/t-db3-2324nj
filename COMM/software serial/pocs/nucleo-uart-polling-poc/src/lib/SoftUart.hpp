@@ -26,11 +26,11 @@ public:
         static_assert(numDataBits >= 5);
         static_assert(numDataBits <= 8);
 
-        static_assert(numStopBits >= 1);
-        static_assert(numStopBits <= 2);
-
         static_assert(numParityBits >= 0);
         static_assert(numParityBits <= 2);
+
+        static_assert(numStopBits >= 1);
+        static_assert(numStopBits <= 2);
     }
     ~SoftUart() {}
 
@@ -98,6 +98,8 @@ public:
 
             updateTimerAndWait(nextBitTime);
         }
+
+        //TODO add parity bit logic
 
         for (int i = 0; i < numStopBits; i++) {
             tx.Write(BITSTOP); // stop bit
