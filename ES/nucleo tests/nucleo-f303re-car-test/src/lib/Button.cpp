@@ -4,20 +4,22 @@
 
 #include "stm32f3xx_hal.h"
 
-Button::Button(NucleoPin inputPin, IRQn_Type irq, osMessageQueueId_t id) : //, std::function<void()> actionShort, std::function<void()> actionLong) :
+Button::Button(NucleoPin inputPin, IRQn_Type irq, osMessageQueueId_t id, Action actionShort, Action actionLong) :
     btnPin(inputPin),
+    id(id),
     irq(irq),
-    id(id)//,
-    // shortPressFunc(actionShort),
-    // longPressFunc(actionLong)
+    shortPressCallback(actionShort),
+    longPressCallback(actionLong)
 {
-    data = { btnPin.GetPinNr(), 0 };
 }
+
 
 Button::Button(const Button &other) :
     btnPin(other.btnPin),
+    id(other.id),
     irq(other.irq),
-    id(other.id)
+    shortPressCallback(other.shortPressCallback),
+    longPressCallback(other.longPressCallback)
 {}
 
 Button::~Button() {
@@ -27,6 +29,8 @@ Button &Button::operator=(const Button &other) {
     btnPin = other.btnPin;
     irq = other.irq;
     id = other.id;
+    shortPressCallback = other.shortPressCallback;
+    longPressCallback = other.longPressCallback;
     return *this;
 }
 
@@ -93,8 +97,8 @@ bool Button::SetupIrq() {
 }
 
 //!TEMP
-#include "usart.h"
-#include <cstring>
+// #include "usart.h"
+// #include <cstring>
 //!TEMP
 
 void Button::HandleIrq() {
@@ -108,21 +112,26 @@ void Button::HandleIrq() {
     else {
         triggered = false;
         delta = tick - startTime;
+    }
+
+    if (delta > 20 && !triggered) {
         data.butNr = btnPin.GetPinNr();
         data.Duration = delta;
 
         const uint8_t msgPrio = 0;
         const uint32_t timeout = 0; //must be zero <https://www.keil.com/pack/doc/CMSIS/RTOS2/html/group__CMSIS__RTOS__Message.html#gaa515fc8b956f721a8f72b2c505813bfc>
-        osMessageQueuePut(id, &data, msgPrio, timeout);
+        osMessageQueuePut(id, (void*)&data, msgPrio, timeout);
     }
-
-    // logger.Logf("\nIRQ: p% 1d __ t% 5ld __ ^% 3ld\n", btnPin.GetPinNr(), tick, delta);
+    else if (!triggered) {
+        startTime = 0;
+        triggered = false;
+    }
 }
 
 void Button::ShortPress() {
-    // shortPressFunc();
+    shortPressCallback();
 }
 
 void Button::LongPress() {
-    // longPressFunc();
+    longPressCallback();
 }

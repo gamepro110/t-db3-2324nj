@@ -41,7 +41,7 @@ public:
 
     NucleoPin& operator=(const NucleoPin& other);
     
-    void SetAltMode(const AltModeValue& modeValue) const;
+    void SetAltMode() const;
     bool Setup() const;
     void Write(bool high) const;
     void Toggle() const;

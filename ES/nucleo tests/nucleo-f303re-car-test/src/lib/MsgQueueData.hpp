@@ -12,4 +12,9 @@ struct SensorMsgData {
     uint8_t distance;
 };
 
+// const uint16_t MsgSize{ 48 };
+// struct LogMsgData {
+//     char msg[MsgSize];
+// };
+
 #endif

@@ -8,7 +8,7 @@
 class HC_SR04_DistSensor : public IDistanceSensor {
 public:
     HC_SR04_DistSensor() = default;
-    HC_SR04_DistSensor(NucleoPin& pinEcho, NucleoPin& pinTrigger, const HardwareTimer tim);
+    HC_SR04_DistSensor(NucleoPin pinEcho, NucleoPin pinTrigger, const HardwareTimer tim);
     HC_SR04_DistSensor(const HC_SR04_DistSensor& other);
     ~HC_SR04_DistSensor() override;
     HC_SR04_DistSensor& operator=(const HC_SR04_DistSensor& other);

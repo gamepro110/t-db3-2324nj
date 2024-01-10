@@ -36,16 +36,15 @@ s2 --> ss2
 s2 --> sm2
 ```
 
-| component | amount | input | output |
-| :---: | :---: | :---: | :---: |
-| servo | 2 | pwm in (50hz) | 1: motor movement, 2: pwm out (910hz) |
-| distance FeedbackSensor | 1 | pin trigger pulse | pwm timing |
-| button | 4 | physical interaction | interrupt |
-<!-- |  |  |  | -->
+## pinout
+
+check [pinout table](pinout.md#pins)
 
 ## class
 
-> `<<active>>` has its own thread. `TSQueue` = freeRtos messageQueue
+> `<<active>>` has its own thread.
+> 
+> `TSQueue` = freeRtos messageQueue
 
 ```mermaid
 classDiagram

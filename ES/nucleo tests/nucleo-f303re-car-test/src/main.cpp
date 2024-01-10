@@ -1,10 +1,19 @@
 #include "lib/MsgQueueData.hpp"
 #include "lib/NucleoPin.hpp"
+
 #include "lib/Interfaces/IButton.hpp"
 #include "lib/Button.hpp"
 #include "lib/ManualControlPanel.hpp"
+
 #include "lib/CarSystem.hpp"
 #include "lib/HC_SR04_DistSensor.hpp"
+
+#include "lib/Interfaces/IMotor.hpp"
+#include "lib/Interfaces/IFeedbackSensor.hpp"
+#include "lib/ServoMotor.hpp"
+#include "lib/FeedbackSensor.hpp"
+#include "lib/MotorController.hpp"
+
 #include "lib/Watchdog.hpp"
 
 #include "main.h"
@@ -23,9 +32,13 @@ osMessageQueueAttr_t distQueueAttr{
 osMessageQueueAttr_t btnQueueAttr{
     .name = "button message queue"
 };
+osMessageQueueAttr_t logQueueAttr{
+    .name = "log message queue"
+};
 
 osMessageQueueId_t distMsgQId{ nullptr };
 osMessageQueueId_t btnMsgQId{ nullptr };
+osMessageQueueId_t logMsgQId{ nullptr };
 
 HC_SR04_DistSensor distSensor;
 CarSystem carSys;
@@ -36,8 +49,15 @@ Button but_a;
 Button but_b;
 ManualControlPanel mcp;
 
+ServoMotor servoLeft;
+ServoMotor servoRight;
+FeedbackSensor sensorLeft;
+FeedbackSensor sensorRight;
+MotorController controller;
+
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
+void checkInit(const char* name, bool setupVal);
 
 int main(void) {
     HAL_Init();
@@ -48,11 +68,9 @@ int main(void) {
     /* Init scheduler */
     // ES Course Comments: Uncomment the three lines below to enable FreeRTOS.
     osKernelInitialize(); /* Call init function for freertos objects (in freertos.c) */
-
-    const int MSGBUFSIZE = 80;
-    char msgBuf[MSGBUFSIZE];
-    snprintf(msgBuf, MSGBUFSIZE, "%s", "Hello World!\n");
-    HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+    //-----------------------------------------------------------------------
+    HAL_Delay(1000); // delay for serial monitor to wake up
+    logger.Log("Hello World!\n");
 
     while (distMsgQId == nullptr) {
         distMsgQId = osMessageQueueNew(20, sizeof(SensorMsgData), &distQueueAttr);
@@ -60,33 +78,124 @@ int main(void) {
     while (btnMsgQId == nullptr) {
         btnMsgQId = osMessageQueueNew(20, sizeof(BtnMsgData), &btnQueueAttr);
     }
+    // while (logMsgQId == nullptr) {
+    //     logMsgQId = osMessageQueueNew(20, sizeof(LogMsgData), &logQueueAttr);
+    // }
 
-    NucleoPin sensorEcho{ GPIOB, 6, 2 };
-    NucleoPin sensorTrig{ GPIOB, 8, 2 };
+    distSensor = HC_SR04_DistSensor{
+        NucleoPin{ GPIOB, 6, 2 },
+        NucleoPin{ GPIOB, 8, 2 },
+        TIM4
+    };
+    checkInit("Dist Sensor", distSensor.Setup(72, 100000, 100, 3, 1, 2));
 
-    distSensor = HC_SR04_DistSensor{ sensorEcho, sensorTrig, TIM4 };
-    distSensor.Setup(72, 100000, 100, 3, 1, 2);
-
-    but_a = Button{ { GPIOC, 0, PinMode::digital_input_pullup }, EXTI0_IRQn, btnMsgQId };
-    but_b = Button{ { GPIOC, 1, PinMode::digital_input_pullup }, EXTI1_IRQn, btnMsgQId };
+    but_a = Button{
+        NucleoPin{ GPIOC, 0, PinMode::digital_input_pullup },
+        EXTI0_IRQn,
+        btnMsgQId,
+        [&]{ logger.Log("btn0 short press\n"); },
+        [&]{ logger.Log("btn0 long press\n"); }
+    };
+    but_b = Button{
+        NucleoPin{ GPIOC, 1, PinMode::digital_input_pullup },
+        EXTI1_IRQn,
+        btnMsgQId,
+        [&]{ logger.Log("btn1 short press\n"); },
+        [&]{ logger.Log("btn1 long press\n"); }
+    };
 
     iBut_a = &but_a;
     iBut_b = &but_b;
 
-    mcp = ManualControlPanel{ but_a, but_b };
-    carSys = CarSystem{ distMsgQId, distSensor, mcp };
+    mcp = ManualControlPanel{
+        btnMsgQId,
+        but_a,
+        but_b
+    };
+
+    checkInit("mcp", mcp.Setup());
+
+    bool direction{ true };
+    HardwareTimer servoDriveTim{ TIM15 };
+    servoDriveTim.SetEnablePeripheralClock();
+    servoDriveTim.SetPrescaler(72);
+    servoDriveTim.SetAutoReload(20000);
+
+    //notes
+    //- [x] prescaler works
+    //- [x] arr works
+    //- [x] ccr 1+2 work
+    //- [x] CCMR1 is correct
+    //- [x] CCER is correct
+    //- [x] timx_bdtr is set (tim15)
+    //- [x] CR1 is correct
+    //*- checking ...
+    //? why no output....???
+
+    servoLeft = ServoMotor{
+        NucleoPin{ GPIOB, 14, 1 },
+        servoDriveTim,
+        1,
+        direction
+    };
+    servoRight = ServoMotor{
+        NucleoPin{ GPIOB, 15, 1 },
+        servoDriveTim,
+        2,
+        !direction
+    };
+
+    sensorLeft = FeedbackSensor{
+        NucleoPin{ GPIOA, 15, 1 }
+    };
+    sensorRight = FeedbackSensor{
+        NucleoPin{ GPIOA, 6, 2 }
+    };
+
+    controller = MotorController{
+        distMsgQId,
+        servoLeft,
+        servoRight,
+        sensorLeft,
+        sensorRight
+    };
+
+    checkInit("motor controller", controller.Setup());
+    servoDriveTim.SetTimerEnable();
+    controller.SetSpeed(50);
+
+    carSys = CarSystem{
+        distMsgQId,
+        distSensor,
+        mcp,
+        controller
+    };
+
+    checkInit("carSys", carSys.Setup());
 
     //-----------------------------------
     MX_FREERTOS_Init();
     osKernelStart(); /* Start scheduler */
 
     /* We should never get here as control is now taken by the scheduler */
-    /* Infinite loop */
-    /* USER CODE BEGIN WHILE */
+    /* Infinite loop
+    const int MSGBUFSIZE = 80;
+    char msgBuf[MSGBUFSIZE];
     while (1) {
         snprintf(msgBuf, MSGBUFSIZE, "%s", "In loop!\r\n");
         HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+    } //*/
+}
+
+void checkInit(const char* name, bool setupVal) {
+    logger.Logf("setting up %-40s ", name);
+
+    if (!setupVal) {
+        logger.Log("failed!\n");
+        return;
     }
+
+    logger.Log("done\n");
 }
 
 #if 1 //hidden

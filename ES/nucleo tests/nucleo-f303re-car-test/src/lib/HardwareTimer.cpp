@@ -43,10 +43,13 @@ void HardwareTimer::SetPrescaler(const uint8_t prescalerDivider) const {
 }
 
 void HardwareTimer::SetEnablePeripheralClock() const {
-    if(timer == TIM1 || timer > TIM7) {
+    if (timer == TIM1 || timer > TIM7) {
         int temp = (int) timer - 0x40010000;
         temp = temp / 1024;
         RCC->APB2ENR |= (1 << temp);
+    }
+    else if (timer == TIM15) {
+        RCC->APB2ENR |= RCC_APB2ENR_TIM15EN;
     }
     else {
         //voor waardes tim2 tot en met tim7, zitten in apb1enr en zitten op de eerste paar bits, dus kun je bitshiften.

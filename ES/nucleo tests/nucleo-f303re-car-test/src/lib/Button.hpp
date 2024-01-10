@@ -9,10 +9,12 @@
 
 #include <functional>
 
+using Action = std::function<void()>;
+
 class Button : public IButton {
 public:
     Button() = default;
-    Button(NucleoPin inputPin, IRQn_Type irq, osMessageQueueId_t id);//, std::function<void()> actionShort, std::function<void()> actionLong);
+    Button(NucleoPin inputPin, IRQn_Type irq, osMessageQueueId_t id, Action actionShort, Action actionLong);
     Button(const Button& other);
     ~Button() override;
 
@@ -25,13 +27,13 @@ public:
 
 private:
     NucleoPin btnPin;
+    osMessageQueueId_t id{ nullptr };
     IRQn_Type irq{ IRQn_Type::HardFault_IRQn };
     volatile bool triggered{ false };
-    uint32_t startTime{ 0 };
-    osMessageQueueId_t id{ nullptr };
-    BtnMsgData data{};
-    // std::function<void()> shortPressFunc;
-    // std::function<void()> longPressFunc;
+    volatile uint32_t startTime{ 0 };
+    volatile BtnMsgData data{};
+    Action shortPressCallback{ []{} };
+    Action longPressCallback{ []{} };
 };
 
 #endif

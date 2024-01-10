@@ -2,9 +2,11 @@
 
 #include "lib/Logger.hpp"
 
-HC_SR04_DistSensor::HC_SR04_DistSensor(NucleoPin &pinEcho, NucleoPin &pinTrigger, const HardwareTimer tim) : echoPin(pinEcho), trigPin(pinTrigger), timer(tim)
-{
-}
+HC_SR04_DistSensor::HC_SR04_DistSensor(NucleoPin pinEcho, NucleoPin pinTrigger, const HardwareTimer tim) :
+    echoPin(pinEcho),
+    trigPin(pinTrigger),
+    timer(tim)
+{}
 
 HC_SR04_DistSensor::HC_SR04_DistSensor(const HC_SR04_DistSensor &other) :
     echoPin(other.echoPin),

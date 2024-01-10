@@ -1,5 +1,9 @@
 #include "NucleoPin.hpp"
 
+#include "lib/Logger.hpp"
+
+#include <inttypes.h>
+
 NucleoPin::NucleoPin() :
     block(GPIOH),
     pin(0),
@@ -7,25 +11,29 @@ NucleoPin::NucleoPin() :
     altModeVal(0)
 {}
 
-NucleoPin::NucleoPin(GPIO_TypeDef *block, uint8_t pinNr, PinMode mode) : block(block),
-                                                                         pin(pinNr),
-                                                                         pinMode(mode),
-                                                                         altModeVal(0)
-{}
+NucleoPin::NucleoPin(GPIO_TypeDef *block, uint8_t pinNr, PinMode mode) :
+    block(block),
+    pin(pinNr),
+    pinMode(mode),
+    altModeVal(0)
+{
+}
 
 NucleoPin::NucleoPin(GPIO_TypeDef* block, uint8_t pinNr, AltModeValue val) :
     block(block),
     pin(pinNr),
     pinMode(PinMode::altMode),
-    altModeVal((val << (4 * pinNr)))
-{}
+    altModeVal(val)
+{
+}
 
 NucleoPin::NucleoPin(const NucleoPin &other) :
     block(other.block),
     pin(other.pin),
     pinMode(other.pinMode),
     altModeVal(other.altModeVal)
-{}
+{
+}
 
 NucleoPin &NucleoPin::operator=(const NucleoPin &other) {
     block = other.block;
@@ -35,9 +43,15 @@ NucleoPin &NucleoPin::operator=(const NucleoPin &other) {
     return *this;
 }
 
-void NucleoPin::SetAltMode(const AltModeValue& modeValue) const {
-    block->AFR[0] |= modeValue.low;
-    block->AFR[1] |= modeValue.high;
+void NucleoPin::SetAltMode() const {
+    uint32_t pinOffset = 4 * pin;
+    AltModeValue val = (altModeVal.value << pinOffset);
+    block->AFR[0] |= val.low;
+    block->AFR[1] |= val.high;
+    // GPIO_AFRL_AFRL1;
+    // GPIO_AFRL_AFRL1_Pos;
+    // GPIO_AFRL_AFRL1_Msk;
+    // 0xFUL;
 }
 
 bool NucleoPin::Setup() const {
@@ -65,12 +79,25 @@ bool NucleoPin::Setup() const {
         }
     case PinMode::altMode: {
         block->MODER |= (altMode << PinModerLoc());
-            SetAltMode(altModeVal);
+            SetAltMode();
         break;
         }
     default:
         return false;
     }
+
+    char blockId = ' ';
+    if (block == GPIOA) {
+        blockId = 'A';
+    }
+    else if (block == GPIOB) {
+        blockId = 'B';
+    }
+    else if (block == GPIOC) {
+        blockId = 'C';
+    }
+
+    logger.Logf("init pin P%c%-2u mode %u hi%u lo%u\n", blockId, pin, pinMode, altModeVal.low, altModeVal.high);
 
     return true;
 }

@@ -3,6 +3,7 @@
 
 class IFeedbackSensor {
 public:
+    virtual bool Setup() = 0;
     virtual float GetSpeed() = 0;
 };
 

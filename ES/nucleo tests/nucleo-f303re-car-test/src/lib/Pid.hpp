@@ -5,17 +5,31 @@
 
 class PID {
 public:
-    PID(uint32_t Kp, uint32_t Ki, uint32_t Kd);
+    PID(int16_t target);
     ~PID();
 
-    void SetKP(uint32_t value);
-    void SetKI(uint32_t value);
-    void SetKD(uint32_t value);
+    int16_t GetError() const;
+    void SetError(const int16_t value);
+    int16_t CalculateError(const int16_t value);
+    int16_t CalculateOutput();
+    void ResetValues();
+    void SetTarget(const int16_t target);
+    void updateKP(float val);
+    void updateKI(float val);
+    void updateKD(float val);
 
 private:
-    uint32_t kp{ 0 };
-    uint32_t ki{ 0 };
-    uint32_t kd{ 0 };
+    int16_t targetVal;
+    int16_t errorVal;
+    int16_t prevErrorVal;
+    int16_t integral;
+    float kp{ 7.75f };
+    float ki{ 0.03f };
+    float kd{ 0.55f };
+
+    const float defaultKp{ 7.75f };
+    const float defaultKi{ 0.03f };
+    const float defaultKd{ 0.55f };
 };
 
 #endif

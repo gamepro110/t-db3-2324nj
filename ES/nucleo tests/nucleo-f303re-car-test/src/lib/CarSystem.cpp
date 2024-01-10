@@ -4,10 +4,11 @@
 
 #include "stm32f303xe.h"
 
-CarSystem::CarSystem(osMessageQueueId_t id, IDistanceSensor& sensor, ManualControlPanel& MCP) :
+CarSystem::CarSystem(osMessageQueueId_t id, IDistanceSensor& sensor, ManualControlPanel& MCP, MotorController& controller) :
     queueId(id),
     distSensor(&sensor),
-    mcp(&MCP)
+    mcp(&MCP),
+    motorController(&controller)
 {
 }
 
@@ -26,8 +27,7 @@ bool CarSystem::Setup() {
 }
 
 void CarSystem::Update() {
-    uint8_t dist{ distSensor->GetDistance() };
-    data.distance = dist;
+    data.distance = distSensor->GetDistance();
     osMessageQueuePut(queueId, &data, 0, osWaitForever);
     osDelay(10);
 }
