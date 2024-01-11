@@ -37,41 +37,6 @@ int PrintList(FILE* stream) {
     return 0;
 }
 
-void dbPrintElement(Element* elem) {
-    if (elem == NULL) {
-        printf("{%8s}", "<NULL>");
-    }
-    else {
-        printf("{% 3d;% 2d}", elem->address, elem->size);
-    }
-}
-void dbPrintList(LinkedList* list) {
-    Element* elem = list->head;
-
-    while (elem != NULL)
-    {
-        dbPrintElement(elem);
-
-        if (elem->next != NULL) {
-            printf(", ");
-        }
-
-        elem = elem->next;
-    }
-    
-}
-void dbPrint(const char* note, Element* del, Element *element) {
-    printf("%s del node: ", note);
-    dbPrintElement(del);
-    printf("__ elem: ");
-    dbPrintElement(element);
-    printf("\nfl: ");
-    dbPrintList(&freeList);
-    printf("\nal: ");
-    dbPrintList(&allocList);
-    printf("\n");
-}
-
 /* function: ClaimMemory
  * pre: nrofBytes > 0
  * post: if no memory block of nrofBytes available return -1
@@ -87,8 +52,6 @@ int ClaimMemory(int nrofBytes) {
 
     if (freeList.size > 1) {
         while (freeElem != NULL && freeElem->next != NULL && spaceAvailable == false) {
-            // int sumAddrSize = freeElem->address + freeElem->size;
-            // int bytesLeft = freeElem->next->address - sumAddrSize;
             spaceAvailable = freeElem->size >= nrofBytes;
 
             if (!spaceAvailable) {
@@ -114,7 +77,7 @@ int ClaimMemory(int nrofBytes) {
     freeElem->address += nrofBytes;
     freeElem->size -= nrofBytes;
 
-    if (freeElem->size == 0) { // move up
+    if (freeElem->size == 0) {
         ListRemove(&freeList, &freeElem);
     }
 
@@ -126,16 +89,15 @@ int ClaimMemory(int nrofBytes) {
         }
         else {
             if (allocList.size > 1) {
-                int sizeBetween = allocElem->next->address - (allocElem->address + allocElem->size);
+                int sizeBetween = 0;
 
                 while (allocElem != NULL && allocElem->next != NULL && sizeBetween < nrofBytes) {
                     sizeBetween = allocElem->next->address - (allocElem->address + allocElem->size);
-                    allocElem = allocElem->next;
-                }
 
-                // if (allocElem->next != NULL && sizeBetween >= nrofBytes) {
-                //     allocElem = allocElem->next;
-                // }
+                    if (sizeBetween < nrofBytes) {
+                        allocElem = allocElem->next;
+                    }
+                }
             }
         }
 

@@ -42,12 +42,12 @@ $(ASSIGNMENT_TEST): Makefile $(ASSIGNMENT_TEST_FILES)  $(HEADER_FILES)
 	@$(CC) $(TEST_INC_DIRS) $(TEST_SYMBOLS) $(ASSIGNMENT_TEST_FILES) -o $(ASSIGNMENT_TEST)
 
 run_simple: $(ASSIGNMENT)
-	@$(VALGRIND) ./$(ASSIGNMENT) < $(INPUT_FILE)_simple.txt > $(OUTPUT_FILE)_simple.txt
-	./compareOut.sh $(COMPARE_FILE)_simple.txt $(OUTPUT_FILE)_simple.txt
+	@$(VALGRIND) ./$(ASSIGNMENT) < $(INPUT_FILE)_simple.txt > $(OUTPUT_FILE)_simple.txt && printf "\n"
+	@./compareOut.sh $(COMPARE_FILE)_simple.txt $(OUTPUT_FILE)_simple.txt && printf "\n"
 
 run_full: $(ASSIGNMENT)
-	@$(VALGRIND) ./$(ASSIGNMENT) < $(INPUT_FILE)_full.txt > $(OUTPUT_FILE)_full.txt
-	./compareOut.sh $(COMPARE_FILE)_full.txt $(OUTPUT_FILE)_full.txt
+	@$(VALGRIND) ./$(ASSIGNMENT) < $(INPUT_FILE)_full.txt > $(OUTPUT_FILE)_full.txt && printf "\n"
+	@./compareOut.sh $(COMPARE_FILE)_full.txt $(OUTPUT_FILE)_full.txt && printf "\n"
 
 run: run_simple run_full
 

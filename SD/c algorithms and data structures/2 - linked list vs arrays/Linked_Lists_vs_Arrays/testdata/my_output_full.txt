@@ -144,9 +144,9 @@ AllocList:
 ----------
   0:  addr:1000  size:  10
   1:  addr:1010  size:  10
-  2:  addr:1040  size:  10
+  2:  addr:1020  size:  18
   3:  addr:1038  size:   2
-  4:  addr:1020  size:  18
+  4:  addr:1040  size:  10
   5:  addr:1080  size:  20
 [FREE]  address: 1000 (10 byte)
 [FREE]  address: 1020 (18 byte)
