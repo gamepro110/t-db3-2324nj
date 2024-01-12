@@ -37,31 +37,35 @@ $(ASSIGNMENT_TEST): Makefile $(ASSIGNMENT_TEST_FILES)  $(HEADER_FILES)
 	@$(CC) $(TEST_INC_DIRS) $(TEST_SYMBOLS) $(ASSIGNMENT_TEST_FILES) -o $(ASSIGNMENT_TEST)
 
 3_1: $(ASSIGNMENT)
-	@./$(ASSIGNMENT) 3 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	@time valgrind --leak-check=full ./$(ASSIGNMENT) 3 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
 	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
 
 3_2: $(ASSIGNMENT)
-	@./$(ASSIGNMENT) 3 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	@time valgrind --leak-check=full ./$(ASSIGNMENT) 3 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
+
+3_2db: $(ASSIGNMENT)
+	@time valgrind --leak-check=full ./$(ASSIGNMENT) 3 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
 	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
 
 3_3: $(ASSIGNMENT)
-	@./$(ASSIGNMENT) 3 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	@time valgrind --leak-check=full ./$(ASSIGNMENT) 3 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
 	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
 
 4_1: $(ASSIGNMENT)
-	@./$(ASSIGNMENT) 4 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	@time valgrind --leak-check=full ./$(ASSIGNMENT) 4 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
 	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
 
 4_2: $(ASSIGNMENT)
-	@./$(ASSIGNMENT) 4 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	@time valgrind --leak-check=full ./$(ASSIGNMENT) 4 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
 	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
 
 4_3: $(ASSIGNMENT)
-	@./$(ASSIGNMENT) 4 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	@time valgrind --leak-check=full ./$(ASSIGNMENT) 4 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
 	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
 
 4_4: $(ASSIGNMENT)
-	@./$(ASSIGNMENT) 4 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
+	@time valgrind --leak-check=full ./$(ASSIGNMENT) 4 < $(INPUT_FILE)$@ > $(OUTPUT_FILE)$@
 	./compareOut.sh $(COMPARE_FILE)$@ $(OUTPUT_FILE)$@
 
 3_: 3_1 3_2 3_3
@@ -74,4 +78,4 @@ clean:
 	@rm -f $(ASSIGNMENT) $(ASSIGNMENT_TEST)
 
 test: $(ASSIGNMENT_TEST)
-	@valgrind ./$(ASSIGNMENT_TEST)
+	@time valgrind --leak-check=full ./$(ASSIGNMENT_TEST)

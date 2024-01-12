@@ -3,9 +3,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 
-
-//TODO move to parse.h
+//TODO make and move to parse.h
 int ParseNumTests(int* t);
 int ParseInputData(int* n, int* m);
 int ParseTreeData(Tree* tree, int m);
@@ -14,7 +14,21 @@ void PrintTree(Tree* tree);
 #define dbPrint 0
 #define dbPrintTree 1
 
+int sig = 0;
+
+void handleSigInt(int inSig) {
+    sig = inSig;
+    printf("caught sigint\n");
+}
+
 int main(int argc, char* argv[]) {
+    if(signal(SIGINT, handleSigInt) == SIG_ERR ||
+        signal(SIGTERM, handleSigInt) == SIG_ERR
+        ) {
+        printf("failed setting up signals\n");
+        return -1;
+    }
+
     if (argc != 2) {
         printf("Please provide argument to select assignment.\n");
         return -1;
@@ -35,7 +49,7 @@ int main(int argc, char* argv[]) {
     printf("nTests: %d\n", tTests);
     #endif
 
-    for (int i = 0; i < tTests; i++) {
+    for (int i = 0; i < tTests && !sig; i++) {
         if (ParseInputData(&nFindNum, &mNumDataLines) == -1) {
             printf("failed to parse input\n");
             return -1;
@@ -55,6 +69,7 @@ int main(int argc, char* argv[]) {
         PrintTree(&tree);
         #endif
 
+        if (!sig) {
         if (selectedAssignment == 3) {
             int shortestPath = 0;
             FindShortestPathInGraphTree(&tree, &shortestPath, nFindNum);
@@ -66,6 +81,7 @@ int main(int argc, char* argv[]) {
             // recursive thing...
 
             printf("%d\n", difference);
+            }
         }
 
         ChopDownTree(&tree);
@@ -107,7 +123,7 @@ int ParseTreeData(Tree* tree, int m) {
         return -1;
     }
 
-    for (int i = 0; i < m; i++) {
+    for (int i = 0; i < m && !sig; i++) {
         int x = 0;
         int y = 0;
 
@@ -122,12 +138,12 @@ int ParseTreeData(Tree* tree, int m) {
             }
         }
 
-        TreeNode* nodeX = FindNodeWithValue(tree->root.head, x);
-        TreeNode* nodeY = FindNodeWithValue(tree->root.head, y);
+        TreeNode* nodeX = FindNodeWithValue(&tree->root, x, NULL);
+        TreeNode* nodeY = FindNodeWithValue(&tree->root, y, NULL);
 
         if (nodeX == NULL) {
             TreeAddNode(&tree->root, x);
-            nodeX = FindNodeWithValue(tree->root.head, x);
+            nodeX = FindNodeWithValue(&tree->root, x, NULL);
         }
 
         if (nodeY == NULL) {
@@ -135,9 +151,7 @@ int ParseTreeData(Tree* tree, int m) {
             TreeAddChildNode(nodeX, newNode);
         }
         else {
-            // TreeAddNodeAfter(nodeX, y, NULL); // incorrect
             TreeAddChildNode(nodeY, nodeX);
-            // nodeX->next = nodeY;
             TreeAddChildNode(nodeX, nodeY);
         }
     }
@@ -154,7 +168,7 @@ void printLeaf(TreeNode* leaf, int indent) {
         printf("\t");
     }
     
-    printf("{% 3d (% 1d)}\n", leaf->data, leaf->branches.size);
+    printf("{% 3d (% 2d)}\n", leaf->data, leaf->branches.size);
 }
 
 void printBranch(TreeNode* node, int indent) {

@@ -37,7 +37,7 @@ int ListRemoveTail(LinkedList* list);
 //static 
 int ListRemove(LinkedList* list, TreeNode** element);
 //static 
-void ListRemoveAll(LinkedList* list);
+void ListRemoveAll(LinkedList* list, TreeNode* parrent);
 
 TreeNode* CreateNode(int data, TreeNode* parent);
 int TreeAddNode(LinkedList* root, int data);
@@ -49,7 +49,7 @@ Tree CreateTree();
 
 /// @deprecated 
 TreeNode* FindNode(TreeNode* root, int val);
-TreeNode* FindNodeWithValue(TreeNode* node, int value);
+TreeNode* FindNodeWithValue(LinkedList* node, int value, TreeNode* parrent);
 int FindShortestPathInGraphTree(Tree* tree, int* shortestPath, int findNum);
 
 #endif

@@ -158,15 +158,19 @@ int ListRemove(LinkedList* list, TreeNode** element) {
         return -1;
     }
 
-    TreeNode** prev = &list->head;
+    TreeNode* prev = list->head;
+
+    if (prev == NULL) {
+        return -1;
+    }
 
     // if head != element
-    if ((*prev)->data != (*element)->data) {
-        while ((*prev)->next != (*element) && (*prev)->next != NULL) {
-            (*prev) = (*prev)->next;
+    if (prev->data != (*element)->data) {
+        while (prev->next != (*element) && prev->next != NULL) {
+            prev = prev->next;
         }
 
-        (*prev)->next = (*element)->next;
+        prev->next = (*element)->next;
     }
     else {
         // if head == element
@@ -184,7 +188,7 @@ int ListRemove(LinkedList* list, TreeNode** element) {
  * pre: -
  * post: all existing elements from list are removed
  */
-void ListRemoveAll(LinkedList* list) {
+void ListRemoveAll(LinkedList* list, TreeNode* parrent) {
     if (list == NULL) {
         //failed to empty list, provided NULL
         return;
@@ -195,7 +199,14 @@ void ListRemoveAll(LinkedList* list) {
 
     while (next != NULL) {
         next = elem->next;
-        free(elem);
+
+        if (elem->parrent == parrent) {
+            free(elem);
+        }
+        // else {
+        //     next = NULL;
+        // }
+
         elem = next;
     }
 
@@ -234,52 +245,79 @@ int TreeAddNodeAfter(TreeNode* root, int data, TreeNode* after) {
 }
 
 int TreeAddChildNode(TreeNode* root, TreeNode* child) {
+    if (root == NULL || child == NULL) {
+        return -1;
+    }
+
     return ListAddNodeTail(&root->branches, child);
 }
 
-void ChopDownBranch(TreeNode* node) {
-    if (node == NULL) {
+void RemoveBranchRef(TreeNode* node, LinkedList* list, TreeNode* parrent) {
+    if (node == NULL || list == NULL) {
         return;
     }
 
-    TreeNode* branch = node->branches.head;
-    TreeNode* freeNode = NULL;
+    TreeNode* child = node->branches.head;
 
-    while (branch != NULL) {
-        if (branch->parrent == node) {
-            if (branch->branches.size > 0) {
-                ChopDownBranch(branch);
+    while (child != NULL) {
+        TreeNode* subChild = child->branches.head;
+        TreeNode** prev = &child->branches.head;
+
+        while (subChild != NULL) {
+            if (subChild->parrent == parrent && subChild->data == node->data) {
+                (*prev)->next = subChild->next;
             }
-            freeNode = branch;
+
+            (*prev) = subChild;
+            subChild = subChild->next;
         }
 
-        branch = branch->next;
+        child = child->next;
+    }
+}
+
+void ChopDownBranch(LinkedList* node, TreeNode* parrent, Tree* treeRef) {
+    if (node == NULL || treeRef == NULL) {
+        return;
+    }
+
+    TreeNode* branch = node->head;
+    TreeNode* freeNode = NULL;
+
+    if (branch == NULL) {
+        return;
+    }
+
+    while (branch != NULL && branch->parrent == parrent) {
+        ChopDownBranch(&branch->branches, branch, treeRef);
+
+        RemoveBranchRef(branch, &treeRef->root, parrent);
+
+        if (branch->branches.size > 0) {
+            ListRemoveAll(&branch->branches, branch);
+        }
+
+        freeNode = branch;
+
+        if (branch->next != NULL && branch->next->parrent == parrent) {
+            branch = branch->next;
+        }
+        else {
+            branch = NULL;
+        }
 
         if (freeNode != NULL) {
-            free(freeNode);
-            freeNode = NULL;
+            ListRemove(node, &freeNode);
         }
     }
 }
 
-void ChopDownTree(Tree *tree) {
+void ChopDownTree(Tree* tree) {
     if (tree == NULL) {
         return;
     }
 
-    TreeNode* branch = tree->root.head;
-    TreeNode* freeNode = NULL;
-
-    while (branch != NULL) {
-        ChopDownBranch(branch);
-        freeNode = branch;
-        branch = branch->next;
-
-        if (freeNode != NULL) {
-            free(freeNode);
-            freeNode = NULL;
-        }
-    }
+    ChopDownBranch(&tree->root, NULL, tree);
 }
 
 Tree CreateTree() {
@@ -303,20 +341,24 @@ TreeNode* FindNode(TreeNode* root, int val) {
     return node;    
 }
 
-TreeNode* FindNodeWithValue(TreeNode* node, int value) {
+TreeNode* FindNodeWithValue(LinkedList* node, int value, TreeNode* parrent) {
     if (node == NULL) {
         return NULL;
     }
     
-    if (node->data == value) {
-        return node;
-    }
-
-    TreeNode* child = node->branches.head;
+    TreeNode* child = node->head;
     TreeNode* found = NULL;
 
-    while (child != NULL && found == NULL) {
-        found = FindNodeWithValue(node->branches.head, value);
+    if (child == NULL) {
+        return NULL;
+    }
+
+    if (child->data == value) {
+        return child;
+    }
+
+    while (child != NULL && found == NULL && child->parrent == parrent) {
+        found = FindNodeWithValue(&child->branches, value, child);
         child = child->next;
     }
 
@@ -328,41 +370,39 @@ TreeNode* TreeFindNodeWithValue(Tree* tree, int value) {
         return NULL;
     }
 
-    return FindNodeWithValue(tree->root.head, value);
+    return FindNodeWithValue(&tree->root, value, NULL);
 }
 
 //TODO figure out where in3_1 test 2 depth 1 comes from.
 //TODO fix logic
 //!INCOMPLETE
-int FindShortestPath(TreeNode* node, int findNum, int depth) {
-    if (node == NULL) {
+int FindShortestPath(LinkedList* list, int findNum, int depth, TreeNode* parrent, bool stop) {
+    if (list == NULL) {
         return -1;
     }
 
-    if (node->data == findNum) {
+    TreeNode* loopNode = list->head;
+
+    if (loopNode != NULL && loopNode->data == findNum) {
         return depth;
     }
 
-    TreeNode* loopNode = node->branches.head;
     int smallestFound = 1<<30;
+    int found = 0;
 
-    while (loopNode != NULL) {
-        int found = 1<<30;
-
-        if (loopNode->parrent == node) {
-            found = FindShortestPath(loopNode, findNum, depth + 1);
+    while (loopNode != NULL && !stop) {
+        if (loopNode->parrent == parrent) {
+            found = FindShortestPath(&loopNode->branches, findNum, depth + 1, loopNode, stop);
         }
         else {
-            found = depth + 1;
+            found = FindShortestPath(&loopNode->branches, findNum, depth + 1, loopNode, true);
         }
 
         if (found < smallestFound) {
             smallestFound = found;
         }
 
-            loopNode = loopNode->next;
-        // if (loopNode->parrent == node) {
-        // }
+        loopNode = loopNode->next;
     }
 
     return smallestFound;
@@ -373,6 +413,6 @@ int FindShortestPathInGraphTree(Tree* tree, int* shortestPath, int findNum) {
         return -1;
     }
 
-    (*shortestPath) = FindShortestPath(tree->root.head, findNum, 0);
+    (*shortestPath) = FindShortestPath(&tree->root, findNum, 0, NULL, false);
     return (*shortestPath);
 }
