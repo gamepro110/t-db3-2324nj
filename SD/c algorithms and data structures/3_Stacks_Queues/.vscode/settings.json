@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        ".viminfo": "ini",
+        "mystack.h": "c"
+    }
+}
