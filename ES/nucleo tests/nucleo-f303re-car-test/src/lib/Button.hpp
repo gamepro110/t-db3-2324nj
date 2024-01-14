@@ -9,7 +9,8 @@
 
 #include <functional>
 
-using Action = std::function<void()>;
+typedef void(*Action)(void);
+// using Action = std::function<void()>;
 
 class Button : public IButton {
 public:
@@ -32,8 +33,10 @@ private:
     volatile bool triggered{ false };
     volatile uint32_t startTime{ 0 };
     volatile BtnMsgData data{};
-    Action shortPressCallback{ []{} };
-    Action longPressCallback{ []{} };
+    // Action shortPressCallback{ []{} };
+    // Action longPressCallback{ []{} };
+    Action shortPressCallback{ nullptr };
+    Action longPressCallback{ nullptr };
 };
 
 #endif

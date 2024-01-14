@@ -5,24 +5,33 @@
 
 class PID {
 public:
-    PID(int16_t target);
+    PID(int16_t min, int16_t max, float kp, float ki, float kd);
     ~PID();
 
-    int16_t GetError() const;
-    void SetError(const int16_t value);
-    int16_t CalculateError(const int16_t value);
-    int16_t CalculateOutput();
+    int16_t Calculate(float target, float lastTarget);
+
     void ResetValues();
-    void SetTarget(const int16_t target);
     void updateKP(float val);
     void updateKI(float val);
     void updateKD(float val);
 
 private:
-    int16_t targetVal;
-    int16_t errorVal;
-    int16_t prevErrorVal;
-    int16_t integral;
+    int16_t min{ 0 };
+    int16_t max{ 0 };
+    float tau{ 0.001f };
+
+    int16_t error{ 0 };
+    int16_t prevError{ 0 };
+    int16_t prevMeasurement{ 0 };
+    float timeSec{ 0.001 };
+    float derivative{ 0 };
+    float integral{ 0 };
+
+    float proportionalOut{ 0 };
+    float integratorOut{ 0 };
+    float differentiatorOut{ 0 };
+    float output{ 0 };
+
     float kp{ 7.75f };
     float ki{ 0.03f };
     float kd{ 0.55f };

@@ -10,8 +10,8 @@
 | 4 | ultrasonic input (trigger) | `PB8` | tim4 alt func | `AF2` |
 | 5 | left servo drive | `PB14` | alt func pwm output tim15 ch1 | `AF1` |
 | 6 | right servo drive | `PB15` | alt func pwm output tim15 ch2 | `AF1` |
-| 7 | left servo measure | `PA15` | alt func pwm input tim2 ch1 | `AF1` |
-| 8 | right servo measure | `PA6` | alt func pwm input tim3 ch1 | `AF2` |
+| 7 | left servo measure | `PA6` | alt func pwm input tim2 ch1 | `AF1` |
+| 8 | right servo measure | `PA15` | alt func pwm input tim3 ch1 | `AF2` |
 <!-- |  |  | `P` |  |  | -->
 
 ## timer allocation

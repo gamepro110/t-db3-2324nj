@@ -97,7 +97,13 @@ bool NucleoPin::Setup() const {
         blockId = 'C';
     }
 
-    logger.Logf("init pin P%c%-2u mode %u hi%u lo%u\n", blockId, pin, pinMode, altModeVal.low, altModeVal.high);
+    logger.Logf("init pin P%c%-1u mode %u", blockId, pin, pinMode);
+
+    if (pinMode == PinMode::altMode) {
+        logger.Logf(" { hi %u lo %u }", altModeVal.low, altModeVal.high);
+    }
+
+    logger.Log("\n");
 
     return true;
 }

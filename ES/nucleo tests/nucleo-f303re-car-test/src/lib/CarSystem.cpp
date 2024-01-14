@@ -12,6 +12,14 @@ CarSystem::CarSystem(osMessageQueueId_t id, IDistanceSensor& sensor, ManualContr
 {
 }
 
+CarSystem::CarSystem(const CarSystem& other) :
+    queueId(other.queueId),
+    distSensor(other.distSensor),
+    mcp(other.mcp),
+    motorController(other.motorController)
+{
+}
+
 CarSystem::~CarSystem() {
 }
 
@@ -19,6 +27,8 @@ CarSystem &CarSystem::operator=(const CarSystem &other) {
     queueId = other.queueId;
     data = other.data;
     distSensor = other.distSensor;
+    motorController = other.motorController;
+    mcp = other.mcp;
     return *this;
 }
 
@@ -28,6 +38,6 @@ bool CarSystem::Setup() {
 
 void CarSystem::Update() {
     data.distance = distSensor->GetDistance();
-    osMessageQueuePut(queueId, &data, 0, osWaitForever);
-    osDelay(10);
+    osMessageQueuePut(queueId, &data, 0, 0);
+    osDelay(1);
 }

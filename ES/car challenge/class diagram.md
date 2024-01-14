@@ -42,8 +42,7 @@ check [pinout table](pinout.md#pins)
 
 ## class
 
-> `<<active>>` has its own thread.
-> 
+> `<<active>>` has its own thread.  
 > `TSQueue` = freeRtos messageQueue
 
 ```mermaid

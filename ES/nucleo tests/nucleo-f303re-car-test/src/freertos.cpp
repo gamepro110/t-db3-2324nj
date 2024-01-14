@@ -39,6 +39,14 @@ const osThreadAttr_t carSysTask_attr {
 osThreadId_t motorCtlTaskHandle;
 const osThreadAttr_t motorCtlTask_attr {
     .name = "motor controller",
+    .attr_bits = 0,
+    .cb_mem = nullptr,
+    .cb_size = 0,
+    .stack_mem = nullptr,
+    .stack_size = 512 * 4,
+    .priority = (osPriority_t)osPriorityNormal,
+    .tz_module = 0,
+    .reserved = 0,
 };
 
 void StartMcpTask(void* argument);
@@ -47,24 +55,15 @@ void StartMotorCtlTask(void *argument);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 //! temp
+
 osThreadId_t dbTask;
 void dbLoop(void*) {
-    const int MSGBUFSIZE = 80;
-    char msgBuf[MSGBUFSIZE];
+    // const int MSGBUFSIZE = 80;
+    // char msgBuf[MSGBUFSIZE];
 
     osDelay(10);
-    snprintf(
-        msgBuf,
-        MSGBUFSIZE,
-        "tim15\nccer:% 5ld _ cr1:% 5ld _ cr2:% 5ld \n",
-        TIM15->CCER, TIM15->CR1, TIM15->CR2
-    );
-    HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
 
     while (1) {
-        // logger.Logf("tim15: % 6ld _ ccr1: % 3d", TIM15->CNT, TIM15->CCR1);
-        snprintf(msgBuf, MSGBUFSIZE, "tim15:% 6ld _ ccer:% 5ld _ ccr1:% 5ld _ ccr2:% 3ld\r", TIM15->CNT, TIM15->CCER, TIM15->CCR1, TIM15->CCR2);
-        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
         osDelay(10);
     }
 }
@@ -73,6 +72,8 @@ void dbLoop(void*) {
 void MX_FREERTOS_Init(void) {
     mcpTaskHandle =         osThreadNew(StartMcpTask, nullptr, &mcpTask_attr);
     carSysTaskHandle =      osThreadNew(StartCarSysTask, nullptr, &carSysTask_attr);
+
+    // disabling this thread stops triggering the hardfault
     motorCtlTaskHandle =    osThreadNew(StartMotorCtlTask, nullptr, &motorCtlTask_attr);
     dbTask =                osThreadNew(dbLoop, nullptr, nullptr);
 }

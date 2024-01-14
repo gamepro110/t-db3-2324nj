@@ -129,9 +129,13 @@ void Button::HandleIrq() {
 }
 
 void Button::ShortPress() {
-    shortPressCallback();
+    if (shortPressCallback != nullptr) {
+        shortPressCallback();
+    }
 }
 
 void Button::LongPress() {
-    longPressCallback();
+    if (longPressCallback != nullptr) {
+        longPressCallback();
+    }
 }

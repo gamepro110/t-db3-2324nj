@@ -1,9 +1,7 @@
 #ifndef LIB_LOGGER_HPP_
 #define LIB_LOGGER_HPP_
 
-#if STM32
-#   include "cmsis_os2.h"
-#endif
+#include "cmsis_os2.h"
 
 class Logger final {
 public:
@@ -19,9 +17,7 @@ public:
     void Error(const char* str);
 
 private:
-#if STM32
     osMutexId_t mux{ osMutexNew(nullptr) };
-#endif
 };
 
 extern Logger logger;

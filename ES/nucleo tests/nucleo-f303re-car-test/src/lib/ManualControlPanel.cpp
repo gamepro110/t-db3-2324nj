@@ -34,9 +34,11 @@ bool ManualControlPanel::Setup() {
 
 //TODO add serial input options
 void ManualControlPanel::Loop() {
-    if (osMessageQueueGet(btnQueueId, &btnData, nullptr, 0) == osOK) {
+    uint8_t prio{0};
+    if (osMessageQueueGet(btnQueueId, &btnData, &prio, 0) == osOK) {
         HandleButtonSelect(btnData);
     }
+    osDelay(1);
 }
 
 void ManualControlPanel::HandleButtonSelect(const BtnMsgData& data) {

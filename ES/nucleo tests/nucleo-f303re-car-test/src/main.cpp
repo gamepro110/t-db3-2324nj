@@ -59,11 +59,18 @@ void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 void checkInit(const char* name, bool setupVal);
 
+void btn0Long();
+void btn0Short();
+
 int main(void) {
     HAL_Init();
     SystemClock_Config();
     MX_GPIO_Init();
     MX_USART2_UART_Init();
+
+    //<https://interrupt.memfault.com/blog/cortex-m-hardfault-debug#cortex-m3-m4-debug-trick>
+    // uint32_t* ACTLR{ (uint32_t*)0xE000E008};
+    // *ACTLR |= 1 << 1;
 
     /* Init scheduler */
     // ES Course Comments: Uncomment the three lines below to enable FreeRTOS.
@@ -93,15 +100,19 @@ int main(void) {
         NucleoPin{ GPIOC, 0, PinMode::digital_input_pullup },
         EXTI0_IRQn,
         btnMsgQId,
-        [&]{ logger.Log("btn0 short press\n"); },
-        [&]{ logger.Log("btn0 long press\n"); }
+        btn0Short,
+        btn0Long
+        // [&]{ btn0Short(); },
+        // [&]{ btn0Long(); }
     };
     but_b = Button{
         NucleoPin{ GPIOC, 1, PinMode::digital_input_pullup },
         EXTI1_IRQn,
         btnMsgQId,
-        [&]{ logger.Log("btn1 short press\n"); },
-        [&]{ logger.Log("btn1 long press\n"); }
+        nullptr,
+        nullptr
+        // [&](void){ logger.Log("btn1 short press\n"); },
+        // [&](void){ logger.Log("btn1 long press\n"); }
     };
 
     iBut_a = &but_a;
@@ -121,39 +132,31 @@ int main(void) {
     servoDriveTim.SetPrescaler(72);
     servoDriveTim.SetAutoReload(20000);
 
-    //notes
-    //- [x] prescaler works
-    //- [x] arr works
-    //- [x] ccr 1+2 work
-    //- [x] CCMR1 is correct
-    //- [x] CCER is correct
-    //- [x] timx_bdtr is set (tim15)
-    //- [x] CR1 is correct
-    //*- checking ...
-    //? why no output....???
-
     servoLeft = ServoMotor{
         NucleoPin{ GPIOB, 14, 1 },
         servoDriveTim,
         1,
-        direction
+        !direction
     };
     servoRight = ServoMotor{
         NucleoPin{ GPIOB, 15, 1 },
         servoDriveTim,
         2,
-        !direction
+        direction
     };
 
     sensorLeft = FeedbackSensor{
-        NucleoPin{ GPIOA, 15, 1 }
+        NucleoPin{ GPIOA, 6, 2 },
+        HardwareTimer{ TIM2 }
     };
     sensorRight = FeedbackSensor{
-        NucleoPin{ GPIOA, 6, 2 }
+        NucleoPin{ GPIOA, 15, 1 },
+        HardwareTimer{ TIM3 }
     };
 
     controller = MotorController{
         distMsgQId,
+        15,
         servoLeft,
         servoRight,
         sensorLeft,
@@ -162,7 +165,7 @@ int main(void) {
 
     checkInit("motor controller", controller.Setup());
     servoDriveTim.SetTimerEnable();
-    controller.SetSpeed(50);
+    controller.SetSpeed(0);
 
     carSys = CarSystem{
         distMsgQId,
@@ -191,11 +194,21 @@ void checkInit(const char* name, bool setupVal) {
     logger.Logf("setting up %-40s ", name);
 
     if (!setupVal) {
-        logger.Log("failed!\n");
+        logger.Error("failed!\n");
         return;
     }
 
     logger.Log("done\n");
+}
+
+void btn0Short() {
+    controller.SetSpeed(0);
+    logger.Log("set speed to 0");
+}
+
+void btn0Long() {
+    controller.SetSpeed(100);
+    logger.Log("set speed to 100");
 }
 
 #if 1 //hidden

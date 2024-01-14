@@ -12,6 +12,7 @@ class CarSystem {
 public:
     CarSystem() = default;
     CarSystem(osMessageQueueId_t id, IDistanceSensor& sensor, ManualControlPanel& MCP, MotorController& controller);
+    CarSystem(const CarSystem& other);
     ~CarSystem();
 
     CarSystem& operator=(const CarSystem& other);
