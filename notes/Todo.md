@@ -7,33 +7,24 @@ tags:
 
 ## #ES
 
-- [x] look at timer challenge
-  - [x] PWM
-    - [x] input
-    - [x] output
-- [ ] look at closed-loop challenge
-  - [ ] requirements
-    - [ ] software serial
-      - [/] polling
-        - [x] arduino
-        - [ ] nucleo
-      - [ ] interrupt
 - [ ] car challenge
   - [x] [main question](<ES/notes.md#main question>)
   - [x] [sub questions](<ES/notes.md#sub questions>)
   - [ ] [class diagram](<../ES/car challenge/class diagram.md>) [wip]
-  - `car challenge` does not work..., continue in `nucleo tests/car-test/`
+  - [ ] implement PID
+    - [ ] stuck because of a hardfault [info](<./../ES/nucleo tests/nucleo-f303re-car-test/notes.md>)
 
 ## #COMM
 
-- [ ] Software Serial
-  - [ ] check assignment pdf
-    - requirements
-      - 5 t/m 8 data bits
-      - 1 or 2 stop bits
-      - none, 1, or 2 parity bits
-      - class diagram
-      - sequence diagram
+- [x] Software Serial
+  - [ ] write report
+    - v0.1,
+      - added
+        - intro
+        - research
+      - started
+        - design
+        - advice
 
 ## #Proftaak
 
@@ -41,22 +32,16 @@ tags:
 
 ## #SD
 
-- [ ] C data-structure algorithm Challenges (started preemptively)
-  - [/] 1 intro
-    - [x] part 0
-    - [x] part 1
-    - [x] part 2
-    - [ ] part 3
-      - [ ] find 3 algorithms and implement them
-        - can be googled and copied
-  - [ ] 2 linked list vs queue
-    - started, trouble with logic
-  - [ ] 3 stack vs queue
-    - > can be skipped when in a time crunch
-  - [ ] 4 graph tree
-- [ ] c++
-  - [ ] bread bake
+check [feedpulse notes](<./feedpulse/2024-01-12-feedpulse-ronald.md>)  
+tldr
+
+- [ ] c algorithm 1
+  - [ ] show why some algorithms are faster and why
+- [x] c algorithm 2
+- [ ] c algorithm 3
+  - [ ] implement
+- c algorithm 4 skipped
 
 ## #PO
 
-- update [portfolio](<https://fhict.instructure.com/accounts/1/external_tools/23360?launch_type=global_navigation>) for next sprint
+- update [portfolio](<https://fhict.instructure.com/accounts/1/external_tools/23360?launch_type=global_navigation>) for final sprint
