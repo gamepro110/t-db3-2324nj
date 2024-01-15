@@ -3,8 +3,12 @@
 
 #include "Interfaces/IButton.hpp"
 #include "lib/MsgQueueData.hpp"
+#include "Pid.hpp"
 
 #include "cmsis_os2.h"
+#include "usart.h"
+
+const uint8_t BUFSIZE{ 50 };
 
 class ManualControlPanel {
 public:
@@ -17,6 +21,9 @@ public:
 
     bool Setup();
     void Loop();
+    void SetPid(PID& p) {
+        pid = &p;
+    }
 
 private:
     void HandleButtonSelect(const BtnMsgData& data);
@@ -26,6 +33,10 @@ private:
     IButton* button0{ nullptr };
     IButton* button1{ nullptr };
     BtnMsgData btnData{};
+    uint8_t buffer[BUFSIZE];
+    uint8_t bufIdx{ 0 };
+    PID* pid;
+    bool printPID{ false };
     //TODO LogMsgData logData{};
 };
 

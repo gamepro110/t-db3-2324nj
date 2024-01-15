@@ -1,10 +1,14 @@
 #include "MotorController.hpp"
 
+#include "lib/HardwareTimer.hpp"
+
 #include "stm32f3xx_hal.h"
 #include "usart.h"
 
 #include <cstring>
 #include <random>
+
+HardwareTimer tim{ TIM1 };
 
 MotorController::MotorController(osMessageQueueId_t id, uint8_t minDist, IMotor& leftMotor, IMotor& rightMotor, IFeedbackSensor& leftSense, IFeedbackSensor& rightSense) :
     id(id),
@@ -43,6 +47,10 @@ MotorController &MotorController::operator=(const MotorController &other) {
 }
 
 bool MotorController::Setup() {
+    tim.SetEnablePeripheralClock();
+    TIM1->PSC = 720000;
+    tim.SetTimerEnable();
+
     return (motorLeft->Setup()
         && motorRight->Setup()
         && senseLeft->Setup()
@@ -56,36 +64,35 @@ void MotorController::Loop() {
 
     uint8_t prio{ 0 };
     if (osMessageQueueGet(id, &data, &prio, 0) == osOK) {
-        int16_t outputL = pidLeft.Calculate(minDetectDistance, data.distance);
-        // int16_t outputR = pidRight.Calculate(data.distance, prevData.distance, TIM2->CNT);
+        int16_t output = pid.Calculate(minDetectDistance, data.distance);
 
-        // const int MSGBUFSIZE = 80;
-        // char msgBuf[MSGBUFSIZE];
-        // snprintf(msgBuf, MSGBUFSIZE, "minDist: % 6d _ dist:% 6d _ ", minDetectDistance, data.distance);
-        // HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-        // snprintf(msgBuf, MSGBUFSIZE, "outputL:% 6d  _ outputR:% 6d\r", outputL, outputR);
-        // HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+        const int MSGBUFSIZE = 60;
+        char msgBuf[MSGBUFSIZE];
+        snprintf(msgBuf, MSGBUFSIZE, "%d,%ld\n", data.distance, tim.GetTimerCount());
+        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
 
         prevData = data;
 
-        if (data.distance <= minDetectDistance) {
+        /*
+        if (data.distance == minDetectDistance) {
             SetSpeed(0);
 
-            /*
-            uint16_t r1{ rand() & 0xFFFF };
-            uint16_t r2{ rand() & 0xFFFF };
-            
-            if ((r1 * r2) % 2 == 0) {
-                TurnLeft(90);
-            }
-            else {
-                TurnRight(90);
-            } //*/
+            //uint16_t r1{ rand() & 0xFFFF };
+            //uint16_t r2{ rand() & 0xFFFF };
+            //if ((r1 * r2) % 2 == 0) {
+            //    TurnLeft(90);
+            //}
+            //else {
+            //    TurnRight(90);
+            //}
         }
         else {
             // SetSpeed(0);
-            motorLeft->SetSpeed(outputL);
+            // motorLeft->SetSpeed(output);
         }
+        //*/
+
+        SetSpeed(output);
     }
 
     osDelay(10);

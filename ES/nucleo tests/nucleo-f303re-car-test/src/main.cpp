@@ -163,6 +163,8 @@ int main(void) {
         sensorRight
     };
 
+    mcp.SetPid(controller.getPid());
+
     checkInit("motor controller", controller.Setup());
     servoDriveTim.SetTimerEnable();
     controller.SetSpeed(0);

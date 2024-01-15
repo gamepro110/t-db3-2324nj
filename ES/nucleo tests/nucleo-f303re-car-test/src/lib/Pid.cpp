@@ -23,48 +23,22 @@ int16_t PID::Calculate(float setpoint, float measurement) {
 
     proportionalOut = kp * error;
 
-    integratorOut = integratorOut + 0.5f * ki * tau * (error + prevError);
+    integratorOut = integratorOut + ki * tau * error;
 
-    float limMin{ 0.0f };
-    float limMax{ 0.0f };
-
-    if (max > proportionalOut) {
-        limMax = max - proportionalOut;
-    }
-    else {
-        limMax = 0;
-    }
-
-    if (min < proportionalOut) {
-        limMax = min - proportionalOut;
-    }
-    else {
-        limMax = 0;
-    }
-
-    if (integratorOut > limMax) {
-        integratorOut = limMax;
-    }
-    else if (integratorOut < limMin) {
-        integratorOut = limMin;
-    }
-
-    differentiatorOut = (2 * kd * (measurement - prevMeasurement))
-                   + (2 * tau - tau) * differentiatorOut
-                   / (2 * tau + tau);
+    differentiatorOut = kd * (error - prevError);
 
     output = proportionalOut + integratorOut + differentiatorOut;
 
-    const int MSGBUFSIZE = 60;
-    char msgBuf[MSGBUFSIZE];
-    snprintf(msgBuf, MSGBUFSIZE, "set:% -4.0f_ meas:% -4.0f_ ", setpoint, measurement);
-    HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-    snprintf(msgBuf, MSGBUFSIZE, "e:% -4d_ pout:% -10.0f_ ", error, proportionalOut);
-    HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-    snprintf(msgBuf, MSGBUFSIZE, "iout:% -10.0f_ dout:% -10.0f _ ", integratorOut, differentiatorOut);
-    HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-    snprintf(msgBuf, MSGBUFSIZE, "out: %-10f_ \r", output);
-    HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+    // const int MSGBUFSIZE = 60;
+    // char msgBuf[MSGBUFSIZE];
+    // snprintf(msgBuf, MSGBUFSIZE, "set:% -4.0f_ meas:% -4.0f_ ", setpoint, measurement);
+    // HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+    // snprintf(msgBuf, MSGBUFSIZE, "e:% -4d_ pout:% -10.0f_ ", error, proportionalOut);
+    // HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+    // snprintf(msgBuf, MSGBUFSIZE, "iout:% -10.0f_ dout:% -10.0f _ ", integratorOut, differentiatorOut);
+    // HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+    // snprintf(msgBuf, MSGBUFSIZE, "out: %-10f_ \r", output);
+    // HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
 
     if (output > max) {
         output = max;
@@ -85,7 +59,7 @@ void PID::ResetValues() {
 }
 
 void PID::updateKP(float val) {
-    ki = val;
+    kp = val;
 }
 
 void PID::updateKI(float val) {
@@ -93,5 +67,5 @@ void PID::updateKI(float val) {
 }
 
 void PID::updateKD(float val) {
-    ki = val;
+    kd = val;
 }

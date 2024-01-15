@@ -25,6 +25,11 @@ public:
     void SetSpeed(int16_t speed);
     void SetDistance(uint8_t dist);
 
+    //temp
+    PID& getPid() {
+        return pid;
+    }
+
 private:
     void TurnLeft(uint8_t deg);
     void TurnRight(uint8_t deg);
@@ -35,8 +40,7 @@ private:
     IMotor* motorRight{ nullptr };
     IFeedbackSensor* senseLeft{ nullptr };
     IFeedbackSensor* senseRight{ nullptr };
-    PID pidLeft{ -100, 100, 7.75f, 0.03f, 0.55f };
-    // PID pidRight{ -100, 100, 7.75f, 0.03f, 0.55f };
+    PID pid{ -100, 100, 13.5f, 0.00f, 0.0f };
     SensorMsgData data{ };
     SensorMsgData prevData{ };
 };

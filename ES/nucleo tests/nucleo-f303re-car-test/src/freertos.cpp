@@ -28,7 +28,15 @@ extern IButton* iBut_b;
 
 osThreadId_t mcpTaskHandle;
 const osThreadAttr_t mcpTask_attr {
-    .name = "MCP"
+    .name = "MCP",
+    .attr_bits = 0,
+    .cb_mem = nullptr,
+    .cb_size = 0,
+    .stack_mem = nullptr,
+    .stack_size = 512 * 4,
+    .priority = (osPriority_t)osPriorityNormal,
+    .tz_module = 0,
+    .reserved = 0,
 };
 
 osThreadId_t carSysTaskHandle;
@@ -54,28 +62,12 @@ void StartCarSysTask(void *argument);
 void StartMotorCtlTask(void *argument);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
-//! temp
-
-osThreadId_t dbTask;
-void dbLoop(void*) {
-    // const int MSGBUFSIZE = 80;
-    // char msgBuf[MSGBUFSIZE];
-
-    osDelay(10);
-
-    while (1) {
-        osDelay(10);
-    }
-}
-//! temp
-
 void MX_FREERTOS_Init(void) {
     mcpTaskHandle =         osThreadNew(StartMcpTask, nullptr, &mcpTask_attr);
     carSysTaskHandle =      osThreadNew(StartCarSysTask, nullptr, &carSysTask_attr);
 
     // disabling this thread stops triggering the hardfault
     motorCtlTaskHandle =    osThreadNew(StartMotorCtlTask, nullptr, &motorCtlTask_attr);
-    dbTask =                osThreadNew(dbLoop, nullptr, nullptr);
 }
 
 void StartMcpTask(void* argument) {

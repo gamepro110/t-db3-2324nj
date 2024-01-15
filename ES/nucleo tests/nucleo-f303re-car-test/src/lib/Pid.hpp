@@ -15,10 +15,14 @@ public:
     void updateKI(float val);
     void updateKD(float val);
 
+    const float& GetKP() const { return kp; }
+    const float& GetKI() const { return ki; }
+    const float& GetKD() const { return kd; }
+
 private:
     int16_t min{ 0 };
     int16_t max{ 0 };
-    float tau{ 0.001f };
+    float tau{ 0.01f };
 
     int16_t error{ 0 };
     int16_t prevError{ 0 };
@@ -32,13 +36,13 @@ private:
     float differentiatorOut{ 0 };
     float output{ 0 };
 
-    float kp{ 7.75f };
-    float ki{ 0.03f };
-    float kd{ 0.55f };
+    float kp{ 13.5f };
+    float ki{ 0.0f };
+    float kd{ 0.0f };
 
-    const float defaultKp{ 7.75f };
-    const float defaultKi{ 0.03f };
-    const float defaultKd{ 0.55f };
+    const float defaultKp{ 13.5f };
+    const float defaultKi{ 0.0f };
+    const float defaultKd{ 0.0f };
 };
 
 #endif
