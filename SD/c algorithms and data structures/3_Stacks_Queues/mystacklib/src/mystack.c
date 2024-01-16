@@ -29,8 +29,8 @@ typedef struct stackMeta {
 
 StackMeta_t* gStackList = NULL;
 
-int ListRemoveTail(StackMeta_t* list, void* returnObj);
-int ListAddTail(StackMeta_t* list, void* data);
+int StackListRemoveTail(StackMeta_t* list, void* returnObj);
+int StackListAddTail(StackMeta_t* list, void* data);
 
 StackMeta_t* FindList(int handle);
 StackObject_t* ctorStackObj();
@@ -83,7 +83,7 @@ int MystackPush(int handle, void* obj) {
         return -1;
     }
 
-    if (ListAddTail(list, obj) == -1) {
+    if (StackListAddTail(list, obj) == -1) {
         return -1;
     }
 
@@ -100,7 +100,7 @@ int MystackPop(int handle, void* obj) {
         return -1;
     }
 
-    ListRemoveTail(list, obj);
+    StackListRemoveTail(list, obj);
 
     if (prev != NULL) {
         prev->next = NULL; //break link to elem to be freed
@@ -217,12 +217,12 @@ int FreeStackElem(StackObject_t** item) {
     return 0;
 }
 
-/* function: ListRemoveTail
+/* function: StackListRemoveTail
  * pre: -
  * post: last element is removed from list
  * returns: 0 on success, -1 on fail
  */
-int ListRemoveTail(StackMeta_t* list, void* returnObj) {
+int StackListRemoveTail(StackMeta_t* list, void* returnObj) {
     if (list == NULL) {
         return -1;
     }
@@ -261,12 +261,12 @@ int ListRemoveTail(StackMeta_t* list, void* returnObj) {
     return 0;
 }
 
-/* function: ListAddTail
+/* function: StackListAddTail
  * pre: -
  * post: an element is added to the end of the linked list
  * returns: 0 on success, -1 on fail
  */
-int ListAddTail(StackMeta_t* list, void* data) {
+int StackListAddTail(StackMeta_t* list, void* data) {
     if (list == NULL) {
         return -1;
     }
