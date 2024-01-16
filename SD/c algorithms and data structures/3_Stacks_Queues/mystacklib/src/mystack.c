@@ -2,6 +2,7 @@
 #include "logging.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 /* The stack is an abstract data type.
  * this means that the internal structures are
@@ -28,9 +29,12 @@ typedef struct stackMeta {
 
 StackMeta_t* gStackList = NULL;
 
+int ListRemoveTail(StackMeta_t* list, void* returnObj);
+int ListAddTail(StackMeta_t* list, void* data);
+
 StackMeta_t* FindList(int handle);
 StackObject_t* ctorStackObj();
-int PeekStack(StackMeta_t* inList, StackObject_t** elem, StackObject_t* previous);
+int PeekStack(StackMeta_t* inList, StackObject_t** elem, StackObject_t** previous);
 int FreeStackElem(StackObject_t** item);
 
 int MystackCreate(size_t objsize) {
@@ -39,26 +43,29 @@ int MystackCreate(size_t objsize) {
     } /* Hint: use gStackList */
     int handle = 1;
     StackMeta_t* list = gStackList;
+    StackMeta_t* newStack = malloc(sizeof(StackMeta_t));
 
     if (list == NULL) {
-        gStackList = malloc(sizeof(StackMeta_t));
-        list = gStackList;
+        list = gStackList = newStack;
     }
     else {
         StackMeta_t* item = gStackList;
         StackMeta_t* prev = gStackList;
 
-        while (item != NULL && item->next != NULL) {
+        while (item != NULL) {
             prev = item;
             item = item->next;
         }
 
         handle = prev->handle + 1;
-        list = item;
+        prev->next = newStack;
+        list = prev->next;
     }
 
-    list->objsize = objsize;
     list->handle = handle;
+    list->stack = NULL;
+    list->next = NULL;//
+    list->objsize = objsize;
     list->numelem = 0;
 
     DBG_PRINTF("Created stack with handle: %d and objsize %zu bytes\n", handle, objsize);
@@ -76,46 +83,28 @@ int MystackPush(int handle, void* obj) {
         return -1;
     }
 
-    StackObject_t* new = ctorStackObj();
-    new->obj = obj;
-
-    if (list->numelem > 0) {
-        StackObject_t* stackObj = list->stack;
-
-        while (stackObj != NULL && stackObj->next != NULL) {
-            stackObj = stackObj->next;
-        }
-
-        stackObj->next = new;
+    if (ListAddTail(list, obj) == -1) {
+        return -1;
     }
-    else {
-        list->stack = new;
-    }
-
-    list->numelem++;
 
     DBG_PRINTF("handle: %d\n, obj: %p\n", handle, obj); 	
     return 0;
 }
 
 int MystackPop(int handle, void* obj) {
-    if (obj == NULL) {
-        return -1;
-    }
-
     StackMeta_t* list = FindList(handle);
     StackObject_t* elem;
-    StackObject_t prev;
+    StackObject_t* prev;
 
     if (list == NULL || PeekStack(list, &elem, &prev) == -1) {
         return -1;
     }
 
-    prev.next = NULL; //break link to elem to be freed
-    obj = elem->obj; // returned the obj
-    list->numelem--;
+    ListRemoveTail(list, obj);
 
-    FreeStackElem(&elem); // free elem
+    if (prev != NULL) {
+        prev->next = NULL; //break link to elem to be freed
+    }
 
     DBG_PRINTF("handle: %d\n, obj: %p\n", handle, obj); 	
     return 0;
@@ -128,32 +117,29 @@ int MystackDestroy(int handle) {
         return -1;
     }
 
-    //TODO destroy all nodes
-    StackObject_t* item = list->stack;
-    StackObject_t* freeItem = NULL;
-
-    while (item != NULL) {
-        freeItem = item;
-        if (FreeStackElem(&freeItem) == -1) {
-            printf("failed to clean up item\a\n");
-        }
-        item = item->next;
+    while (list->numelem > 0) {
+        MystackPop(handle, NULL);
     }
 
     //TODO destroy list from `gStackList`
-
     StackMeta_t* prevList = gStackList;
 
-    while (prevList != NULL && prevList->next != NULL && prevList->next != list) {
-        prevList = prevList->next;
-    }
+    if (prevList->handle != handle) {
+        while (prevList != NULL && prevList->next != NULL && prevList->next->handle != handle) {
+            prevList = prevList->next;
+        }
 
-    prevList->next = list->next;
+        prevList->next = list->next;
+    }
+    else {
+        gStackList = list->next;
+    }
 
     for (int i = 0; i < list->numelem; i++) {
         StackObject_t* item;
         PeekStack(list, &item, NULL);
     }
+
 
     free(list);
     list = NULL;
@@ -197,7 +183,7 @@ typedef struct data Data;
 /// @param elem ptr to element
 /// @param previous element
 /// @return -1 on error. 0 on succes
-int PeekStack(StackMeta_t* inList, StackObject_t** elem, StackObject_t* previous) {
+int PeekStack(StackMeta_t* inList, StackObject_t** elem, StackObject_t** previous) {
     if (inList == NULL || elem == NULL || previous == NULL) {
         return -1;
     }
@@ -205,18 +191,13 @@ int PeekStack(StackMeta_t* inList, StackObject_t** elem, StackObject_t* previous
     StackObject_t* stackObj = inList->stack;
     StackObject_t* prev = NULL;
 
-    // the loop below throws a segfault.
-    // check
-    // - stack::pop
-    // - stack::peek
-
     while (stackObj != NULL && stackObj->next != NULL) {
         prev = stackObj;
         stackObj = stackObj->next;
     }
 
     (*elem) = stackObj;
-    previous = prev;
+    (*previous) = prev;
 
     return 0;
 }
@@ -233,5 +214,87 @@ int FreeStackElem(StackObject_t** item) {
     (*item) = NULL;
     item = NULL;
 
+    return 0;
+}
+
+/* function: ListRemoveTail
+ * pre: -
+ * post: last element is removed from list
+ * returns: 0 on success, -1 on fail
+ */
+int ListRemoveTail(StackMeta_t* list, void* returnObj) {
+    if (list == NULL) {
+        return -1;
+    }
+
+    StackObject_t* current = list->stack;
+    StackObject_t* last = NULL;
+
+    if (current == NULL) {
+        return -1;
+    }
+
+    while (current->next != NULL) { 
+        last = current;
+        current = current->next;
+    }
+
+    // (*returnObj) = current->obj;
+    if (returnObj != NULL) {
+        memcpy(returnObj, current->obj, list->objsize);
+    }
+
+    free(current->obj);
+    current->obj = NULL;
+    free(current);
+    current = NULL;
+
+    if (last != NULL) {
+        last->next = NULL; 
+    }
+    else {
+        // could not assign last, means list is empty
+        list->stack = NULL;
+    }
+
+    list->numelem--;
+    return 0;
+}
+
+/* function: ListAddTail
+ * pre: -
+ * post: an element is added to the end of the linked list
+ * returns: 0 on success, -1 on fail
+ */
+int ListAddTail(StackMeta_t* list, void* data) {
+    if (list == NULL) {
+        return -1;
+    }
+
+    list->numelem++;
+
+    if(list->stack == NULL) {
+        list->stack = calloc(1, sizeof(StackObject_t));
+        list->stack->obj = data;
+        list->stack->next = NULL;
+        return 0;
+    }
+
+    StackObject_t* elem = NULL;
+    elem = calloc(1, sizeof(StackObject_t));
+    elem->next = NULL;
+    elem->obj = data;
+
+    StackObject_t* curElem = list->stack;
+
+    while (curElem != NULL) {
+        if (curElem->next == NULL) {
+            break;
+        }
+
+        curElem = curElem->next;
+    }
+
+    curElem->next = elem;
     return 0;
 }

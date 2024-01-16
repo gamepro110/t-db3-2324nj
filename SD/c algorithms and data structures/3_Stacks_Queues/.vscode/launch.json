@@ -7,7 +7,7 @@
             "request": "launch",
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
-            "program": "${workspaceFolder}/myStack",
+            "program": "${workspaceFolder}/mystack_exec",
             "MIMode": "gdb",
             "miDebuggerPath": "gdb",
             "setupCommands": [
@@ -30,7 +30,7 @@
             "request": "launch",
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
-            "program": "${workspaceFolder}/linkedlist_test",
+            "program": "${workspaceFolder}/mystack_test",
             "MIMode": "gdb",
             "miDebuggerPath": "gdb",
             "setupCommands": [

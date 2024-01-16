@@ -14,7 +14,7 @@
         {
             "label": "run make test",
             "type": "shell",
-            "command": "make linkedlist_test",
+            "command": "make",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
