@@ -40,7 +40,7 @@ private:
     IMotor* motorRight{ nullptr };
     IFeedbackSensor* senseLeft{ nullptr };
     IFeedbackSensor* senseRight{ nullptr };
-    PID pid{ -100, 100, 13.5f, 0.00f, 0.0f };
+    PID pid{ -100, 100 };
     SensorMsgData data{ };
     SensorMsgData prevData{ };
 };

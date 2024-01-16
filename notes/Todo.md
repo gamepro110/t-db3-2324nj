@@ -11,8 +11,11 @@ tags:
   - [x] [main question](<ES/notes.md#main question>)
   - [x] [sub questions](<ES/notes.md#sub questions>)
   - [ ] [class diagram](<../ES/car challenge/class diagram.md>) [wip]
-  - [ ] implement PID
-    - [ ] stuck because of a hardfault [info](<./../ES/nucleo tests/nucleo-f303re-car-test/notes.md>)
+  - [x] implement PID
+  - [x] calculate pid values
+  - [x] implemented pid values into program
+    - car rocks back and forth...
+  - [ ] write report
 
 ## #COMM
 
@@ -26,10 +29,6 @@ tags:
         - design
         - advice
 
-## #Proftaak
-
-- [x] poc (check trello)
-
 ## #SD
 
 check [feedpulse notes](<./feedpulse/2024-01-12-feedpulse-ronald.md>)  
@@ -37,9 +36,14 @@ tldr
 
 - [ ] c algorithm 1
   - [ ] show why some algorithms are faster and why
+    - [ ] validate
 - [x] c algorithm 2
 - [ ] c algorithm 3
   - [ ] implement
+    - [x] push
+    - [x] num elem
+    - [ ] pop
+      - got a thing with pop that it does not populate the output ptr
 - c algorithm 4 skipped
 
 ## #PO
