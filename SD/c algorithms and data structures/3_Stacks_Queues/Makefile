@@ -18,6 +18,9 @@ reverse_files=$(SHARED_FILES) \
 			reverseLinkedList/main.c \
 			reverseLinkedList/linked_list.c
 
+calc_files=$(SHARED_FILES) \
+			polish_calc/calc_main.c
+
 reverse_inc_dirs=$(INC_DIRS) -IreverseLinkedList/
 
 HEADER_FILES=mystacklib/src/*.h
@@ -32,7 +35,7 @@ TEST_SYMBOLS=$(SYMBOLS) -DTEST
 
 VALGRIND=valgrind --leak-check=full --leak-check=summary --show-leak-kinds=all -s --track-origins=yes
 
-.PHONY: clean test
+.PHONY: clean test calc
 
 all: $(ASSIGNMENT) $(ASSIGNMENT_TEST) reverse
 
@@ -44,6 +47,12 @@ $(ASSIGNMENT_TEST): Makefile $(ASSIGNMENT_TEST_FILES) $(HEADER_FILES)
 
 reverse: Makefile $(ASSIGNMENT_FILES) $(reverse_files) $(reverse_headers)
 	@$(CC) $(reverse_inc_dirs) $(SYMBOLS) $(reverse_files) -o $@
+
+calc: Makefile $(calc_files) $(HEADER_FILES)
+	@$(CC) $(INC_DIRS) $(SYMBOLS) $(calc_files) -o $@
+
+run_calc: calc
+	@$(VALGRIND) ./calc < polish_calc/input/example.txt
 
 run: $(ASSIGNMENT)
 	@$(VALGRIND) ./$(ASSIGNMENT)
