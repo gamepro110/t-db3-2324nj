@@ -12,6 +12,16 @@
             },
         },
         {
+            "label": "run make calc",
+            "type": "shell",
+            "command": "make calc",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
             "label": "run make test",
             "type": "shell",
             "command": "make",

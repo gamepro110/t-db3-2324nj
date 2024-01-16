@@ -49,7 +49,7 @@ reverse: Makefile $(ASSIGNMENT_FILES) $(reverse_files) $(reverse_headers)
 	@$(CC) $(reverse_inc_dirs) $(SYMBOLS) $(reverse_files) -o $@
 
 calc: Makefile $(calc_files) $(HEADER_FILES)
-	@$(CC) $(INC_DIRS) $(SYMBOLS) $(calc_files) -o $@
+	@$(CC) $(INC_DIRS) $(SYMBOLS) -lm $(calc_files) -o $@
 
 run_calc: calc
 	@$(VALGRIND) ./calc < polish_calc/input/example.txt

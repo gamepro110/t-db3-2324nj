@@ -45,7 +45,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "run make",
+            "preLaunchTask": "run make calc",
         },
         {
             "name": "(gdb) test",
