@@ -33,7 +33,7 @@ CC=gcc
 SYMBOLS= -g -O0 -std=c99 -Wall -Wextra -Werror
 TEST_SYMBOLS=$(SYMBOLS) -DTEST
 
-VALGRIND=valgrind --leak-check=full --leak-check=summary --show-leak-kinds=all -s --track-origins=yes
+VALGRIND=valgrind --leak-check=full --show-leak-kinds=all -s --track-origins=yes
 
 .PHONY: clean test calc
 
@@ -55,10 +55,12 @@ run_calc: calc
 	@$(VALGRIND) ./calc < polish_calc/input/example.txt
 
 run: $(ASSIGNMENT)
-	@$(VALGRIND) ./$(ASSIGNMENT)
+	@$(VALGRIND) ./$(ASSIGNMENT)_exec
 
 run_reverse: reverse
 	@$(VALGRIND) ./reverse
+
+run_all: run test run_reverse run_calc
 
 clean:
 	@rm -f $(ASSIGNMENT) $(ASSIGNMENT_TEST)
