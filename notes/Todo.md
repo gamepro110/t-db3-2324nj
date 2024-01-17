@@ -15,36 +15,35 @@ tags:
   - [x] calculate pid values
   - [x] implemented pid values into program
     - car rocks back and forth...
+  - [ ] update ES portfolio
   - [ ] write report
 
 ## #COMM
 
 - [x] Software Serial
-  - [ ] write report
-    - v0.1,
-      - added
-        - intro
-        - research
-      - started
-        - design
-        - advice
+  - [ ] write [report](<./../notes/comm/uart report.md>)
+  - todo today
+    - [ ] update com portfolio
+    - [ ] continue writing report
 
 ## #SD
 
-check [feedpulse notes](<./feedpulse/2024-01-12-feedpulse-ronald.md>)  
+check [feedpulse notes](<./feedpulse/2024-01-12-feedpulse-ronald.md>)
 tldr
 
 - [ ] c algorithm 1
   - [ ] show why some algorithms are faster and why
     - [ ] validate
 - [x] c algorithm 2
-- [ ] c algorithm 3
-  - [ ] implement
-    - [x] push
-    - [x] num elem
-    - [ ] pop
-      - got a thing with pop that it does not populate the output ptr
+- [/] c algorithm 3
+  - [x] part 1
+  - [/] part 2
+    - [x] 2.1
+    - [ ] 2.2
 - c algorithm 4 skipped
+- [ ] c++ breadbake diagram
+  - >START!!!
+- [ ] update SD portfolio
 
 ## #PO
 

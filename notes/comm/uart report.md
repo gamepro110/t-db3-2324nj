@@ -8,6 +8,7 @@ Karlo Koelewijn
 | date | version | author | notes |
 | :---: | :---: | :---: | --- |
 | 2024-01-14 | 0.1 | Karlo | started v0.1, added T.O.C., intro, research, started design and advice |
+| 2024-01-17 | 0.2 | karlo | updated advice, added tests header added state diagram, fixed a few formatting issues, updated design + advice |
 <!-- |  |  |  |  | -->
 
 ## content
@@ -30,6 +31,8 @@ Karlo Koelewijn
         - [recieving](#recieving)
   - [design](#design)
     - [class diagram](#class-diagram)
+    - [state diagram](#state-diagram)
+  - [tests](#tests)
   - [advice](#advice)
   - [conclusion](#conclusion)
 
@@ -84,7 +87,7 @@ messages can be 'chained' by putting a `idle` bit between data bits instead of f
 >![uart hex print](./../../COMM/software%20serial/evidende/uno%20writer%20logic%20analyzer%20output.png)
 >above shows hex, below shows ascii. the message is the same
 >![uart ascii print](./../../COMM/software%20serial/evidende/uart%20ascii%20output.png)
->`[09]` == `\t` aka a tab  
+>`[09]` == `\t` aka a tab
 >`[0A]` == `\n` aka a new line
 
 ###### named bit definitions
@@ -116,11 +119,16 @@ receiving is fairly similar to sending, but instead of setting a pin we read it 
 > why this design, what other choices could i have made
 ---
 
+i opted to make the class a template to hardbake the number of data, parity and stop bits into the constructed implementation, this prevents the user from changing them in runtime.
+a `HardwareTimer` was added because of the need for specific timing and 2 `NucleoPins` were to act as a transmit and receive pin.
+the baudrate is given throught the constructor because i wanted to allow the const savy people to be able to change the baud rate at runtime.
+
 ### class diagram
 
 ```mermaid
 classDiagram
 class SoftUart~typename DataType, uint8_t numDataBits, uint8_t numStopBits, uint8_t numParityBits, uint8_t bufferSize~ {
+  +SoftUart(uint32_t baud)
   +Setup() bool
   +ReadByte(char& byte) bool
   +WriteByte(uint8_t byte)
@@ -140,16 +148,86 @@ class SoftUart~typename DataType, uint8_t numDataBits, uint8_t numStopBits, uint
 }
 ```
 
+### state diagram
+
+> arrows with no guard can be considered an else case
+
+```mermaid
+stateDiagram-v2
+state "read byte" as rb
+state "detecting start bit" as dsb
+state "reading data bits" as rdb
+
+state "UpdateTimerAndWait" as utw1
+state "UpdateTimerAndWait" as utw2
+state "UpdateTimerAndWait" as utw3
+
+state "reading parity bits" as rpb
+state "detecting stop bits" as rsb
+state "detecting stop bit" as dstopb
+state "reading data bit i" as rdi
+state "reading parity bit i" as rpi
+state "calculate parity bit i" as cpbi
+%%state "a"
+
+dsb : entry / rx.read()
+
+[*] --> rb
+state rb {
+  [*] --> dsb
+  dsb --> [*] : [rx.read != BITSTART]/return false
+  dsb --> rdb : [rx.read == BITSTART]
+
+  state rdb{
+    [*] --> rdi : / i = 0
+    rdi --> utw1
+    utw1 --> rdi : [i < numDataBits]/ i++
+    utw1 --> [*] : [i >= numDataBits]
+  }
+
+  rdb --> rpb : [numParityBits > 0]
+  rdb --> rsb : [numParityBits == 0]
+
+  state rpb{
+    [*] --> cpbi : / i = 0
+    cpbi --> rpi
+    rpi --> utw2
+    utw2 --> rpi : [i < numParityBits]/ i++
+    utw2 --> [*] : [i >= numParityBits]
+  }
+
+  rpb --> rsb
+
+  state rsb {
+    [*] --> dstopb : / i = 0
+    dstopb --> utw3 : [rx.read == BITSTOP]
+    dstopb --> [*] : [rx.read != BITSTOP] / return false
+    utw3 --> dstopb : [i < numStopBits] / i++
+    utw3 --> [*] : [i >= numStopBits]
+  }
+
+  rsb --> [*]
+}
+rb --> [*] : / return true
+
+```
+
+## tests
+
+- [ ] TODO
+
 ## advice
 
-as of writing this document my implementation does not implement the parity calulations yet due to time constraints, however it can go upto 57600 baud without problems.
-the next step up would be 115200 but the way i have my timer setup wont allow the use of that speed.
+as of writing this document my implementation does not implement the parity calulations yet due to time constraints.
+without parity it achieves 57600 baud, but if i had implemented parity i would make an estimated guess that it would achieve 38400 baud.
+i tried the next step up (115200 baud) but the way i have my timer setup won't allow the use of that speed.
 i have tested 9600, 38400, and 57600 baud and speeds below that should work fine.
-the numer of bits is configurable for the data bits, parity bits and the stop bits, any unsuported number will be cautght using a static_assert.
-the code is blocking and not thread safe so keep that in mind.
+the numer of bits is configurable for the data bits, parity bits and the stop bits, and any unsuported number will be cautght using a static_assert.
+the code is blocking and **not** thread safe so keep that in mind.
 
 ## conclusion
 
 ---
+<!-- TODO -->
 > what did i thingk of the project
 ---

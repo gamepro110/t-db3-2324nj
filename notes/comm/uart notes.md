@@ -34,9 +34,9 @@ tags:
 - [x] state diagram
   - use the function names to link them
 - [ ] report
-  - you got the info, restructure it into a doc
-  - [ ] analysis!
-  - [ ] advice!
+  - [ ] update intro?
+  - [ ] tests
+  - [ ] conclusion
 
 ## info
 
@@ -53,6 +53,7 @@ tags:
 ```mermaid
 classDiagram
 class SoftUart~typename DataType, uint8_t numDataBits, uint8_t numStopBits, uint8_t numParityBits, uint8_t bufferSize~ {
+  +SoftUart(uint32_t baud)
   +Setup() bool
   +ReadByte(char& byte) bool
   +WriteByte(uint8_t byte)
@@ -73,6 +74,70 @@ class SoftUart~typename DataType, uint8_t numDataBits, uint8_t numStopBits, uint
 ```
 
 ## state diagram
+
+> arrows with no guard can be considered an else case
+
+```mermaid
+stateDiagram-v2
+state "read byte" as rb
+state "detecting start bit" as dsb
+state "reading data bits" as rdb
+
+state "UpdateTimerAndWait" as utw1
+state "UpdateTimerAndWait" as utw2
+state "UpdateTimerAndWait" as utw3
+
+state "reading parity bits" as rpb
+state "detecting stop bits" as rsb
+state "detecting stop bit" as dstopb
+state "reading data bit i" as rdi
+state "reading parity bit i" as rpi
+state "calculate parity bit i" as cpbi
+%%state "a"
+
+dsb : entry / rx.read()
+
+[*] --> rb
+state rb {
+  [*] --> dsb
+  dsb --> [*] : [rx.read != BITSTART]/return false
+  dsb --> rdb : [rx.read == BITSTART]
+
+  state rdb{
+    [*] --> rdi : / i = 0
+    rdi --> utw1
+    utw1 --> rdi : [i < numDataBits]/ i++
+    utw1 --> [*] : [i >= numDataBits]
+  }
+
+  rdb --> rpb : [numParityBits > 0]
+  rdb --> rsb : [numParityBits == 0]
+
+  state rpb{
+    [*] --> cpbi : / i = 0
+    cpbi --> rpi
+    rpi --> utw2
+    utw2 --> rpi : [i < numParityBits]/ i++
+    utw2 --> [*] : [i >= numParityBits]
+  }
+
+  rpb --> rsb
+
+  state rsb {
+    [*] --> dstopb : / i = 0
+    dstopb --> utw3 : [rx.read == BITSTOP]
+    dstopb --> [*] : [rx.read != BITSTOP] / return false
+    utw3 --> dstopb : [i < numStopBits] / i++
+    utw3 --> [*] : [i >= numStopBits]
+  }
+
+  rsb --> [*]
+}
+rb --> [*] : / return true
+
+```
+
+### old version
 
 ```mermaid
 stateDiagram-v2
