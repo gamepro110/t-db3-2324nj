@@ -12,27 +12,27 @@ tags:
 
 ## sub questions
 
-- [ ] what parts does the car have?
+- [x] what parts does the car have?
   - [x] [object diagram](<./../../ES/car challenge/class diagram.md#object>)
-  - [ ] [class diagram](<./../../ES/car challenge/class diagram.md#class>)
-- [ ] how do i control the actuators?
-  - [ ] servo
+  - [x] [class diagram](<./../../ES/car challenge/class diagram.md#class>)
+- [x] how do i control the actuators?
+  - [x] servo
     - [x] pwm
-    - [ ] pwm + pid
-  - [ ] distance sensor
-    - [ ] gpio control
-- [ ] how do i control the sensors?
-  - [ ] servo
+    - [x] pwm + pid
+  - [x] distance sensor
+    - [x] gpio control
+- [x] how do i control the sensors?
+  - [x] servo
     - [x] [pwm](<./../../ES/nucleo tests/nucleo-f303re-2x-pwm/>)
-  - [ ] button
+  - [x] button
     - [x] [interrupts](<./../../ES/nucleo tests/nucleo-f303re-gpio-challange/>)
-  - [ ] ultra sonic distance
-    - [ ] pwm
+  - [x] ultra sonic distance
+    - [x] pwm
       - [x] [reading servo pwm](<./../../ES/nucleo tests/nucleo-f303re-pwm-input/>)
-- [ ] how do i control the car while its running?
-  - [ ] serial communication
+- [x] how do i control the car while its running?
+  - [x] serial communication
     - sotfware serial
-  - [ ] mcp (manual control panel)
+  - [x] mcp (manual control panel)
     - [example](./../../ES/nucleo%20tests/nucleo-f303re-gpio-challange/)
 - [x] what is an obstacle?
   - an obstacle is anything the distance sensor can sense within N cm for longer than a few measurements

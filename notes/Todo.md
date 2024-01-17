@@ -10,11 +10,12 @@ tags:
 - [ ] car challenge
   - [x] [main question](<ES/notes.md#main question>)
   - [x] [sub questions](<ES/notes.md#sub questions>)
-  - [ ] [class diagram](<../ES/car challenge/class diagram.md>) [wip]
+  - [x] [class diagram](<../ES/car challenge/class diagram.md>) [wip]
   - [x] implement PID
   - [x] calculate pid values
   - [x] implemented pid values into program
     - car rocks back and forth...
+  - [ ] update [car challenge class diagram](<./../ES/car challenge/class diagram.md#class>)
   - [ ] update ES portfolio
   - [ ] write report
 
@@ -22,9 +23,8 @@ tags:
 
 - [x] Software Serial
   - [ ] write [report](<./../notes/comm/uart report.md>)
-  - todo today
-    - [ ] update com portfolio
-    - [ ] continue writing report
+  - [ ] update com portfolio
+  - [ ] continue writing report
 
 ## #SD
 
@@ -33,15 +33,17 @@ tldr
 
 - [ ] c algorithm 1
   - [ ] show why some algorithms are faster and why
-    - [ ] validate
+    - [ ] [validate](<./SD/bigONotes.md>)
 - [x] c algorithm 2
-- [/] c algorithm 3
+- [ ] c algorithm 3
   - [x] part 1
-  - [/] part 2
+  - [x] part 2
     - [x] 2.1
-    - [ ] 2.2
+    - [x] 2.2
+  - [ ] validate
 - c algorithm 4 skipped
 - [ ] c++ breadbake diagram
+  - [ ] [possible skip?](<./comm/uart report.md#state-diagram>)
   - >START!!!
 - [ ] update SD portfolio
 
