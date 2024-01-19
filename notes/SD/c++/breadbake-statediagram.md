@@ -4,21 +4,11 @@
 stateDiagram-v2
     direction LR
 
-    state "standby" as s
+    state "idle" as s
     state "processing" as p
     state "baking" as b
     state "raising" as r
     state "kneading" as k
-    state "increasing timer" as timu
-    state "decreasing timer" as timd
-    state "increasing temperature" as temu
-    state "decreasing temperature" as temd
-
-    timu: entry / increase timer
-    timd: entry / decrease timer
-
-    temu: entry / increase temperature
-    temd: entry / decrease temperature
 
     r: entry / heater.TurnOn()
     r: exit / heater.TurnOff()
@@ -29,21 +19,14 @@ stateDiagram-v2
     k: exit / kneader.TurnOff()
 
     [*] --> s
-    s --> timu : TIMER_UP_BUTTON_PRESSED [running == false] / STATE=STANDBY
-    timu --> s
+    s --> s : TIMER_UP_BUTTON_PRESSED / timer.IncreaseTime()
+    s --> s : TIMER_DOWN_BUTTON_PRESSED / timer.DecreaseTime()
+    s --> s : TEMP_UP_BUTTON_PRESSED / heater.IncreaseTemp()
+    s --> s : TEMP_DOWN_BUTTON_PRESSED / heater.DecreaseTemp()
 
-    s --> timd : TIMER_DOWN_BUTTON_PRESSED [running == false] / STATE=STANDBY
-    timd --> s
-
-    s --> temu : TEMP_UP_BUTTON_PRESSED [running == false] / STATE=STANDBY
-    temu --> s
-
-    s --> temd : TEMP_DOWN_BUTTON_PRESSED [running == false] / STATE=STANDBY
-    temd --> s
-
-    s --> p : START_BUTTON_PRESSED / SetTime(), TurnOn()
+    s --> p : START_BUTTON_PRESSED [time > 0] / SetTime(), TurnOn()
     state p {
-        direction LR
+        %%direction LR
         [*] --> k
         k --> r : KNEADING_TIME_1_DONE [kneadingTimer1 == 0]
         r --> k : RAISING_DONE [raisingTimer == 0]
