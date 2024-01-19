@@ -150,6 +150,8 @@ class SoftUart~typename DataType, uint8_t numDataBits, uint8_t numStopBits, uint
 
 ### state diagram
 
+<!-- TODO add context about state diagram -->
+
 > arrows with no guard can be considered an else case
 
 ```mermaid

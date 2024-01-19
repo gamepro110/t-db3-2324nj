@@ -43,8 +43,7 @@ tldr
   - [ ] validate
 - c algorithm 4 skipped
 - [ ] c++ breadbake diagram
-  - [ ] [possible skip?](<./comm/uart report.md#state-diagram>)
-  - >START!!!
+  - [ ] validate
 - [ ] update SD portfolio
 
 ## #PO
