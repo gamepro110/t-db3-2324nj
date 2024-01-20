@@ -26,7 +26,7 @@ HC_SR04_DistSensor &HC_SR04_DistSensor::operator=(const HC_SR04_DistSensor &othe
     return *this;
 }
 
-bool HC_SR04_DistSensor::Setup(uint8_t prescaler, uint32_t arrValue, uint32_t outputCCValue, const uint8_t outputChannel, const uint8_t inputChannel1, const uint8_t inputChannel2) {
+bool HC_SR04_DistSensor::Setup(uint32_t prescaler, uint32_t arrValue, uint32_t outputCCValue, const uint8_t outputChannel, const uint8_t inputChannel1, const uint8_t inputChannel2) {
     return (
         timer.Init(prescaler, arrValue, outputCCValue, outputChannel, inputChannel1, inputChannel2) &&
         echoPin.Setup() &&

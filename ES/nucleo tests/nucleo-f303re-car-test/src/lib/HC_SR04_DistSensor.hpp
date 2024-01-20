@@ -13,7 +13,7 @@ public:
     ~HC_SR04_DistSensor() override;
     HC_SR04_DistSensor& operator=(const HC_SR04_DistSensor& other);
 
-    bool Setup(uint8_t prescaler, uint32_t arrValue, uint32_t outputCCValue, const uint8_t outputChannel, const uint8_t inputChannel1, const uint8_t intputChannel2);
+    bool Setup(uint32_t prescaler, uint32_t arrValue, uint32_t outputCCValue, const uint8_t outputChannel, const uint8_t inputChannel1, const uint8_t intputChannel2);
     uint8_t GetDistance() override;
 
 private:

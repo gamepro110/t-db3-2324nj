@@ -27,10 +27,8 @@ private:
     int16_t error{ 0 };
     int16_t prevError{ 0 };
     int16_t prevMeasurement{ 0 };
-    float timeSec{ 0.001 };
-    float derivative{ 0 };
-    float integral{ 0 };
 
+    float timeSec{ 0.001 };
     float proportionalOut{ 0 };
     float integratorOut{ 0 };
     float differentiatorOut{ 0 };

@@ -33,8 +33,8 @@ private:
     IButton* button0{ nullptr };
     IButton* button1{ nullptr };
     BtnMsgData btnData{};
-    uint8_t buffer[BUFSIZE];
-    uint8_t bufIdx{ 0 };
+    // uint8_t buffer[BUFSIZE];
+    // uint8_t bufIdx{ 0 };
     PID* pid;
     bool printPID{ false };
     //TODO LogMsgData logData{};

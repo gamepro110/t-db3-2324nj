@@ -42,54 +42,54 @@ void ManualControlPanel::Loop() {
         HandleButtonSelect(btnData);
     }
 
-    uint8_t byte{ 0 };
-    if (HAL_UART_Receive(&huart2, &byte, 1, 0) == HAL_OK) {
-        buffer[bufIdx] = byte;
-        bufIdx++;
+    // uint8_t byte{ 0 };
+    // if (HAL_UART_Receive(&huart2, &byte, 1, 0) == HAL_OK) {
+    //     buffer[bufIdx] = byte;
+    //     bufIdx++;
 
-        if (bufIdx >= BUFSIZE) {
-            bufIdx = 0;
-        }
+    //     if (bufIdx >= BUFSIZE) {
+    //         bufIdx = 0;
+    //     }
 
-        if (byte == '\n') {
-            buffer[bufIdx] = '\000';
-            uint8_t letter{ 0 };
-            float num{ 0 };
-            if (pid != nullptr && sscanf((char*)buffer, "%c%f", &letter, &num) != -1) {
-                switch (letter)
-                {
-                case 'p':
-                    pid->updateKP(num);
-                    break;
-                case 'i':
-                    pid->updateKI(num);
-                    break;
-                case 'd':
-                    pid->updateKD(num);
-                    break;
-                case '?': {
-                    printPID = true;
-                    break;
-                }
-                default:
-                    break;
-                }
-            }
-            bufIdx = 0;
-        }
-    }
+    //     if (byte == '\n') {
+    //         buffer[bufIdx] = '\000';
+    //         uint8_t letter{ 0 };
+    //         float num{ 0 };
+    //         if (pid != nullptr && sscanf((char*)buffer, "%c%f", &letter, &num) != -1) {
+    //             switch (letter)
+    //             {
+    //             case 'p':
+    //                 pid->updateKP(num);
+    //                 break;
+    //             case 'i':
+    //                 pid->updateKI(num);
+    //                 break;
+    //             case 'd':
+    //                 pid->updateKD(num);
+    //                 break;
+    //             case '?': {
+    //                 printPID = true;
+    //                 break;
+    //             }
+    //             default:
+    //                 break;
+    //             }
+    //         }
+    //         bufIdx = 0;
+    //     }
+    // }
 
-    if (printPID) {
-        printPID = false;
-        const uint8_t MSGBUFSIZE{ 18 };
-        char msgBuf[MSGBUFSIZE];
-        snprintf(msgBuf, MSGBUFSIZE, "p%-5.2f_ ", pid->GetKP());
-        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-        snprintf(msgBuf, MSGBUFSIZE, "i%-5.2f_ ", pid->GetKI());
-        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-        snprintf(msgBuf, MSGBUFSIZE, "d%-5.2f\n", pid->GetKD());
-        HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
-    }
+    // if (printPID) {
+    //     printPID = false;
+    //     const uint8_t MSGBUFSIZE{ 18 };
+    //     char msgBuf[MSGBUFSIZE];
+    //     snprintf(msgBuf, MSGBUFSIZE, "p%-5.2f_ ", pid->GetKP());
+    //     HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+    //     snprintf(msgBuf, MSGBUFSIZE, "i%-5.2f_ ", pid->GetKI());
+    //     HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+    //     snprintf(msgBuf, MSGBUFSIZE, "d%-5.2f\n", pid->GetKD());
+    //     HAL_UART_Transmit(&huart2, (uint8_t *)msgBuf, strlen(msgBuf), HAL_MAX_DELAY);
+    // }
 
     osDelay(1);
 }

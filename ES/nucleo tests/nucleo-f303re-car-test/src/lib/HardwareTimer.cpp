@@ -4,7 +4,7 @@ HardwareTimer::HardwareTimer(TIM_TypeDef *timer) :
     timer(timer)
 {}
 
-bool HardwareTimer::Init(uint8_t prescaler, uint32_t arrValue, uint32_t outputCCValue, const uint8_t outputChannel, const uint8_t inputChannel1, const uint8_t inputChannel2) {
+bool HardwareTimer::Init(uint32_t prescaler, uint32_t arrValue, uint32_t outputCCValue, const uint8_t outputChannel, const uint8_t inputChannel1, const uint8_t inputChannel2) {
     if (timer == TIM6 || timer == TIM17) {
         return false;
     }

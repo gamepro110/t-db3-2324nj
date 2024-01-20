@@ -8,7 +8,7 @@ class HardwareTimer {
 public:
     HardwareTimer(TIM_TypeDef* timer);
 
-    bool Init(uint8_t prescaler, uint32_t arrValue, uint32_t outputCCValue, const uint8_t outputChannel, const uint8_t inputChannel1, const uint8_t intputChannel2);
+    bool Init(uint32_t prescaler, uint32_t arrValue, uint32_t outputCCValue, const uint8_t outputChannel, const uint8_t inputChannel1, const uint8_t intputChannel2);
 
     void SetTimerEnable() const;
     void SetPrescaler(const uint8_t prescalerDivider) const;
