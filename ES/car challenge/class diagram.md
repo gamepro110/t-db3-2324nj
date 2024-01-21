@@ -241,6 +241,8 @@ classDiagram
     %% o-- == has a
     %% <|.. == implements interface
 
+    ManualControlPanel o-- BtnMsgData
+    BtnMsgData --o Button
     CarSystem o-- MotorController
     NucleoPin o-- AltModeValue
 
