@@ -8,7 +8,6 @@ tags:
 ## #ES
 
 - [ ] car challenge
-  - [ ] class diagram update
   - [ ] report
 
 ## #COMM

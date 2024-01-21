@@ -83,12 +83,12 @@ messages can be 'chained' by putting a `idle` bit between data bits instead of f
 
 ---
 
-> this shows a string of text being send
->![uart hex print](./../../COMM/software%20serial/evidende/uno%20writer%20logic%20analyzer%20output.png)
->above shows hex, below shows ascii. the message is the same
->![uart ascii print](./../../COMM/software%20serial/evidende/uart%20ascii%20output.png)
->`[09]` == `\t` aka a tab
->`[0A]` == `\n` aka a new line
+> this shows a string of text being send.  
+> ![uart hex print](./../../COMM/software%20serial/evidende/uno%20writer%20logic%20analyzer%20output.png)  
+> above shows hex, below shows ascii. the message is the same  
+> ![uart ascii print](./../../COMM/software%20serial/evidende/uart%20ascii%20output.png)  
+> `[09]` == `\t` aka a tab  
+> `[0A]` == `\n` aka a new line
 
 ###### named bit definitions
 
@@ -113,15 +113,11 @@ receiving is fairly similar to sending, but instead of setting a pin we read it 
 
 ## design
 
----
-> design choices
->
-> why this design, what other choices could i have made
----
+<!-- TODO design choices. why this design, what other choices could i have made -->
 
-i opted to make the class a template to hardbake the number of data, parity and stop bits into the constructed implementation, this prevents the user from changing them in runtime.
-a `HardwareTimer` was added because of the need for specific timing and 2 `NucleoPins` were to act as a transmit and receive pin.
-the baudrate is given throught the constructor because i wanted to allow the const savy people to be able to change the baud rate at runtime.
+i opted to make the class a template to hardbake the number of data, parity and stop bits into the constructed implementation, this prevents the user from changing them in runtime.  
+a `HardwareTimer` was added because of the need for specific timing and 2 `NucleoPins` were to act as a transmit and receive pin.  
+the baudrate is given throught the constructor because i wanted to allow the const savy people to be able to change the baud rate at runtime. (event though it is not suported in the spec)
 
 ### class diagram
 
@@ -149,8 +145,6 @@ class SoftUart~typename DataType, uint8_t numDataBits, uint8_t numStopBits, uint
 ```
 
 ### state diagram
-
-<!-- TODO add context about state diagram -->
 
 > arrows with no guard can be considered an else case
 
@@ -216,7 +210,7 @@ rb --> [*] : / return true
 
 ## tests
 
-- [ ] TODO
+<!-- TODO -->
 
 ## advice
 
@@ -229,7 +223,4 @@ the code is blocking and **not** thread safe so keep that in mind.
 
 ## conclusion
 
----
-<!-- TODO -->
-> what did i thingk of the project
----
+<!-- TODO what did i think of the project -->
