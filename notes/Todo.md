@@ -7,13 +7,13 @@ tags:
 
 ## #ES
 
-- [ ] car challenge report
+- [ ] [car challenge report](<./ES/car-challenge-report.md>)
   - [ ] get feedback
 
 ## #COMM
 
 - [/] Software Serial
-  - [ ] [report](<./../notes/comm/uart report.md>)
+  - [ ] [report](<./comm/uart report.md>)
 
 ## #SD
 
