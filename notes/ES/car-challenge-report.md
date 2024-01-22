@@ -10,8 +10,10 @@ Karlo Koelewijn
 | date | version | author | notes |
 | :---: | :---: | :---: | --- |
 | 2024-01-17 | 0.1 | Karlo | added layout + started research |
-| 2024-01-20 | 0.2 | Karlo | fleshed out the subquestions, added class diagram, added todo list |
-| 2024-01-21 | 0.3 | Karlo | added image, finished deepdive section, finished design, wrote advice, wrote conclusion |
+| 2024-01-20 | 0.2 | Karlo | fleshed out the sub-questions, added class diagram, added todo list |
+| 2024-01-21 | 0.3 | Karlo | added image, finished deep-dive section, finished design, wrote advice, wrote conclusion |
+| 2024-01-22 | 0.4 | Karlo | rewrote conclusion, moved part of advice to research, seperated reflection and conclusion |
+| 2024-01-23 | 0.5 | Karlo | added dot-framework + spell checking |
 <!-- |  |  |  |  | -->
 
 ## content
@@ -22,22 +24,24 @@ Karlo Koelewijn
   - [introduction](#introduction)
   - [research](#research)
     - [main question](#main-question)
-    - [subquestions](#subquestions)
+    - [sub-questions](#sub-questions)
       - [what parts does the car have?](#what-parts-does-the-car-have)
       - [how do i control the actuators? / how do i control the sensors?](#how-do-i-control-the-actuators--how-do-i-control-the-sensors)
       - [how do i control the car while its running?](#how-do-i-control-the-car-while-its-running)
       - [what is an obstacle?](#what-is-an-obstacle)
       - [how do i communicate between threads while keeping it in real time?](#how-do-i-communicate-between-threads-while-keeping-it-in-real-time)
-      - [deepdive](#deepdive)
-        - [pwm output control](#pwm-output-control)
-        - [pwm input control](#pwm-input-control)
-          - [example pwm in+out](#example-pwm-inout)
-        - [uart control](#uart-control)
-        - [pid control](#pid-control)
+    - [deep-dive](#deep-dive)
+      - [pwm output control](#pwm-output-control)
+      - [pwm input control](#pwm-input-control)
+        - [example pwm in+out](#example-pwm-inout)
+      - [uart control](#uart-control)
+      - [pid control](#pid-control)
+    - [debugging hardfaults](#debugging-hardfaults)
   - [design](#design)
     - [class diagram](#class-diagram)
   - [advice](#advice)
-  - [conclusion/reflection](#conclusionreflection)
+  - [conclusion](#conclusion)
+  - [reflection](#reflection)
 
 ## introduction
 
@@ -46,7 +50,7 @@ the goal of this challenge is to get to know low-level hardware control on the n
 we got the following goals in this challenge:
 
 1. HAL methods are forbidden
-    - with the exception of `HAL_Delay`, `HAL_UART_Transmint`, and `HAL_UART_Receive`
+    - with the exception of `HAL_Delay`, `HAL_UART_Transmit`, and `HAL_UART_Receive`
 2. drive the servos in a closed loop with a pid
 3. use the distance sensor for obstacle detection
 4. make a MCP (Manual Control Panel)
@@ -58,7 +62,7 @@ we got the following goals in this challenge:
 
 how do I get the Nucleo car driving and avoiding obstacles using low level hardware control in real-time?
 
-### subquestions
+### sub-questions
 
 #### what parts does the car have?
 
@@ -89,10 +93,10 @@ graph
 
 #### how do i control the actuators? / how do i control the sensors?
 
-the servos used are the `parallax inc. feedback 360 highspeed`, which are controlled using a 100 KHz pwm signal.  
+the servos used are the `parallax inc. feedback 360 high-speed`, which are controlled using a 100 KHz pwm signal.  
 by using the ccr (Capture Compare registers) you are able to manipulate the width of the duty cycle of the pwm signal.  
 the servo responds to a signal between 1280 and 1720, which are the values that we put into the ccr.  
-to controll them in a closed loop you can either:
+to control them in a closed loop you can either:
 
 1) choose to read the 910 hz pwm output signal, or
 2) use the distance from a distance sensor
@@ -100,11 +104,11 @@ to controll them in a closed loop you can either:
 either option could be used as part of the pid controller.
 
 as for controlling the distance sensor, this can be controlled using pwm pulse mode.  
-that means u only send a pulse at the begining of the pwm signal on the trigger pin and read the resulting pwm signal from the echo pin.  
+that means u only send a pulse at the beginning of the pwm signal on the trigger pin and read the resulting pwm signal from the echo pin.  
 then after a calculation you get the distance from an obstacle.
 
-the buttons on the other hand use interrupts, so when the button is pressed an interrupt is triggerd in the cpu.  
-the cpu then executes its interupt handler (corosponding to the correct interrupt) and after which return to where it was before.  
+the buttons on the other hand use interrupts, so when the button is pressed an interrupt is triggered in the cpu.  
+the cpu then executes its interrupt handler (corresponding to the correct interrupt) and after which return to where it was before.  
 it is essential that interrupts are short as to not loose track of other time sensitive tasks/threads.  
 to keep mine short i only set a bool to true and save how long it has been pressed for on letting the button go.  
 after which it can handle the button press whenever it has 'time' outside of the interrupt.
@@ -112,7 +116,7 @@ after which it can handle the button press whenever it has 'time' outside of the
 #### how do i control the car while its running?
 
 while the assignment said that we needed to make our own software-serial, because the nucleo did not have enough pin,
-i was able to allocate all the pins without needing to use the software-serial i had writen.  
+i was able to allocate all the pins without needing to use the software-serial i had written.  
 i did use serial to set the individual Kp, Ki, and Kd values while the car was running so i did not have to recompile every time i had to change a value.  
 another method to control the car was by adding a MCP (Manual Control Panel), for that i added 2 buttons where each button had a short and a long press action.  
 they utilize a combination of interrupts and a messageQueue to decide what action gets executed.
@@ -124,15 +128,15 @@ an obstacle is anything the distance sensor can sense within N cm for longer tha
 #### how do i communicate between threads while keeping it in real time?
 
 the nucleo f303re has a single ARM Cortex M4 core, so if we want to use multiple threads we are going to need an os.
-thats where FreeRtos steps in, FreeRtos (or Free Real time operating system) provides a cross-platfrom operating system with threading capabilities.
-which allowes us too make multiple threads while the kernal keeps the system running at 'real-time'.
+thats where FreeRtos steps in, FreeRtos (or Free Real time operating system) provides a cross-platform operating system with threading capabilities.
+which allows us too make multiple threads while the kernel keeps the system running at 'real-time'.
 
 to communicate between threads we can use one of freeRtos' features called a messageQueue,
-you are able to push messages to the queue from one thread while another thread is able to pop them while the kernal keeps everything running.
+you are able to push messages to the queue from one thread while another thread is able to pop them while the kernel keeps everything running.
 
-#### deepdive
+### deep-dive
 
-##### pwm output control
+#### pwm output control
 
 to produce a pwm signal on the nucleo we need to use a timer.  
 the nucleo has multiple timers:
@@ -141,10 +145,10 @@ the nucleo has multiple timers:
 - general-purpose timers (tim2/tim3/tim4)
 - basic timers (tim6/tim7)
 - general-purpose timers (tim15/tim16/tim17)
-  - thise have less features
+  - these have less features
 
 all timers except the 'basic timers' have the capability to output a pwm signal.  
-to achive this you have to do the following steps.  
+to achieve this you have to do the following steps.  
 (using tim2 for this example)
 
 1. enable specific timer  
@@ -178,7 +182,7 @@ to achive this you have to do the following steps.
     );
     ```
 
-5. set output mdoe to pwm
+5. set output mode to pwm
 
     ```cpp
     TIM2->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2;
@@ -231,10 +235,10 @@ to achive this you have to do the following steps.
     );
     ```
 
-##### pwm input control
+#### pwm input control
 
 reading a pwm signal is a bit trickier.  
-bacause only advanced timers, general-purpose 2/3/4 can read pwm.  
+because only advanced timers, general-purpose 2/3/4 can read pwm.  
 to setup it up for tim3 you do the following steps:
 
 1. enable timer
@@ -319,7 +323,7 @@ to setup it up for tim3 you do the following steps:
     GPIOA->AFR[0] |= (0b0010 << GPIO_AFRL_AFRL6_Pos);
     ```
 
-###### example pwm in+out
+##### example pwm in+out
 
 ![servo in + output](<./../Assets/raw servo in+output.png>)
 
@@ -332,10 +336,10 @@ d3 shows servo 1 sense signal
 ![distance sensor output](<./../Assets/distSensorOutput.png>)
 
 here i show the pwm signal send to (on d6) and received from (on d7) the ultra sonic distance sensor.  
-due to a small configuration mistake at the time it send a weird signal and shortly after hit the ARR (auro reload register).  
+due to a small configuration mistake at the time it send a weird signal and shortly after hit the ARR (auto reload register).  
 this is fixed now and i have measured it again, but lost the data due to my battery dying and not having time to measure it again.
 
-##### uart control
+#### uart control
 
 there are multiple ways to receive uart, but the way i chose was a simple one.  
 i made an array in my MCP (Manual Control Panel) class and kept in index where i was writing.  
@@ -351,16 +355,16 @@ here is a list of actions i wanted and which got implemented:
 - [x] change Kd
 - [ ] change setpoint
 - [ ] change max speed
-- [ ] chagne current speed
+- [ ] change current speed
 
-##### pid control
+#### pid control
 
-I used a PID controller as part of a closed-loop controll system to ensure the car kept a specified distance from an obstacle.  
+I used a PID controller as part of a closed-loop control system to ensure the car kept a specified distance from an obstacle.  
 PID stands for `Proportional–integral–derivative` which is a three-term controller in a control loop.  
 
 | symbol | name | value |
 | :---: | :---: | :---: |
-| $k_u$ | (p value at oscilation steady state when i and d are 0) |  |
+| $k_u$ | (p value at oscillation steady state when i and d are 0) |  |
 | $m$ | distance measured |  |
 | $s_p$ | setpoint |  |
 | $\tau$ | tau (time constant) |  |
@@ -377,33 +381,46 @@ one note: my $k_u$ is the following tables $P$
 
 ![pid calc ref](<./../Assets/pid calc ref.png>)
 
-after setting the pid values i noticed that the car continuesly rocks back and forth like the steady oscilation state.  
+after setting the pid values i noticed that the car continuously rocks back and forth like the steady oscitation state.  
 this was expected seeing as the above calculation provides a decent start after which it needs fine tuning.  
 however due to time constraints i'm unable to fine tune it.
 
+### debugging hardfaults
+
+i had my fair share of hardfaults (unrecoverable hard crashes) which in turn had me debugging the error flags and cpu registers as shown below.
+
+![debugging cpu registers](<./../Assets/debugging freertos.png>)  
+
+when the hardfault happened i was looking a these addresses (status flags, cpu registers, stack pointers, process stack pointer, etc) to figure out what was going  wrong
+
+![info hardfault](<./../Assets/finding crash info.png>)
+
+in the above picture i was looking at the wrong bit as i had an error with one of the bits next to the one high-lighted in the image.  
+the cause in the end was not having enough stack space, which was caused by my logger class requesting a decent string each time.
+
 ## design
 
-while it might be easy to put all the low-level code in the main and freertos files, it is considdered bad design.  
+while it might be easy to put all the low-level code in the main and freertos files, it is considered bad design.  
 because that means its hard to swap out a sensor or actuator code wise, that is why we had to make our own HAL (Hardware Abstraction Layer).  
-and in combination whith object oriented code it becomes way easier and expandable to write code that works on multiple devices and with multiple configurations.  
+and in combination with object oriented code it becomes way easier and expandable to write code that works on multiple devices and with multiple configurations.  
 
 below i will list a few odd choices and why i made them:
 
 - `MotorController` has 2 `IMotors`
-  - i chose to do it this way because i did not want the pid accesable outside the controller.
+  - i chose to do it this way because i did not want the pid accessible outside the controller.
   - the pid controlled the motors so it did not make sense to provide it from the outside.
 - `ManualControlPanel` has 2 buttons
-  - by using a vector i could have made it more versitile, but that makes it more memory heavy and complex.
+  - by using a vector i could have made it more versatile, but that makes it more memory heavy and complex.
   - if i had used a vector i would also have to manage its cleanup and logic for adding to it, which would have taken more time.
 - `IButton` inherits from `IBtnIrq`
-  - as we were not allowed to poll for button input as one of the requirements we had to use interrupts, and by inheriting from it i forced that behaviour.
-  - i did make them seperate to make them reuseable and they can work independent from each other.
+  - as we were not allowed to poll for button input as one of the requirements we had to use interrupts, and by inheriting from it i forced that behavior.
+  - i did make them separate to make them reuseable and they can work independent from each other.
 
 ### class diagram
 
 `<<active>>` means that it has a separate thread.  
 `Action` = std::function\<void()\> or void(*func)(void) depending on the memory impact.  
-the rule of 3 applies to classes (ctor, dtor, asignment-operator).  
+the rule of 3 applies to classes (ctor, dtor, assignment-operator).  
 IMotor::SetSpeed argument range: `-100` to `100`.
 
 ```mermaid
@@ -482,7 +499,7 @@ classDiagram
   }
   class HC_SR04_DistSensor {
     +HC_SR04_DistSensor(NucleoPin& echo, NucleoPin& trigger, HardwareTimer tim)
-    +Setup(uint32_t prescaler, uint32_t arrValue, uint32_t outputCCValue, const uint8_t outputChannel, const uint8_t inputChannel1, const uint8_t intputChannel2) bool
+    +Setup(uint32_t prescaler, uint32_t arrValue, uint32_t outputCCValue, const uint8_t outputChannel, const uint8_t inputChannel1, const uint8_t inputChannel2) bool
     -NucleoPin* echoPin
     -NucleoPin* triggerPin
     -HardwareTimer timer
@@ -559,7 +576,7 @@ classDiagram
   }
   class HardwareTimer {
     +HardwareTimer(TIM_TypeDef* timer);
-    +Init(uint32_t prescaler, uint32_t arrValue, uint32_t outputCCValue, const uint8_t outputChannel, const uint8_t inputChannel1, const uint8_t intputChannel2) bool
+    +Init(uint32_t prescaler, uint32_t arrValue, uint32_t outputCCValue, const uint8_t outputChannel, const uint8_t inputChannel1, const uint8_t inputChannel2) bool
     +SetTimerEnable() void
     +SetPrescaler(const uint8_t prescalerDivider) void
     +SetEnablePeripheralClock() void
@@ -613,39 +630,55 @@ classDiagram
 ## advice
 
 I would advice for anyone learning to work with freeRtos to start experimenting with it.  
-i had my fair share of hardfaults (unrecoverable hard crashes) which in turn had me debugging the error flags and cpu registers as shown below.
 
-![debugging cpu registers](<./../Assets/debugging freertos.png>)  
+seeing as I was short on time i would spend more time tuning the pid values, as to not rock back and forth continuesly.  
+as stated in the paper it is used as a guide, i would make sure to take more time next time im working with a pid controller.
+apart from thata it is a functioning car with MCP and uart control.
 
-when the hardfautl happend i was looking a these adresses (status flags, cpu registers, stack pointers, proces stack pointer, etc) to figure out what was going  wrong
+## conclusion
 
-![info hardfault](<./../Assets/finding crash info.png>)
+to reiterate the main question:  
 
-in the above picture i was looking at the wrong bit as i had an error with one of the bits next to the one hilighted in the image.  
-the cause in the end was not having enough stack space, which was caused by my logger class requesting a decent string each time.
+> how do I get the Nucleo car driving and avoiding obstacles using low level hardware control in real-time?
 
-seeing as I was short on time i would spend more time tuning the pid values, as to not rock back and forth.  
-as stated in the paper it is used as a guide, while i did not have the time this time, i would make sure to take more time next time im working with a pid controller.
+we first need to know what component the car has want wat its 'goals' are.
 
-## conclusion/reflection
+its components can be [found here](<#what-parts-does-the-car-have>), and it can have 1 of 2 goals.
 
-lets recap the goals.
+1. drive straight, once it detects a obstacle rotate 90 degrees and continue.
+2. keep a certain distance from an obstacle (moving or static makes not difference)
 
-1. HAL methods are forbidden
-    - with the exception of `HAL_Delay`, `HAL_UART_Transmint`, and `HAL_UART_Receive`
-2. drive the servos in a closed loop with a pid
-3. use the distance sensor for obstacle detection
-4. make a MCP (Manual Control Panel)
-5. have a backup system to control the car while it is running
+I choose to do option 2, my definition of an [obstacle can be found here](<#what-is-an-obstacle>), but how do i control a ultra sonic distance sensor?  
+I explain [pwm input here](<#pwm-input-control>), and [pwm output here](<#pwm-output-control>).  
+to move the car we need to use the servos which take a pwm signal as input to move the output with the speed determined by the duty cycle.  
+the servo also outputs a faster pwm signal that shows its angle in the duty cycle, which could be used to measure how fast it is going.  
+by using the output of the distence sensor as setpoint for the [PID (described here)](<#pid-control>) i was able to have a closed loop control controller.  
 
-for point 1, the only HAL methods used were `HAL_UART_Transmint` and `HAL_UART_Receive` for my serial communication.  
-for point 2 and 3 i used pwm to controll and read the sensors and actuators as shown [here](<#how-do-i-control-the-actuators--how-do-i-control-the-sensors>).  
-for point 4  
-![mcp](<./../Assets/mcp view.jpg>)  
-and lastly for point 5, I have my [uart-control](<#uart-control>).
+for controlling the behaviour of the car while it is running I made a MCP with 2 buttons (each with long and short press action) and a [uart terminal](<#uart-control>) to parse input and apply the changes.
 
-this assingment was a journey and had it's ups and downs, i can say that on one hand i don't like this deep level of control.  
+to communicate between threads i used 2 FreeRtos message queues with the following data types.
+
+```cpp
+struct BtnMsgData {
+    int butNr;
+    int Duration;
+};
+
+struct SensorMsgData {
+    uint8_t distance;
+};
+```
+
+as the names might sugest, one is for sending which button is pressed and for how long, and the other is for passing the distance measured by the ultra sonic sensor.  
+the reason for doing the button this way is to keep the interrupt code as short as possible while still complying to single resposibility, the button handles the interrupt while the action is called from from another thread using the MCP class to preform the action.  
+as for the distance sensor. while the hardware timer managed the timing, i did have to send the data to the MotorController (which is on another thread) so it could be used in the PID.
+
+and while the previous bit spoiled it a bit, i used FreeRtos as on OS to keep it running in real time while being able to utilize mutltiple threads.
+
+## reflection
+
+this assignment was a journey and had it's ups and downs, i can say that on one hand i don't like this deep level of control.  
 but on the other hand it makes u think more about what you do with your platform.  
-I learned a lot during this journey and hope i dont have to use this in the near future.  
-this semester made me realize how important timing is in embeded devices, and that a small looking change can affect more than you might think.  
+I learned a lot during this journey and hope i don't have to use this in the near future.  
+this semester made me realize how important timing is in embedded devices, and that a small looking change can affect more than you might think.  
 while i'm glad it's over im glad i pushed to make it work seeing as i learned a lot.
