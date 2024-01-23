@@ -8,7 +8,8 @@ Karlo Koelewijn
 | date | version | author | notes |
 | :---: | :---: | :---: | --- |
 | 2024-01-14 | 0.1 | Karlo | started v0.1, added T.O.C., intro, research, started design and advice |
-| 2024-01-17 | 0.2 | karlo | updated advice, added tests header added state diagram, fixed a few formatting issues, updated design + advice |
+| 2024-01-17 | 0.2 | Karlo | updated advice, added tests header added state diagram, fixed a few formatting issues, updated design + advice |
+| 2024-01-23 | 0.3 | Karlo | spelling checking +  |
 <!-- |  |  |  |  | -->
 
 ## content
@@ -22,13 +23,13 @@ Karlo Koelewijn
     - [sub questions](#sub-questions)
       - [how does uart work](#how-does-uart-work)
         - [uart msg example](#uart-msg-example)
-          - [message we send](#message-we-send)
           - [uart message structure](#uart-message-structure)
+          - [message we send](#message-we-send)
           - [actual messages](#actual-messages)
           - [named bit definitions](#named-bit-definitions)
       - [how can we transfer the data](#how-can-we-transfer-the-data)
         - [sending](#sending)
-        - [recieving](#recieving)
+        - [receiving](#receiving)
   - [design](#design)
     - [class diagram](#class-diagram)
     - [state diagram](#state-diagram)
@@ -44,25 +45,19 @@ this is my uart research report. im writing this because i needed to learn how t
 
 ### main question
 
-> how do i write software uart running faster than 9600 on a nucleo f303re without using HAL[^1] methods?
-
-[^1]: Hardware Abstraction Layer
+> how do i write software uart running faster than 9600 on a nucleo f303re without using HAL (Hardware Abstraction Layer) methods?
 
 ### sub questions
 
 #### how does uart work
 
-uart (universal asynchronous receiver-transmitter) usses serial communication. meaning it sends each byte after the other.
+uart (universal asynchronous receiver-transmitter) uses serial communication. meaning it sends each byte after the other.
 each message is comprised of a start bit to notify the other side that it is about to send something,
 followed by 5 to up to 9 data bits, which can be followed by 0 up to 2 parity bits and 1 or 2 stop bits.
 do note that the total amount of bits send per message cannot exceed 9 bits (excluding start and stop)
 the data is send at a pre configured speed which means it does not need a shared clock signal.
 
 ##### uart msg example
-
-###### message we send
-
-> A
 
 ###### uart message structure
 
@@ -76,10 +71,14 @@ stopBits: 1-2
 
 messages can be 'chained' by putting a `idle` bit between data bits instead of fully stopping.
 
+###### message we send
+
+> A
+
 ###### actual messages
 
 > this shows a program receiving a byte, incrementing it, and sending it back.
->![uart message on logic analyzer](<./../../COMM/software serial/evidende/uart msg.png>)
+>![uart message on logic analyzer](<../../COMM/software serial/evidence/uart msg.png>)
 
 ---
 
@@ -104,20 +103,18 @@ messages can be 'chained' by putting a `idle` bit between data bits instead of f
 
 ##### sending
 
-we can use 2 microcontroller pins seeing as we need 2 'channels', 1 to send and 1 to receive, and we are dealing with bits and bytes.
-we split each byte up into bits and send each bit over the 'output channel' whith a 'delay' between each bit. the 'delay' is determined by the speed we set for the uart, and the bit determinds if the corosponding pin high on a `1` or low on a `0`.
+we can use 2 micro-controller pins seeing as we need 2 'channels', 1 to send and 1 to receive, and we are dealing with bits and bytes.
+we split each byte up into bits and send each bit over the 'output channel' with a 'delay' between each bit. the 'delay' is determined by the speed we set for the uart, and the bit determines if the corresponding pin high on a `1` or low on a `0`.
 
-##### recieving
+##### receiving
 
 receiving is fairly similar to sending, but instead of setting a pin we read it at the baudrate that is configured.
 
 ## design
 
-<!-- TODO design choices. why this design, what other choices could i have made -->
-
-i opted to make the class a template to hardbake the number of data, parity and stop bits into the constructed implementation, this prevents the user from changing them in runtime.  
+i opted to make the class a template to hard-bake the number of data, parity and stop bits into the constructed implementation, this prevents the user from changing them in runtime.  
 a `HardwareTimer` was added because of the need for specific timing and 2 `NucleoPins` were to act as a transmit and receive pin.  
-the baudrate is given throught the constructor because i wanted to allow the const savy people to be able to change the baud rate at runtime. (event though it is not suported in the spec)
+the baudrate is given through the constructor because i wanted to allow the const savvy people to be able to change the baud rate at runtime. (event though it is not supported in the spec)
 
 ### class diagram
 
@@ -214,11 +211,11 @@ rb --> [*] : / return true
 
 ## advice
 
-as of writing this document my implementation does not implement the parity calulations yet due to time constraints.
+as of writing this document my implementation does not implement the parity calculations yet due to time constraints.
 without parity it achieves 57600 baud, but if i had implemented parity i would make an estimated guess that it would achieve 38400 baud.
 i tried the next step up (115200 baud) but the way i have my timer setup won't allow the use of that speed.
 i have tested 9600, 38400, and 57600 baud and speeds below that should work fine.
-the numer of bits is configurable for the data bits, parity bits and the stop bits, and any unsuported number will be cautght using a static_assert.
+the number of bits is configurable for the data bits, parity bits and the stop bits, and any unsupported number will be cautght using a static_assert.
 the code is blocking and **not** thread safe so keep that in mind.
 
 ## conclusion

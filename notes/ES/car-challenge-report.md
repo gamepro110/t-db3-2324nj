@@ -631,9 +631,9 @@ classDiagram
 
 I would advice for anyone learning to work with freeRtos to start experimenting with it.  
 
-seeing as I was short on time i would spend more time tuning the pid values, as to not rock back and forth continuesly.  
+seeing as I was short on time i would spend more time tuning the pid values, as to not rock back and forth continuously.  
 as stated in the paper it is used as a guide, i would make sure to take more time next time im working with a pid controller.
-apart from thata it is a functioning car with MCP and uart control.
+apart from that it is a functioning car with MCP and uart control.
 
 ## conclusion
 
@@ -652,9 +652,9 @@ I choose to do option 2, my definition of an [obstacle can be found here](<#what
 I explain [pwm input here](<#pwm-input-control>), and [pwm output here](<#pwm-output-control>).  
 to move the car we need to use the servos which take a pwm signal as input to move the output with the speed determined by the duty cycle.  
 the servo also outputs a faster pwm signal that shows its angle in the duty cycle, which could be used to measure how fast it is going.  
-by using the output of the distence sensor as setpoint for the [PID (described here)](<#pid-control>) i was able to have a closed loop control controller.  
+by using the output of the distance sensor as setpoint for the [PID (described here)](<#pid-control>) i was able to have a closed loop control controller.  
 
-for controlling the behaviour of the car while it is running I made a MCP with 2 buttons (each with long and short press action) and a [uart terminal](<#uart-control>) to parse input and apply the changes.
+for controlling the behavior of the car while it is running I made a MCP with 2 buttons (each with long and short press action) and a [uart terminal](<#uart-control>) to parse input and apply the changes.
 
 to communicate between threads i used 2 FreeRtos message queues with the following data types.
 
@@ -669,11 +669,11 @@ struct SensorMsgData {
 };
 ```
 
-as the names might sugest, one is for sending which button is pressed and for how long, and the other is for passing the distance measured by the ultra sonic sensor.  
-the reason for doing the button this way is to keep the interrupt code as short as possible while still complying to single resposibility, the button handles the interrupt while the action is called from from another thread using the MCP class to preform the action.  
+as the names might suggest, one is for sending which button is pressed and for how long, and the other is for passing the distance measured by the ultra sonic sensor.  
+the reason for doing the button this way is to keep the interrupt code as short as possible while still complying to single responsibility, the button handles the interrupt while the action is called from from another thread using the MCP class to preform the action.  
 as for the distance sensor. while the hardware timer managed the timing, i did have to send the data to the MotorController (which is on another thread) so it could be used in the PID.
 
-and while the previous bit spoiled it a bit, i used FreeRtos as on OS to keep it running in real time while being able to utilize mutltiple threads.
+and while the previous bit spoiled it a bit, i used FreeRtos as on OS to keep it running in real time while being able to utilize multiple threads.
 
 ## reflection
 
