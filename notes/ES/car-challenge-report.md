@@ -12,7 +12,7 @@ Karlo Koelewijn
 | 2024-01-17 | 0.1 | Karlo | added layout + started research |
 | 2024-01-20 | 0.2 | Karlo | fleshed out the sub-questions, added class diagram, added todo list |
 | 2024-01-21 | 0.3 | Karlo | added image, finished deep-dive section, finished design, wrote advice, wrote conclusion |
-| 2024-01-22 | 0.4 | Karlo | rewrote conclusion, moved part of advice to research, seperated reflection and conclusion |
+| 2024-01-22 | 0.4 | Karlo | rewrote conclusion, moved part of advice to research, separated reflection and conclusion |
 | 2024-01-23 | 0.5 | Karlo | added dot-framework + spell checking |
 <!-- |  |  |  |  | -->
 
@@ -131,10 +131,32 @@ the nucleo f303re has a single ARM Cortex M4 core, so if we want to use multiple
 thats where FreeRtos steps in, FreeRtos (or Free Real time operating system) provides a cross-platform operating system with threading capabilities.
 which allows us too make multiple threads while the kernel keeps the system running at 'real-time'.
 
-to communicate between threads we can use one of freeRtos' features called a messageQueue,
+to communicate between threads we can use one of freeRtos' features called a messageQueue, you need to provide a type for transferring the data and i made the following data types.
+
+```cpp
+struct BtnMsgData {
+    int butNr;
+    int Duration;
+};
+
+struct SensorMsgData {
+    uint8_t distance;
+};
+```
+
+as the names might suggest, one is for sending which button is pressed and for how long, and the other is for passing the distance measured by the ultra sonic sensor.  
+the reason for doing the button this way is to keep the interrupt code as short as possible while still complying to single responsibility, the button handles the interrupt while the action is called from from another thread using the MCP class to preform the action.  
+as for the distance sensor. while the hardware timer managed the timing, i did have to send the data to the MotorController (which is on another thread) so it could be used in the PID.,
 you are able to push messages to the queue from one thread while another thread is able to pop them while the kernel keeps everything running.
 
 ### deep-dive
+
+for each of the sub-parts i used at least 2 the following dot-framework methods per subject
+
+- Document Analysis (full reference manual)
+- Literature study (school powerpoint's)
+- Community research (class mates)
+- expert interview
 
 #### pwm output control
 
@@ -386,6 +408,11 @@ this was expected seeing as the above calculation provides a decent start after 
 however due to time constraints i'm unable to fine tune it.
 
 ### debugging hardfaults
+
+for parts i used the following dot-framework methods
+
+- Literature study (cpu info pdf)
+- Prototyping (git)
 
 i had my fair share of hardfaults (unrecoverable hard crashes) which in turn had me debugging the error flags and cpu registers as shown below.
 
@@ -653,27 +680,8 @@ I explain [pwm input here](<#pwm-input-control>), and [pwm output here](<#pwm-ou
 to move the car we need to use the servos which take a pwm signal as input to move the output with the speed determined by the duty cycle.  
 the servo also outputs a faster pwm signal that shows its angle in the duty cycle, which could be used to measure how fast it is going.  
 by using the output of the distance sensor as setpoint for the [PID (described here)](<#pid-control>) i was able to have a closed loop control controller.  
-
-for controlling the behavior of the car while it is running I made a MCP with 2 buttons (each with long and short press action) and a [uart terminal](<#uart-control>) to parse input and apply the changes.
-
-to communicate between threads i used 2 FreeRtos message queues with the following data types.
-
-```cpp
-struct BtnMsgData {
-    int butNr;
-    int Duration;
-};
-
-struct SensorMsgData {
-    uint8_t distance;
-};
-```
-
-as the names might suggest, one is for sending which button is pressed and for how long, and the other is for passing the distance measured by the ultra sonic sensor.  
-the reason for doing the button this way is to keep the interrupt code as short as possible while still complying to single responsibility, the button handles the interrupt while the action is called from from another thread using the MCP class to preform the action.  
-as for the distance sensor. while the hardware timer managed the timing, i did have to send the data to the MotorController (which is on another thread) so it could be used in the PID.
-
-and while the previous bit spoiled it a bit, i used FreeRtos as on OS to keep it running in real time while being able to utilize multiple threads.
+for controlling the behavior of the car while it is running I made a MCP with 2 buttons (each with long and short press action), and a [uart terminal](<#uart-control>) to parse input and apply the changes.  
+I used FreeRtos as on OS to keep it running in real time while being able to utilize multiple threads, and to communicate between those threads i used [message queues](<#how-do-i-communicate-between-threads-while-keeping-it-in-real-time>)
 
 ## reflection
 
