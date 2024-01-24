@@ -14,6 +14,7 @@ Karlo Koelewijn
 | 2024-01-21 | 0.3 | Karlo | added image, finished deep-dive section, finished design, wrote advice, wrote conclusion |
 | 2024-01-22 | 0.4 | Karlo | rewrote conclusion, moved part of advice to research, separated reflection and conclusion |
 | 2024-01-23 | 0.5 | Karlo | added dot-framework + spell checking |
+| 2024-01-24 | 0.6 | Karlo | added info about POC's, added a note conclusion about the car working |
 <!-- |  |  |  |  | -->
 
 ## content
@@ -63,6 +64,8 @@ we got the following goals in this challenge:
 how do I get the Nucleo car driving and avoiding obstacles using low level hardware control in real-time?
 
 ### sub-questions
+
+below I present and answer the sub-question. there is a POC for each component in my git repo, each POC is a stand alone test how a specific component works. the reason for making a POC for each component was to get to know how that component works without interference of other components, which reduces complexity. the result was to understand the component and get it working, which was a success because each POC works on its own.
 
 #### what parts does the car have?
 
@@ -123,7 +126,7 @@ they utilize a combination of interrupts and a messageQueue to decide what actio
 
 #### what is an obstacle?
 
-an obstacle is anything the distance sensor can sense within N cm for longer than a few measurements
+an obstacle is anything the distance sensor can sense within $N$ cm for at least $M$ measurements
 
 #### how do i communicate between threads while keeping it in real time?
 
@@ -681,7 +684,8 @@ to move the car we need to use the servos which take a pwm signal as input to mo
 the servo also outputs a faster pwm signal that shows its angle in the duty cycle, which could be used to measure how fast it is going.  
 by using the output of the distance sensor as setpoint for the [PID (described here)](<#pid-control>) i was able to have a closed loop control controller.  
 for controlling the behavior of the car while it is running I made a MCP with 2 buttons (each with long and short press action), and a [uart terminal](<#uart-control>) to parse input and apply the changes.  
-I used FreeRtos as on OS to keep it running in real time while being able to utilize multiple threads, and to communicate between those threads i used [message queues](<#how-do-i-communicate-between-threads-while-keeping-it-in-real-time>)
+I used FreeRtos as on OS to keep it running in real time while being able to utilize multiple threads, and to communicate between those threads i used [message queues](<#how-do-i-communicate-between-threads-while-keeping-it-in-real-time>).  
+together with this document you will find a video of the car in action.
 
 ## reflection
 
